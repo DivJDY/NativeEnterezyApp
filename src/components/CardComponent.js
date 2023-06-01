@@ -6,14 +6,38 @@ import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {deleteProduct, getAllProducts} from '../db/database';
 import {styles} from '../styles/cardStyles';
+import {hostName} from '../../App';
 
-const CardComponent = ({name, item}) => {
+const CardComponent = ({name, item, fetchProduct}) => {
   const navigation = useNavigation();
 
   // console.warn('===> nav ' + name);
   const handleButtonPress = () => {
-    // console.warn('******** ' + JSON.stringify(item));
+    console.warn('******** ' + typeof item.product_image);
     navigation.navigate(name, {data: item});
+  };
+
+  const deleteProductById = async id => {
+    await fetch(hostName + '/products/' + id, {
+      method: 'DELETE',
+    })
+      .then(response => response.json())
+      .then(response => {
+        // if (response.ok) {
+        //   console.log('deleted ', response.message);
+        //   // Record deleted successfully
+        //   console.log('Record deleted successfully');
+        // } else {
+        //   // Handle the error response
+        //   console.error('Failed to delete record');
+        // }
+        console.log(response.message);
+        fetchProduct();
+      })
+      .catch(error => {
+        // Handle any network or other errors
+        console.error('Error:', error);
+      });
   };
 
   const deleteProductItem = async id => {
@@ -28,14 +52,16 @@ const CardComponent = ({name, item}) => {
         {
           text: 'OK',
           onPress: async () => {
-            await deleteProduct(id)
-              .then(async () => {
-                console.log('Order deleted successfully');
-                await getAllProducts();
-              })
-              .catch(error => {
-                console.error('Error deleting order: ', error);
-              });
+            await deleteProductById(id);
+            // await deleteProduct(id)
+            //   .then(async () => {
+            //     console.log('Order deleted successfully');
+            //     await getAllProducts();
+            //   })
+            //   .catch(error => {
+            //     console.error('Error deleting order: ', error);
+            //   });
+
             navigation.navigate('Home');
           },
         },
@@ -54,6 +80,8 @@ const CardComponent = ({name, item}) => {
         source={{
           uri: item?.product_image,
         }}
+        // source={require('C:UsersPcDesktopPython Flasklays.jpg')}
+        // source={{uri: 'file:///C:/Users/Pc/Desktop/Python Flask/dryFruits.jpg'}}
         resizeMode="contain"
       />
       <Card.Content>

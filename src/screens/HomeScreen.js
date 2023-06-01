@@ -1,26 +1,20 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  FlatList,
-  // Dimensions
-} from 'react-native';
-import {Button, Searchbar, Text} from 'react-native-paper';
+import {View, FlatList, TouchableOpacity, Alert} from 'react-native';
+import {Button, Searchbar, Text, Card} from 'react-native-paper';
 import CardComponent from '../components/CardComponent';
-// import {productdata} from '../ProductJsonData';
 import BannerLists from '../components/BannerLists';
 import {useNavigation} from '@react-navigation/native';
-import {getAllProducts, createProductTable} from '../db/database';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {styles} from '../styles/homeScreen';
-import NoDataFound from '../components/NoDataFound';
-
-// const {width} = Dimensions.get('window');
-// const CARD_WIDTH = (width - 20) / 2 - 10; // Subtracting margin and padding
+import {hostName} from '../../App';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {cardstyles} from '../styles/cardStyles';
 
 const keyExtractor = item => item.id;
 
-const HomeScreen = () => {
+const HomeScreen = ({route}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,22 +23,33 @@ const HomeScreen = () => {
 
   const fetchProduct = async () => {
     setLoading(true);
-    await getAllProducts()
-      .then(async products => {
-        console.log('All products: ', products);
-        setFilteredData(await products);
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
+    };
+    console.warn(' endpoint ' + hostName + '/products');
+    await fetch(hostName + '/products', requestOptions)
+      .then(response => response.json())
+      .then(responseData => {
+        console.warn('fetch data ==> ', responseData);
+        setFilteredData(responseData);
         setLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching products: ', error);
+        console.error(error);
       });
   };
 
   useEffect(() => {
     setLoading(true);
-    createProductTable();
     fetchProduct();
-  }, []);
+
+    setLoading(false);
+    console.warn('ttt ', JSON.stringify(route?.params));
+  }, [route?.params]);
 
   const handleSearch = query => {
     if (query !== '') {
@@ -60,7 +65,11 @@ const HomeScreen = () => {
   };
 
   const renderItem = ({item}) => (
-    <CardComponent name="ProductDetails" item={item} />
+    <CardComponent
+      name="ProductDetails"
+      item={item}
+      fetchProduct={fetchProduct}
+    />
   );
 
   return (
@@ -79,17 +88,7 @@ const HomeScreen = () => {
           value={searchQuery}
           style={styles.searchBar}
         />
-        {filteredData.length === 0 && (
-          <Text
-            style={{
-              textAlign: 'center',
-              marginTop: 10,
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}>
-            No Data Found
-          </Text>
-        )}
+
         {loading ? (
           <LoadingIndicator />
         ) : (
@@ -101,6 +100,17 @@ const HomeScreen = () => {
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
           />
+        )}
+        {filteredData.length === 0 && (
+          <Text
+            style={{
+              textAlign: 'center',
+              marginBottom: 20,
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}>
+            No Data Found
+          </Text>
         )}
       </View>
     </>

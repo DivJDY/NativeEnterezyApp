@@ -17,8 +17,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
 import ButtonComponent from '../components/ButtonComponent';
-import {createProductTable, addProduct, getAllProducts} from '../db/database';
 import {styles} from '../styles/formStyles';
+import {hostName} from '../../App';
+// import {useNavigation} from '@react-navigation/native';
+// import {fetchProduct} from './HomeScreen';
 
 const validationSchema = Yup.object().shape({
   product_name: Yup.string().required('Product name is required'),
@@ -37,6 +39,32 @@ const validationSchema = Yup.object().shape({
 
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState('');
+  // const [filteredData, setFilteredData] = useState([]);
+  // const [loading, setLoading] = useState(false);
+
+  // const navigation = useNavigation();
+
+  // const fetchProduct = async () => {
+  //   // setLoading(true);
+  //   const requestOptions = {
+  //     method: 'GET',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded',
+  //       Accept: 'application/json',
+  //     },
+  //   };
+  //   console.warn(' endpoint ' + hostName + '/products');
+  //   await fetch(hostName + '/products', requestOptions)
+  //     .then(response => response.json())
+  //     .then(responseData => {
+  //       console.warn('fetch data ==> ', responseData);
+  //       setFilteredData(responseData);
+  //       // setLoading(false);
+  //     })
+  //     .catch(error => {
+  //       console.error(error);
+  //     });
+  // };
 
   const handleFormSubmit = (values, {resetForm}) => {
     // Handle form submission logic here
@@ -45,35 +73,53 @@ const ProductPostScreen = () => {
     if (uploadImage !== '') {
       const product_image = uploadImage?.assets[0].uri;
       values.product_image = product_image;
-      console.log(
-        ' ====> ' + values.product_desc,
-        ' **** ' + values.minimum_product_order_quantity,
-      );
-      addProduct(
-        values.product_image,
-        values.product_name,
-        values.product_price,
-        values.product_mrp,
-        values.product_desc,
-        values.minimum_product_order_quantity,
-      )
-        .then(insertId => {
-          console.log('Product added with ID: ', insertId);
+
+      const data = {
+        product_name: values.product_name,
+        product_price: values.product_price,
+        product_mrp: values.product_mrp,
+        product_desc: values.product_desc,
+        minimum_product_order_quantity: values.minimum_product_order_quantity,
+        product_image: values.product_image,
+      };
+
+      // console.warn(
+      //   ' post data ===> ' +
+      //     JSON.stringify(data) +
+      //     ' === Type ' +
+      //     typeof values.product_image,
+      // );
+
+      fetch(hostName + '/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then(response => response.json())
+        .then(response => {
+          // Handle the response data
+          console.log('data response ', response);
+          Alert.alert(response.message);
+          // fetchProduct()
+          // navigation.navigate('HomeStack', {fetchProductList: filteredData});
         })
         .catch(error => {
-          console.error('Error adding product: ', error);
+          // Handle any errors
+          console.error('post error ', error);
         });
       resetForm();
       setUploadImage('');
-      getAllProducts();
-      Alert.alert('Product posted successfully');
+      // Alert.alert('Product created successfully');
     } else {
       Alert.alert('Please upload product image');
     }
   };
 
   useEffect(() => {
-    createProductTable();
+    // createProductTable();
   });
 
   const initialValues = {
@@ -114,7 +160,7 @@ const ProductPostScreen = () => {
               <View style={styles.formContainer}>
                 <TextInputComponent
                   label="Product Name"
-                  placeholder={'Enter Product Name'}
+                  placeholder={'Enter Product Name *'}
                   onChangeText={handleChange('product_name')}
                   onBlur={handleBlur('product_name')}
                   value={values.product_name}
@@ -129,7 +175,7 @@ const ProductPostScreen = () => {
 
                 <TextInputComponent
                   label="Product Description"
-                  placeholder={'Enter Product Description'}
+                  placeholder={'Enter Product Description *'}
                   onChangeText={handleChange('product_desc')}
                   onBlur={handleBlur('product_desc')}
                   value={values.product_desc}
@@ -145,7 +191,7 @@ const ProductPostScreen = () => {
 
                 <TextInputComponent
                   label="Minimum Product Order Quantity"
-                  placeholder={'Enter Minimum Product Order Quantity'}
+                  placeholder={'Enter Minimum Product Order Quantity *'}
                   onChangeText={handleChange('minimum_product_order_quantity')}
                   onBlur={handleBlur('minimum_product_order_quantity')}
                   value={values.minimum_product_order_quantity}
@@ -178,7 +224,7 @@ const ProductPostScreen = () => {
 
                 <TextInputComponent
                   label="Product Price"
-                  placeholder={'Enter Product Price'}
+                  placeholder={'Enter Product Price *'}
                   onChangeText={handleChange('product_price')}
                   onBlur={handleBlur('product_price')}
                   value={values.product_price}
@@ -194,7 +240,7 @@ const ProductPostScreen = () => {
 
                 <TextInputComponent
                   label="Product MRP"
-                  placeholder={'Enter Product MRP'}
+                  placeholder={'Enter Product MRP *'}
                   onChangeText={handleChange('product_mrp')}
                   onBlur={handleBlur('product_mrp')}
                   value={values.product_mrp}
