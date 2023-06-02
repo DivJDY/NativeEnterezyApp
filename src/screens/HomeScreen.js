@@ -1,25 +1,32 @@
-/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {View, FlatList, TouchableOpacity, Alert} from 'react-native';
-import {Button, Searchbar, Text, Card} from 'react-native-paper';
+import {View, FlatList} from 'react-native';
+import {Button, Searchbar, Text} from 'react-native-paper';
 import CardComponent from '../components/CardComponent';
 import BannerLists from '../components/BannerLists';
 import {useNavigation} from '@react-navigation/native';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {styles} from '../styles/homeScreen';
 import {hostName} from '../../App';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {cardstyles} from '../styles/cardStyles';
 
 const keyExtractor = item => item.id;
 
 const HomeScreen = ({route}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(
+    route?.params ? route?.params.loading : false,
+  );
 
   const navigation = useNavigation();
+
+  const reloadData = () => {
+    // Toggle the reload state to trigger a re-render of the component
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    setLoading(true);
+  };
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -45,11 +52,11 @@ const HomeScreen = ({route}) => {
 
   useEffect(() => {
     setLoading(true);
+    reloadData();
     fetchProduct();
-
     setLoading(false);
-    console.warn('ttt ', JSON.stringify(route?.params));
-  }, [route?.params]);
+    // console.log(' Route ', route?.params.loading);
+  }, [route]);
 
   const handleSearch = query => {
     if (query !== '') {
@@ -99,6 +106,7 @@ const HomeScreen = ({route}) => {
             keyExtractor={keyExtractor}
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
+            onEndReached={() => reloadData}
           />
         )}
         {filteredData.length === 0 && (

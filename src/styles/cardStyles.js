@@ -33,4 +33,37 @@ export const styles = StyleSheet.create({
     textAlign: 'justify',
     marginBottom: 2,
   },
+
+  line: {
+    marginTop: 8,
+    borderBottomColor: 'black',
+    borderBottomWidth: 1.5,
+    width: '100%',
+  },
+  submitbtn: {
+    borderRadius: 12,
+    marginHorizontal: '10%',
+    // backgroundColor: 'yellow',
+    color: 'black',
+  },
+  dialog: {
+    position: 'absolute',
+    // width:'90%',
+    bottom: 25,
+    margin: 0,
+  },
+
+  // checkboxContainer: {
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
+  // checkboxWrapper: {
+  //   width: 24,
+  //   height: 24,
+  //   borderRadius: 12,
+  //   borderWidth: 2,
+  //   borderColor: 'black',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
 });

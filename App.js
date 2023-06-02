@@ -20,5 +20,4 @@ export default App;
 
 // export const hostName = 'http://127.0.0.1:8000';
 
-export const hostName = 'https://7c69-202-131-135-242.ngrok-free.app';
-
+export const hostName = 'https://bc0f-202-131-134-219.ngrok-free.app';

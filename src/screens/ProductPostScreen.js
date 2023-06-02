@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -19,9 +19,9 @@ import TextComponent from '../components/TextComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
-// import {useNavigation} from '@react-navigation/native';
-// import {fetchProduct} from './HomeScreen';
+import {useNavigation} from '@react-navigation/native';
 
+// validation schema
 const validationSchema = Yup.object().shape({
   product_name: Yup.string().required('Product name is required'),
   product_desc: Yup.string().required('Product Description is required'),
@@ -39,37 +39,12 @@ const validationSchema = Yup.object().shape({
 
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState('');
-  // const [filteredData, setFilteredData] = useState([]);
-  // const [loading, setLoading] = useState(false);
+  const [loading] = useState(true);
 
-  // const navigation = useNavigation();
-
-  // const fetchProduct = async () => {
-  //   // setLoading(true);
-  //   const requestOptions = {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //       Accept: 'application/json',
-  //     },
-  //   };
-  //   console.warn(' endpoint ' + hostName + '/products');
-  //   await fetch(hostName + '/products', requestOptions)
-  //     .then(response => response.json())
-  //     .then(responseData => {
-  //       console.warn('fetch data ==> ', responseData);
-  //       setFilteredData(responseData);
-  //       // setLoading(false);
-  //     })
-  //     .catch(error => {
-  //       console.error(error);
-  //     });
-  // };
+  const navigation = useNavigation();
 
   const handleFormSubmit = (values, {resetForm}) => {
     // Handle form submission logic here
-
-    // console.log(values.product_image);
     if (uploadImage !== '') {
       const product_image = uploadImage?.assets[0].uri;
       values.product_image = product_image;
@@ -83,13 +58,6 @@ const ProductPostScreen = () => {
         product_image: values.product_image,
       };
 
-      // console.warn(
-      //   ' post data ===> ' +
-      //     JSON.stringify(data) +
-      //     ' === Type ' +
-      //     typeof values.product_image,
-      // );
-
       fetch(hostName + '/products', {
         method: 'POST',
         headers: {
@@ -101,10 +69,9 @@ const ProductPostScreen = () => {
         .then(response => response.json())
         .then(response => {
           // Handle the response data
-          console.log('data response ', response);
+          // console.log('data response ', response);
           Alert.alert(response.message);
-          // fetchProduct()
-          // navigation.navigate('HomeStack', {fetchProductList: filteredData});
+          navigation.navigate('HomeStack', {loading: loading});
         })
         .catch(error => {
           // Handle any errors
@@ -112,15 +79,10 @@ const ProductPostScreen = () => {
         });
       resetForm();
       setUploadImage('');
-      // Alert.alert('Product created successfully');
     } else {
       Alert.alert('Please upload product image');
     }
   };
-
-  useEffect(() => {
-    // createProductTable();
-  });
 
   const initialValues = {
     product_name: '',
@@ -132,7 +94,7 @@ const ProductPostScreen = () => {
 
   const selectImage = () => {
     launchImageLibrary({noData: true}, response => {
-      console.log(response);
+      // console.log(response);
       if (response) {
         setUploadImage(response);
       }
@@ -144,7 +106,16 @@ const ProductPostScreen = () => {
       <KeyboardAvoidingView
         enabled
         behavior={Platform.OS === 'ios' ? 'padding' : null}>
-        <ScrollView style={{marginBottom: 15}}>
+        <ScrollView style={{marginBottom: 18}}>
+          <Text
+            variant="headlineSmall"
+            style={{
+              textAlign: 'center',
+              marginTop: 12,
+              textDecorationLine: 'underline',
+            }}>
+            Create Product
+          </Text>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -205,22 +176,6 @@ const ProductPostScreen = () => {
                       style={styles.error}
                     />
                   )}
-
-                {/* <TextInputComponent
-                  label="Product Quantity"
-                  placeholder={'Enter Product Quantity'}
-                  onChangeText={handleChange('product_quantity')}
-                  onBlur={handleBlur('product_quantity')}
-                  value={values.product_quantity}
-                  keyboardType="numeric"
-                  style={styles.input}
-                />
-                {errors.product_quantity && touched.product_quantity && (
-                  <TextComponent
-                    text={errors.product_quantity}
-                    style={styles.error}
-                  />
-                )} */}
 
                 <TextInputComponent
                   label="Product Price"

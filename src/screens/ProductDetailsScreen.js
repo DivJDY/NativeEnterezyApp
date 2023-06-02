@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {View} from 'react-native';
 import React from 'react';
 import CardDetailsComponent from '../components/CardDetailsComponent';
@@ -13,3 +14,4 @@ const ProductDetailsScreen = ({route}) => {
 };
 
 export default ProductDetailsScreen;
+

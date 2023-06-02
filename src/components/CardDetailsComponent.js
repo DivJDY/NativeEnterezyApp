@@ -5,9 +5,7 @@ import {Button, Card, Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from '../styles/cardStyles';
 import QuantitySelector from './QuantitySelector';
-// import {cartItems} from '../CartItems';
-
-export const cartItems = [];
+import {hostName} from '../../App';
 
 const CardDetailsComponent = props => {
   const [value, setValue] = useState();
@@ -29,41 +27,38 @@ const CardDetailsComponent = props => {
   };
 
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart(value);
-    }
-    showAlert();
+    addToCart(value);
   };
 
   const addToCart = item => {
-    console.warn('Items in cartItems 000 ' + cartItems);
+    console.log(' Item post cart ' + JSON.stringify(item));
     const cartItem = {...item, quantity: quantity};
     console.warn(' Item 1st **** ' + JSON.stringify(cartItem));
-    cartItems.push(cartItem);
-    console.warn(' Item 2st **** ' + JSON.stringify(cartItems));
 
-    // Function to add an item to the cart
+    const data = {
+      id: cartItem.id,
+      quantity: cartItem.minimum_product_order_quantity,
+    };
 
-    // const existingItemIndex = cartItems.findIndex(
-    //   cartItem => cartItem.id === item.id,
-    // );
-
-    // if (existingItemIndex !== -1) {
-    //   // Item already exists in the cart, update its quantity
-    //   const updatedCartItems = cartItems.map((cartItem, index) => {
-    //     if (index === existingItemIndex) {
-    //       return {...cartItem, quantity: cartItem.quantity + 1};
-    //     }
-    //     return cartItem;
-    //   });
-
-    //   cartItems.push(updatedCartItems);
-    // } else {
-    //   // Item does not exist in the cart, add it with quantity 1
-    //   cartItems.push([...cartItems, {...item, quantity: 1}]);
-    // }
-
-    // console.warn(' Item 2st **** ' + JSON.stringify(cartItems));
+    fetch(hostName + '/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.json())
+      .then(response => {
+        // Handle the response data
+        console.log('data response ', response);
+        // Alert.alert(response.message);
+        showAlert(response.message);
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error('post error ', error);
+      });
   };
 
   useEffect(() => {
@@ -71,18 +66,16 @@ const CardDetailsComponent = props => {
     setQuantity(props.data?.minimum_product_order_quantity);
   }, [props.data]);
 
-  const showAlert = () => {
+  const showAlert = message => {
     Alert.alert(
       '',
-      'Item added successfully',
+      message,
       [
         {
           text: 'Cancel',
           style: 'cancel',
-          onPress: () => {
-            // Action to perform when Cancel is pressed
-            // console.log('Cancel pressed');
-          },
+          // onPress: () => {
+          // },
         },
         {
           text: 'OK',

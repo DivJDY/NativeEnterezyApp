@@ -4,7 +4,6 @@ import {TouchableOpacity, Alert} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {deleteProduct, getAllProducts} from '../db/database';
 import {styles} from '../styles/cardStyles';
 import {hostName} from '../../App';
 
@@ -13,7 +12,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
 
   // console.warn('===> nav ' + name);
   const handleButtonPress = () => {
-    console.warn('******** ' + typeof item.product_image);
+    // console.warn('******** ' + typeof item.product_image);
     navigation.navigate(name, {data: item});
   };
 
@@ -23,14 +22,6 @@ const CardComponent = ({name, item, fetchProduct}) => {
     })
       .then(response => response.json())
       .then(response => {
-        // if (response.ok) {
-        //   console.log('deleted ', response.message);
-        //   // Record deleted successfully
-        //   console.log('Record deleted successfully');
-        // } else {
-        //   // Handle the error response
-        //   console.error('Failed to delete record');
-        // }
         console.log(response.message);
         fetchProduct();
       })
