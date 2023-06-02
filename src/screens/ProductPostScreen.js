@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -20,6 +21,7 @@ import ButtonComponent from '../components/ButtonComponent';
 import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
 import {useNavigation} from '@react-navigation/native';
+import Selection from '../components/Selection';
 
 // validation schema
 const validationSchema = Yup.object().shape({
@@ -39,9 +41,52 @@ const validationSchema = Yup.object().shape({
 
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState('');
+  const [category, setCategory] = useState('');
+  const [categoryList, setCategoryList] = useState([]);
+  // const [categoryPost, setCategoryPost] = useState();
+  const [loadcategory, setLoadCategory] = useState(false);
   const [loading] = useState(true);
 
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+    },
+  };
+
   const navigation = useNavigation();
+
+  console.warn('category ', category[0]);
+
+  const fetchProductCategory = async () => {
+    setLoadCategory(true);
+    await fetch(hostName + '/category', requestOptions)
+      .then(response => response.json())
+      .then(responseData => {
+        console.warn('fetch data ==> ', responseData);
+        setCategoryList(responseData);
+        setLoadCategory(false);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  // const fetchProductCategoryById = async id => {
+  //   await fetch(hostName + '/category/' + id, requestOptions)
+  //     .then(response => response.json())
+  //     .then(responseData => {
+  //       setCategoryPost(responseData);
+  //     })
+  //     .catch(error => {
+  //       console.error(error);
+  //     });
+  // };
+
+  useEffect(() => {
+    fetchProductCategory();
+  }, []);
 
   const handleFormSubmit = (values, {resetForm}) => {
     // Handle form submission logic here
@@ -50,6 +95,7 @@ const ProductPostScreen = () => {
       values.product_image = product_image;
 
       const data = {
+        category_id: category[0],
         product_name: values.product_name,
         product_price: values.product_price,
         product_mrp: values.product_mrp,
@@ -79,6 +125,7 @@ const ProductPostScreen = () => {
         });
       resetForm();
       setUploadImage('');
+      setCategory('');
     } else {
       Alert.alert('Please upload product image');
     }
@@ -143,6 +190,18 @@ const ProductPostScreen = () => {
                     style={styles.error}
                   />
                 )}
+
+                <View marginBottom={10}>
+                  <Selection
+                    title="Select product category *"
+                    placeholder="Search Item...."
+                    options={categoryList}
+                    displayKey={'category_name'}
+                    single={true}
+                    onChangeText={text => setCategory(text)}
+                    selectedItem={category}
+                  />
+                </View>
 
                 <TextInputComponent
                   label="Product Description"

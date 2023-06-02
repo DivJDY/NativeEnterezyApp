@@ -113,7 +113,7 @@ const HomeScreen = ({route}) => {
           <Text
             style={{
               textAlign: 'center',
-              marginBottom: 20,
+              marginBottom: '60%',
               fontSize: 18,
               fontWeight: 'bold',
             }}>

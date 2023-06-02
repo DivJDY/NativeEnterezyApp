@@ -179,7 +179,10 @@ const CartScreen = () => {
                 //   'You want to proceed',
                 //   navigation.navigate('Payment', {totalPrice: totalPrice}),
                 // )
-                navigation.navigate('Payment', {totalPrice: totalPrice})
+                navigation.navigate('Payment', {
+                  cartData: Item,
+                  totalPrice: totalPrice,
+                })
               }>
               <Text style={{fontSize: 16, color: '#fff'}}>Proceed</Text>
             </Button>

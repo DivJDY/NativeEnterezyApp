@@ -15,14 +15,25 @@ import {useNavigation} from '@react-navigation/native';
 
 const PaymentScreen = ({route}) => {
   const [taxValue, setTaxValue] = useState(50);
+  const [data, setData] = useState();
   const [toalAmount, setTotalAmount] = useState();
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState(false);
   const discount = 15.12;
   const navigation = useNavigation();
 
+  console.log(' route data ', route?.params?.cartData);
+
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
+
+  console.warn('place order ', data.id);
+
+  const placeOrder = () => {
+    const delivery_date = Date.now();
+    const customer_name = 'Unknown';
+    const cart_id = data[0]?.id;
+  };
 
   const handleCheckbox = () => {
     setChecked(!checked);
@@ -32,9 +43,16 @@ const PaymentScreen = ({route}) => {
     console.log('pressed');
   };
   useEffect(() => {
-    const total = route?.params?.totalPrice - taxValue;
+    setData(route?.params?.cartData);
+    const total = route?.params?.totalPrice + taxValue;
+
     setTotalAmount(total);
-  }, [route?.params?.totalPrice, taxValue]);
+  }, [
+    data?.total_product_price,
+    route?.params?.cartData,
+    route?.params?.totalPrice,
+    taxValue,
+  ]);
   return (
     <>
       <View style={{flex: 1, marginVertical: 20}}>
@@ -128,28 +146,6 @@ const PaymentScreen = ({route}) => {
           Proceed
         </Button>
 
-        {/* <Portal style={{flex: 1}}>
-          <Dialog
-            style={{alignContent: 'flex-end'}}
-            visible={visible}
-            onDismiss={hideDialog}>
-            <Dialog.Content>
-              <Checkbox.Item
-                label="Cash on delivery"
-                status={checked ? 'checked' : 'unchecked'}
-                onPress={handleCheckbox}
-              />
-            </Dialog.Content>
-            <Dialog.Content>
-              <Text>Discount</Text>
-            </Dialog.Content>
-
-            <Dialog.Actions>
-              <Button onPress={hideDialog}>Close</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal> */}
-
         <Portal>
           <Dialog
             visible={visible}
@@ -161,36 +157,29 @@ const PaymentScreen = ({route}) => {
               status={checked ? 'checked' : 'unchecked'}
               onPress={handleCheckbox}
             />
-            {/* </View> */}
-
-            {/* <Checkbox.Android
-              status={checked ? 'checked' : 'unchecked'}
-              onPress={handleCheckbox}
-              uncheckedColor="black"
-              color="black"
-            /> */}
 
             <Dialog.Content flexDirection="row">
               <Text>Discount</Text>
               <Text marginLeft={'60%'} style={{color: 'red'}}>
                 {' '}
-                - {'\u20B9'} {discount}
+                {/* - {'\u20B9'} {data[0]?.discount} */}
               </Text>
             </Dialog.Content>
             <Dialog.Content flexDirection="row" marginTop={'-5%'}>
               <Text>Total amount</Text>
               <Text marginLeft={'50%'} style={{color: 'red'}}>
                 {' '}
-                - {'\u20B9'} {toalAmount - discount}
+                {/* - {'\u20B9'} {toalAmount - data[0]?.discount} */}
               </Text>
             </Dialog.Content>
 
             <Dialog.Actions>
               <Button
                 mode="outlined"
-                style={styles.submitbtn}
+                style={[styles.submitbtn]}
+                disabled={checked ? false : true}
                 textAlign="center"
-                onPress={hideDialog}>
+                onPress={placeOrder}>
                 Place Order
               </Button>
             </Dialog.Actions>
