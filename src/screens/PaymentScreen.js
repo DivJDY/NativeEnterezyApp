@@ -27,12 +27,12 @@ const PaymentScreen = ({route}) => {
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
-  console.warn('place order ', data.id);
+  // console.warn('place order ', data.id);
 
   const placeOrder = () => {
     const delivery_date = Date.now();
     const customer_name = 'Unknown';
-    const cart_id = data[0]?.id;
+    // const cart_id = data[0]?.id;
   };
 
   const handleCheckbox = () => {

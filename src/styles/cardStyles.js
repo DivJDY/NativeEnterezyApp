@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     overflow: 'hidden',
+    // height: '100',
   },
   cardTextContainer: {
     marginTop: 8,

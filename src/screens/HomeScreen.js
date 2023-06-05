@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {View, FlatList} from 'react-native';
+import {View, FlatList, TouchableOpacity} from 'react-native';
 import {Button, Searchbar, Text} from 'react-native-paper';
 import CardComponent from '../components/CardComponent';
 import BannerLists from '../components/BannerLists';
@@ -18,45 +19,52 @@ const HomeScreen = ({route}) => {
     route?.params ? route?.params.loading : false,
   );
 
+  const [hasNoData, setHasNoData] = useState(false);
+  const [page_limit, setPageLimit] = useState(2);
+
   const navigation = useNavigation();
 
-  const reloadData = () => {
-    // Toggle the reload state to trigger a re-render of the component
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    setLoading(true);
-  };
+  // const reloadData = () => {
+  //   // Toggle the reload state to trigger a re-render of the component
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 2000);
+  //   setLoading(true);
+  // };
 
   const fetchProduct = async () => {
+    // console.warn(' 00000 ', hasNoData);
     setLoading(true);
-    const requestOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-      },
-    };
-    console.warn(' endpoint ' + hostName + '/products');
-    await fetch(hostName + '/products', requestOptions)
-      .then(response => response.json())
-      .then(responseData => {
-        console.warn('fetch data ==> ', responseData);
-        setFilteredData(responseData);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    try {
+      const response = await fetch(
+        `${hostName}/products?page_limit=${page_limit}`,
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const jsonData = await response.json();
+      const newData = jsonData.products;
+      setFilteredData(newData);
+
+      setLoading(false);
+      console.warn(' jsonData.lengthjsonData.length ', jsonData.total);
+      // setHasNoData(true);
+
+      // setHasNoData(jsonData.total === filteredData.length ? true : false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   useEffect(() => {
-    setLoading(true);
-    reloadData();
     fetchProduct();
-    setLoading(false);
-    // console.log(' Route ', route?.params.loading);
-  }, [route]);
+  }, []);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [route, page_limit]);
 
   const handleSearch = query => {
     if (query !== '') {
@@ -78,6 +86,44 @@ const HomeScreen = ({route}) => {
       fetchProduct={fetchProduct}
     />
   );
+
+  const handleLoadMore = () => {
+    if (!loading) {
+      // const nextPage = page + 1;
+      // setPage(nextPage);
+      setPageLimit(page_limit + 2);
+      // console.warn(' page numberrfc ', page_limit, ' *** ', hasNoData);
+      fetchProduct();
+    }
+  };
+
+  const footerView = () => {
+    // console.warn('gggg ', filteredData.length);
+    return (
+      <View style={{flex: 1}}>
+        {filteredData.length === 0 ? (
+          <Text
+            style={{
+              textAlign: 'center',
+              marginTop: 20,
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}>
+            No Data Found
+          </Text>
+        ) : loading ? (
+          <LoadingIndicator />
+        ) : (
+          <TouchableOpacity onPress={handleLoadMore}>
+            <Text
+              style={[hasNoData ? styles.loadMoreTxtdis : styles.loadMoreTxt]}>
+              {hasNoData ? 'No more data' : 'Load more'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   return (
     <>
@@ -106,19 +152,9 @@ const HomeScreen = ({route}) => {
             keyExtractor={keyExtractor}
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
-            onEndReached={() => reloadData}
+            ListFooterComponent={footerView}
+            onEndReachedThreshold={0.5}
           />
-        )}
-        {filteredData.length === 0 && (
-          <Text
-            style={{
-              textAlign: 'center',
-              marginBottom: '60%',
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}>
-            No Data Found
-          </Text>
         )}
       </View>
     </>

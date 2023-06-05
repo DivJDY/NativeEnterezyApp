@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -11,5 +12,18 @@ export const styles = StyleSheet.create({
     marginBottom: 14,
     height: 50,
     borderRadius: 10,
+  },
+  loadMoreTxt: {
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  loadMoreTxtdis: {
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginVertical: 10,
+    color: 'gray',
   },
 });

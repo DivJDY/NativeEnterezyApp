@@ -13,6 +13,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
   // console.warn('===> nav ' + name);
   const handleButtonPress = () => {
     // console.warn('******** ' + typeof item.product_image);
+    console.warn(' image address ==> ', item.product_image);
     navigation.navigate(name, {data: item});
   };
 
@@ -60,6 +61,14 @@ const CardComponent = ({name, item, fetchProduct}) => {
       {cancelable: true},
     );
   };
+  const [imageError, setImageError] = React.useState(false);
+
+  const handleImageError = () => {
+    // Handle image loading error
+    setImageError(true);
+  };
+
+  console.warn(' image error ==> ', imageError);
 
   return (
     <Card
@@ -69,12 +78,20 @@ const CardComponent = ({name, item, fetchProduct}) => {
       <Card.Cover
         style={{marginBottom: 10}}
         source={{
-          uri: item?.product_image,
+          uri: item.product_image,
         }}
         // source={require('C:UsersPcDesktopPython Flasklays.jpg')}
-        // source={{uri: 'file:///C:/Users/Pc/Desktop/Python Flask/dryFruits.jpg'}}
+        // source={{
+        //   uri: 'https://images.pexels.com/photos/1252811/pexels-photo-1252811.jpeg?cs=srgb&dl=pexels-tgh-1252811.jpg&fm=jpg',
+        // }}
         resizeMode="contain"
+        onError={handleImageError}
       />
+      {imageError && (
+        <Text style={{textAlign: 'center', color: 'red'}}>
+          Error loading image
+        </Text>
+      )}
       <Card.Content>
         <Text style={styles.cardTitle} variant="titleLarge">
           {item?.product_name}
