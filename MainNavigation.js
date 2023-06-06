@@ -20,6 +20,7 @@ import PaymentScreen from './src/screens/PaymentScreen';
 import DisplayRental from './src/screens/DisplayRental';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import ProductPostScreen from './src/screens/ProductPostScreen';
+import OrderListScreen from './src/screens/OrderListScreen';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createStackNavigator();
@@ -113,29 +114,9 @@ const DrawerNavigationList = ({route}) => {
           drawerIcon: ({color}) => (
             <Ionicons name="home-outline" size={22} color={color} />
           ),
-          // headerRight: () => (
-          //   <View style={styles.headerRight}>
-          //     <Icon
-          //       name="bell"
-          //       size={20}
-          //       color="#fff"
-          //       onPress={() => Alert.alert('Icon Pressed')}
-          //     />
-          //   </View>
-          // ),
         }}
       />
-      <Drawer.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Profile',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <Ionicons name="person-outline" size={22} color={color} />
-          ),
-        }}
-      />
+
       <Drawer.Screen
         name="SignUp"
         component={SignupScreen}
@@ -146,6 +127,48 @@ const DrawerNavigationList = ({route}) => {
             <FontAwesome name="user-plus" size={22} color={color} />
           ),
         }}
+      />
+
+      <Drawer.Screen
+        name="ProductPost"
+        component={ProductPostScreen}
+        options={{
+          title: 'Create Product',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <FontAwesome name="product-hunt" size={22} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="OrderList"
+        component={OrderListScreen}
+        options={{
+          title: 'My Order',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <MaterialIcons name="shopping-cart" size={22} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: 'Profile',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <Ionicons name="person-outline" size={22} color={color} />
+          ),
+        }}
+        // options={{
+        //   drawerLockMode: 'locked-closed',
+        //   headerTitle: () => <HeaderImage />,
+        //   hidden: true,
+        //   drawerItemStyle: {display: 'none'},
+        // }}
       />
 
       <Drawer.Screen
@@ -160,14 +183,14 @@ const DrawerNavigationList = ({route}) => {
         }}
       />
 
+      {/* Header locked */}
+
       <Drawer.Screen
         name="ProductDetails"
         component={ProductDetailsScreen}
         options={{
           drawerLockMode: 'locked-closed',
           headerTitle: () => <HeaderImage />,
-          // drawerItemStyle: {height: 0},
-          // headerShown: false,
           hidden: true,
           drawerItemStyle: {display: 'none'},
         }}
@@ -179,8 +202,6 @@ const DrawerNavigationList = ({route}) => {
         options={{
           drawerLockMode: 'locked-closed',
           headerTitle: () => <HeaderImage />,
-          // drawerItemStyle: {height: 0},
-          // headerShown: false,
           hidden: true,
           drawerItemStyle: {display: 'none'},
         }}
@@ -194,18 +215,6 @@ const DrawerNavigationList = ({route}) => {
           headerTitle: () => <HeaderImage />,
           hidden: true,
           drawerItemStyle: {display: 'none'},
-        }}
-      />
-
-      <Drawer.Screen
-        name="ProductPost"
-        component={ProductPostScreen}
-        options={{
-          title: 'Create Product',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <FontAwesome name="product-hunt" size={22} color={color} />
-          ),
         }}
       />
     </Drawer.Navigator>

@@ -24,14 +24,6 @@ const HomeScreen = ({route}) => {
 
   const navigation = useNavigation();
 
-  // const reloadData = () => {
-  //   // Toggle the reload state to trigger a re-render of the component
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 2000);
-  //   setLoading(true);
-  // };
-
   const fetchProduct = async () => {
     // console.warn(' 00000 ', hasNoData);
     setLoading(true);
@@ -88,6 +80,8 @@ const HomeScreen = ({route}) => {
   );
 
   const handleLoadMore = () => {
+    setSearchQuery('');
+    console.warn(' Search query ', searchQuery);
     if (!loading) {
       // const nextPage = page + 1;
       // setPage(nextPage);
@@ -127,14 +121,14 @@ const HomeScreen = ({route}) => {
 
   return (
     <>
+      <Button
+        mode="contained"
+        style={{marginBottom: 8, marginTop: 15, marginHorizontal: 10}}
+        onPress={() => navigation.navigate('DisplayRental')}>
+        Display Rentals
+      </Button>
       <BannerLists />
       <View style={styles.container}>
-        <Button
-          mode="contained"
-          style={{marginBottom: 8}}
-          onPress={() => navigation.navigate('DisplayRental')}>
-          Display Rentals
-        </Button>
         <Searchbar
           placeholder="Search"
           onChangeText={handleSearch}

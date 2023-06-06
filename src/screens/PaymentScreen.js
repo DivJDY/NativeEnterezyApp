@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View} from 'react-native';
+import {View, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   Button,
@@ -12,6 +12,7 @@ import {
 } from 'react-native-paper';
 import {styles} from '../styles/cardStyles';
 import {useNavigation} from '@react-navigation/native';
+import {hostName} from '../../App';
 
 const PaymentScreen = ({route}) => {
   const [taxValue, setTaxValue] = useState(50);
@@ -29,10 +30,71 @@ const PaymentScreen = ({route}) => {
 
   // console.warn('place order ', data.id);
 
+  const removeCartItem = async () => {
+    fetch(hostName + '/emptyCart', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.warn(' *** ', response);
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error('post error ', error);
+      });
+  };
+
   const placeOrder = () => {
-    const delivery_date = Date.now();
     const customer_name = 'Unknown';
-    // const cart_id = data[0]?.id;
+    const date = new Date(); // Example delivery_date as a Date object
+
+    const delivery_date = date.toLocaleDateString('en-GB'); // Adjust the locale as needed
+    const delivery_status = 'assigned';
+    const postOrderData = [];
+    // Push array1 into array2
+    route?.params?.cartData.forEach(item => {
+      postOrderData.push({
+        cart_id: item.id,
+        product_name: item.product_name,
+        product_image: item.product_image,
+        quantity: item.quantity,
+        delivery_date: delivery_date,
+        customer_name: customer_name,
+        category_name: item.category_name,
+        discount: item.discount,
+        order_amount: item.total_product_price,
+        delivery_status: delivery_status,
+      });
+    });
+
+    // console.warn(' place order data ', ' ** ', postOrderData);
+
+    fetch(hostName + '/invoice', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(postOrderData),
+    })
+      .then(response => response.json())
+      .then(response => {
+        // Handle the response data
+        // console.log('data response ', response);
+        Alert.alert(response.message);
+        hideDialog();
+        setChecked(false);
+        removeCartItem();
+        navigation.navigate('HomeStack');
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error('post error ', error);
+      });
   };
 
   const handleCheckbox = () => {
@@ -122,7 +184,7 @@ const PaymentScreen = ({route}) => {
               <View style={styles.line} />
 
               <Text
-                marginRight={'67%'}
+                marginRight={'65%'}
                 variant="bodyMedium"
                 marginTop={10}
                 marginBottom={3}>
@@ -162,13 +224,13 @@ const PaymentScreen = ({route}) => {
               <Text>Discount</Text>
               <Text marginLeft={'60%'} style={{color: 'red'}}>
                 {' '}
-                {/* - {'\u20B9'} {data[0]?.discount} */}
+                {/* - {'\u20B9'} {data[0]?.discount} */}- {'\u20B9'} {discount}
               </Text>
             </Dialog.Content>
             <Dialog.Content flexDirection="row" marginTop={'-5%'}>
               <Text>Total amount</Text>
               <Text marginLeft={'50%'} style={{color: 'red'}}>
-                {' '}
+                - {'\u20B9'} {toalAmount - discount}
                 {/* - {'\u20B9'} {toalAmount - data[0]?.discount} */}
               </Text>
             </Dialog.Content>

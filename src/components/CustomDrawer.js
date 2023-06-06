@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
@@ -12,11 +13,13 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import {useNavigation} from '@react-navigation/native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const CustomDrawer = props => {
+  const navigation = useNavigation();
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView
@@ -54,6 +57,7 @@ const CustomDrawer = props => {
           onPress={() => {
             Alert.alert('Signout');
           }}
+          // onPress={navigation.navigate('Profile')}
           style={{paddingVertical: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Ionicons name="exit-outline" size={22} />

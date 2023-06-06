@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
 import {DrawerActions} from '@react-navigation/native';
@@ -25,3 +26,4 @@ const DrawerContent = ({navigation}) => {
 };
 
 export default DrawerContent;
+
