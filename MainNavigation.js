@@ -1,7 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Image, View, Text, TouchableOpacity} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -38,9 +39,11 @@ const BottomTabNavigator = () => {
         component={HomeScreen}
         options={{
           tabBarIcon: ({focused}) => (
-            <Icon name="home" size={30} color={focused ? '#551E18' : '#000'} />
+            <Icon name="home" size={30} color={focused ? '#FECE00' : 'black'} />
           ),
-          tabBarLabel: () => <Text style={styles.tabBarLabel}>Home</Text>,
+          tabBarLabel: ({focused}) => (
+            <Text style={styles.tabBarLabel}>Home</Text>
+          ),
         }}
       />
 
@@ -52,7 +55,7 @@ const BottomTabNavigator = () => {
             <Icon
               name="shopping-cart"
               size={30}
-              color={focused ? '#551E18' : '#000'}
+              color={focused ? '#FECE00' : 'black'}
             />
           ),
           tabBarLabel: () => <Text style={styles.tabBarLabel}>Cart</Text>,
@@ -67,8 +70,8 @@ const Drawer = createDrawerNavigator();
 const HeaderImage = () => (
   <Image
     source={require('./assets/logo.jpg')}
-    style={{width: 120, height: 30}}
-    resizeMode="contain"
+    style={{width: 60, height: 24}}
+    resizeMode="stretch"
   />
 );
 
@@ -77,7 +80,7 @@ const DrawerNavigationList = ({route}) => {
     <Drawer.Navigator
       screenOptions={({navigation}) => ({
         headerStyle: {
-          backgroundColor: 'gray',
+          backgroundColor: 'black',
           height: 60,
         },
         headerLeft: () => (
@@ -98,7 +101,7 @@ const DrawerNavigationList = ({route}) => {
           fontSize: 15,
           fontWeight: 'bold',
         },
-        drawerActiveBackgroundColor: 'blue',
+        drawerActiveBackgroundColor: 'black',
         drawerActiveTintColor: '#fff',
         // drawerInactiveTintColor: '#333',
       })}
@@ -222,14 +225,45 @@ const DrawerNavigationList = ({route}) => {
 };
 
 const MainNavigation = () => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    checkLoginStatus();
+  }, []);
+
+  const checkLoginStatus = async () => {
+    try {
+      // Check if user is already logged in by checking AsyncStorage
+      const userToken = await AsyncStorage.getItem('userToken');
+      setIsSignedIn(!!userToken);
+    } catch (error) {
+      console.log('Error checking login status:', error);
+    }
+  };
+  // return (
+  //   <Stack.Navigator>
+  // <Stack.Screen
+  //   name="Main"
+  //   options={{headerShown: false}}
+  //   component={DrawerNavigationList}
+  // />
+  // <Stack.Screen name="Login" component={SignupScreen} />
+  //   </Stack.Navigator>
+  // );
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Main"
-        options={{headerShown: false}}
-        component={DrawerNavigationList}
-      />
-      <Stack.Screen name="Login" component={LoginScreen} />
+      {!isSignedIn ? (
+        // User is already signed in, navigate to HomeScreen
+        <Stack.Screen
+          name="Main"
+          options={{headerShown: false}}
+          component={DrawerNavigationList}
+        />
+      ) : (
+        // User is not signed in, navigate to SignupScreen
+        <Stack.Screen name="Signup" component={SignupScreen} />
+      )}
     </Stack.Navigator>
   );
 };

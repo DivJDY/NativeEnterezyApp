@@ -42,29 +42,24 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   submitbtn: {
-    borderRadius: 12,
-    marginHorizontal: '10%',
-    // backgroundColor: 'yellow',
-    color: 'black',
+    // marginHorizontal: '10%',
+    borderColor: 'black',
   },
   dialog: {
     position: 'absolute',
-    // width:'90%',
     bottom: 25,
+    left: 0,
+    right: 0,
     margin: 0,
   },
-
-  // checkboxContainer: {
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
-  // checkboxWrapper: {
-  //   width: 24,
-  //   height: 24,
-  //   borderRadius: 12,
-  //   borderWidth: 2,
-  //   borderColor: 'black',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
+  imageLoadError: {
+    textAlign: 'center',
+    color: '#FECE00',
+    fontWeight: 'bold',
+  },
+  btnStyle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    lineHeight: 20,
+  },
 });

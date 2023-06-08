@@ -1,12 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, View, Alert} from 'react-native';
+import {FlatList, View, Alert} from 'react-native';
 import {Avatar, Button, Card, Text} from 'react-native-paper';
 import {styles} from '../styles/cardStyles';
 import NoDataFound from '../components/NoDataFound';
 import {useNavigation} from '@react-navigation/native';
 import {hostName} from '../../App';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const CartScreen = () => {
   const [Item, setItem] = useState([]);
@@ -130,8 +131,16 @@ const CartScreen = () => {
               </Text>
             </View>
           </View>
-          <Button color="black" onPress={() => showAlert(item.id)}>
-            Remove
+          <Button onPress={() => showAlert(item.id)}>
+            <Text
+              style={{
+                fontSize: 17,
+                color: '#FECE00',
+                fontWeight: 'semi-bold',
+                lineHeight: 20,
+              }}>
+              Remove
+            </Text>
           </Button>
         </Card>
       </>
@@ -140,13 +149,7 @@ const CartScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {isLoading && (
-        <ActivityIndicator
-          style={{paddingVertical: 8}}
-          size="large"
-          color="blue"
-        />
-      )}
+      {isLoading && <LoadingIndicator />}
 
       {Item.length !== 0 ? (
         <>
@@ -166,25 +169,32 @@ const CartScreen = () => {
               marginBottom: 12,
             }}>
             <Button>
-              <Text style={{fontSize: 16, color: '#5832a8'}}>
-                Total: <Text style={{color: '#5832a8'}}>{'\u20B9'}</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: 'black',
+
+                  fontWeight: 'bold',
+                }}>
+                Total: {'\u20B9'}
                 {totalPrice}
               </Text>
             </Button>
             <Button
               mode="contained"
-              style={{borderRadius: 12, marginLeft: 10}}
+              style={{
+                marginLeft: 10,
+                backgroundColor: 'black',
+              }}
               onPress={() =>
-                // Alert.alert(
-                //   'You want to proceed',
-                //   navigation.navigate('Payment', {totalPrice: totalPrice}),
-                // )
                 navigation.navigate('Payment', {
                   cartData: Item,
                   totalPrice: totalPrice,
                 })
               }>
-              <Text style={{fontSize: 16, color: '#fff'}}>Proceed</Text>
+              <Text style={{fontSize: 16, color: '#fff', fontWeight: 'bold'}}>
+                Proceed
+              </Text>
             </Button>
           </View>
         </>
@@ -200,7 +210,11 @@ const CartScreen = () => {
         }}>
         <Button
           mode="outlined"
-          style={{borderRadius: 12, alignItems: 'center'}}
+          style={{
+            alignItems: 'center',
+            borderColor: 'black',
+            borderWidth: 3,
+          }}
           onPress={() => getCartItems()}>
           Update Cart
         </Button>

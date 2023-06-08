@@ -10,14 +10,14 @@ export default function PrivacyPolicyScreen() {
         style={{
           textAlign: 'center',
           marginBottom: 20,
-          color: 'purple',
+          color: '#FECE00',
           fontWeight: '700',
           textDecorationLine: 'underline',
         }}
         variant="titleLarge">
         Privacy Policy
       </Text>
-      <Text style={{textAlign: 'justify', color: 'blue'}} variant="bodyLarge">
+      <Text style={{textAlign: 'justify'}} variant="bodyLarge">
         Contrary to popular belief, Lorem Ipsum is not simply random text. It
         has roots in a piece of classical Latin literature from 45 BC, making it
         over 2000 years old. Richard McClintock, a Latin professor at

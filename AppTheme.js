@@ -1,14 +1,13 @@
 import {DefaultTheme, configureFonts} from 'react-native-paper';
-import {Platform} from 'react-native';
 
 const fontConfig = {
   default: {
     regular: {
-      fontFamily: './assets/fonts/RobotoCondensed-Regular.ttf',
+      fontFamily: 'RobotoCondensed-Regular',
       fontWeight: 'normal',
     },
     medium: {
-      fontFamily: './assets/fonts/RobotoCondensed-Light.ttf',
+      fontFamily: 'RobotoCondensed-Light',
       fontWeight: 'normal',
     },
     // Define additional font styles as needed
@@ -17,12 +16,15 @@ const fontConfig = {
 
 const theme = {
   ...DefaultTheme,
-  fonts: configureFonts(fontConfig),
+  // fonts: configureFonts(fontConfig),
   roundness: 2, // Customize the button border radius
   colors: {
     ...DefaultTheme.colors,
-    primary: '#007aff', // Customize the primary button color
-    accent: '#ff5c5c', // Customize the accent button color
+    text: 'black',
+
+    primary: '#FECE00', // replace with your desired background color
+    // text: 'white',
+    // accent: 'black', // Customize the accent button color
   },
 };
 

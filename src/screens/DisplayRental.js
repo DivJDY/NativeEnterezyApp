@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import React, {useState, useEffect} from 'react';
 import {
@@ -166,7 +167,9 @@ function DisplayRental() {
           style={{marginBottom: 15}}
           showsVerticalScrollIndicator={false}>
           <View style={{flex: 1, alignItems: 'center'}}>
-            <Text style={{fontSize: 30, marginBottom: 5}}>Display Rental</Text>
+            <Text style={{fontSize: 28, marginBottom: 5, fontWeight: 'bold'}}>
+              Display Rental
+            </Text>
           </View>
           <View style={{marginBottom: 15}} />
           <Selection
@@ -238,7 +241,10 @@ function DisplayRental() {
               takeImage ? style.btnSuccess : style.btn,
               {marginBottom: 15},
             ]}>
-            {takeImage ? 'Shelf Pic Taken' : 'Take a Shelf Pic *'}
+            <Text style={{fontWeight: 'bold'}}>
+              {' '}
+              {takeImage ? 'Shelf Pic Taken' : 'Take a Shelf Pic *'}
+            </Text>
           </Button>
           <Button
             mode="contained"
@@ -260,7 +266,10 @@ function DisplayRental() {
               uploadImage ? style.btnSuccess : style.btn,
               {marginBottom: 15},
             ]}>
-            {uploadImage ? 'Shelf Pic uploaded' : 'Upload a Shelf Pic *'}
+            {' '}
+            <Text style={{fontWeight: 'bold'}}>
+              {uploadImage ? 'Shelf Pic uploaded' : 'Upload a Shelf Pic *'}
+            </Text>
           </Button>
 
           <View
@@ -270,16 +279,24 @@ function DisplayRental() {
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: 10,
+              marginTop: 15,
             }}>
             <Button
               mode="contained"
-              style={{marginRight: 15}}
+              style={{marginRight: 15, backgroundColor: 'black'}}
               onPress={submitData}>
-              Submit Data
+              <Text style={[styles.btnStyle, {color: '#FECE00'}]}>
+                Submit Data
+              </Text>
             </Button>
-            <Button mode="contained" onPress={clearFormData}>
+            <Button
+              mode="contained"
+              style={{backgroundColor: 'black'}}
+              onPress={clearFormData}>
               {' '}
-              Clear Data
+              <Text style={[styles.btnStyle, {color: '#FECE00'}]}>
+                Clear Data
+              </Text>
             </Button>
           </View>
         </ScrollView>
@@ -290,10 +307,10 @@ function DisplayRental() {
 
 const style = StyleSheet.create({
   btnSuccess: {
-    backgroundColor: 'green',
+    backgroundColor: 'black',
   },
   btn: {
-    backgroundColor: 'blue',
+    backgroundColor: '#FECE00',
   },
 });
 

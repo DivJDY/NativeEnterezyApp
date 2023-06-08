@@ -15,6 +15,7 @@ import {useNavigation} from '@react-navigation/native';
 import {hostName} from '../../App';
 
 const PaymentScreen = ({route}) => {
+  // eslint-disable-next-line no-unused-vars
   const [taxValue, setTaxValue] = useState(50);
   const [data, setData] = useState();
   const [toalAmount, setTotalAmount] = useState();
@@ -118,17 +119,6 @@ const PaymentScreen = ({route}) => {
   return (
     <>
       <View style={{flex: 1, marginVertical: 20}}>
-        {/* <Text
-          variant="titleLarge"
-          style={[styles.cardTitle, {textAlign: 'center', marginBottom: 30}]}>
-          Please take screen shot of the QR code to make payment
-        </Text>
-
-        <Image
-          resizeMode="contain"
-          source={require('../../assets/QRCode.png')}
-          style={{marginBottom: 50}}
-        /> */}
         <View
           style={{
             flex: 1,
@@ -140,7 +130,7 @@ const PaymentScreen = ({route}) => {
               icon="percent"
               size={16}
               color="white"
-              style={{backgroundColor: 'red', marginRight: 20}}
+              style={{backgroundColor: 'black', marginRight: 20}}
             />
             <Appbar.Content title="Appy Coupon" style={{fontWeight: 'bold'}} />
             <Appbar.Action
@@ -199,13 +189,18 @@ const PaymentScreen = ({route}) => {
         </View>
 
         <Button
-          mode="outlined"
-          style={styles.submitbtn}
+          // style={styles.submitbtn}
+          style={{
+            marginHorizontal: 10,
+            backgroundColor: 'black',
+          }}
           onPress={() =>
             // navigation.navigate('HomeStack')
             showDialog()
           }>
-          Proceed
+          <Text style={{fontSize: 16, color: '#fff', fontWeight: 'bold'}}>
+            Proceed
+          </Text>
         </Button>
 
         <Portal>
@@ -222,27 +217,28 @@ const PaymentScreen = ({route}) => {
 
             <Dialog.Content flexDirection="row">
               <Text>Discount</Text>
-              <Text marginLeft={'60%'} style={{color: 'red'}}>
+              <Text marginLeft={'60%'} style={{fontWeight: '800'}}>
                 {' '}
                 {/* - {'\u20B9'} {data[0]?.discount} */}- {'\u20B9'} {discount}
               </Text>
             </Dialog.Content>
             <Dialog.Content flexDirection="row" marginTop={'-5%'}>
               <Text>Total amount</Text>
-              <Text marginLeft={'50%'} style={{color: 'red'}}>
+              <Text marginLeft={'45%'} style={{fontWeight: '800'}}>
                 - {'\u20B9'} {toalAmount - discount}
-                {/* - {'\u20B9'} {toalAmount - data[0]?.discount} */}
               </Text>
             </Dialog.Content>
 
             <Dialog.Actions>
               <Button
                 mode="outlined"
-                style={[styles.submitbtn]}
+                style={[styles.submitbtn, {borderWidth: 3}]}
                 disabled={checked ? false : true}
                 textAlign="center"
                 onPress={placeOrder}>
+                {/* <Text style={{fontSize: 16}} disabled={checked ? true : false}> */}
                 Place Order
+                {/* </Text> */}
               </Button>
             </Dialog.Actions>
           </Dialog>

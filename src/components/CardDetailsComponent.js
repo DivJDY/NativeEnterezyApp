@@ -31,9 +31,9 @@ const CardDetailsComponent = props => {
   };
 
   const addToCart = item => {
-    console.log(' Item post cart ' + JSON.stringify(item));
+    // console.log(' Item post cart ' + JSON.stringify(item));
     const cartItem = {...item, quantity: quantity};
-    console.warn(' Item 1st **** ' + JSON.stringify(cartItem));
+    // console.warn(' Item 1st **** ' + JSON.stringify(cartItem));
 
     const data = {
       id: cartItem.id,
@@ -51,7 +51,7 @@ const CardDetailsComponent = props => {
       .then(response => response.json())
       .then(response => {
         // Handle the response data
-        console.log('data response ', response);
+        // console.log('data response ', response);
         // Alert.alert(response.message);
         showAlert(response.message);
       })
@@ -74,15 +74,12 @@ const CardDetailsComponent = props => {
         {
           text: 'Cancel',
           style: 'cancel',
-          // onPress: () => {
-          // },
         },
         {
           text: 'OK',
           onPress: () => {
             // Action to perform when OK is pressed
             navigation.navigate('Home');
-            // console.log('OK pressed');
           },
         },
       ],
@@ -139,12 +136,11 @@ const CardDetailsComponent = props => {
               mode="outlined"
               style={{
                 marginLeft: 15,
-                borderRadius: 12,
-                borderColor: 'blue',
-                borderWidth: 2,
+                borderColor: '#FECE00',
+                borderWidth: 3,
               }}
               onPress={handleAddToCart}>
-              Add to Cart
+              <Text style={styles.btnStyle}>Add to Cart</Text>
             </Button>
           </View>
         </Card.Content>

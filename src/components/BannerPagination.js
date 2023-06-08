@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  useWindowDimensions,
-} from 'react-native';
+import {View, StyleSheet, Animated, useWindowDimensions} from 'react-native';
 import React from 'react';
 
 const BannerPagination = ({data, scrollX}) => {
@@ -51,7 +45,7 @@ const styles = StyleSheet.create({
   dot: {
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#493d8a',
+    backgroundColor: 'black',
     marginHorizontal: 4,
   },
 });

@@ -19,6 +19,7 @@ const HomeScreen = ({route}) => {
     route?.params ? route?.params.loading : false,
   );
 
+  // eslint-disable-next-line no-unused-vars
   const [hasNoData, setHasNoData] = useState(false);
   const [page_limit, setPageLimit] = useState(2);
 
@@ -41,7 +42,7 @@ const HomeScreen = ({route}) => {
       setFilteredData(newData);
 
       setLoading(false);
-      console.warn(' jsonData.lengthjsonData.length ', jsonData.total);
+      // console.warn(' jsonData.lengthjsonData.length ', jsonData.total);
       // setHasNoData(true);
 
       // setHasNoData(jsonData.total === filteredData.length ? true : false);
@@ -83,10 +84,7 @@ const HomeScreen = ({route}) => {
     setSearchQuery('');
     console.warn(' Search query ', searchQuery);
     if (!loading) {
-      // const nextPage = page + 1;
-      // setPage(nextPage);
       setPageLimit(page_limit + 2);
-      // console.warn(' page numberrfc ', page_limit, ' *** ', hasNoData);
       fetchProduct();
     }
   };
@@ -123,9 +121,13 @@ const HomeScreen = ({route}) => {
     <>
       <Button
         mode="contained"
-        style={{marginBottom: 8, marginTop: 15, marginHorizontal: 10}}
+        style={{
+          marginBottom: 8,
+          marginTop: 15,
+          marginHorizontal: 10,
+        }}
         onPress={() => navigation.navigate('DisplayRental')}>
-        Display Rentals
+        <Text style={styles.btnStyle}>Display Rentals</Text>
       </Button>
       <BannerLists />
       <View style={styles.container}>
@@ -145,7 +147,6 @@ const HomeScreen = ({route}) => {
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             numColumns={2}
-            columnWrapperStyle={styles.columnWrapper}
             ListFooterComponent={footerView}
             onEndReachedThreshold={0.5}
           />

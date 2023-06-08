@@ -44,6 +44,7 @@ export const styles = StyleSheet.create({
     width: 100,
     marginTop: 20,
     borderRadius: 12,
+    backgroundColor: 'black',
   },
   btnText: {
     color: '#fff',

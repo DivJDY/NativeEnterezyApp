@@ -26,52 +26,41 @@ const CustomDrawer = props => {
         {...props}
         contentContainerStyle={{backgroundColor: 'gray'}}>
         <ImageBackground
-          source={require('../../assets/background.png')}
-          style={{padding: 20, height: 160}}
+          source={require('../../assets/logo.jpg')}
+          style={{padding: 20, height: 130}}
+          resizeMode="stretch"
         />
 
         <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
-      <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
-        <TouchableOpacity
+      <View
+        style={{
+          paddingVertical: 10,
+          borderTopWidth: 1.5,
+          borderTopColor: '#ccc',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        {/* <TouchableOpacity
           onPress={() => {
             Alert.alert('Share to friend');
           }}
-          style={{paddingVertical: 15}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="share-social-outline" size={22} />
-            <Text
-              style={{
-                fontSize: 15,
-                fontFamily: 'Roboto-Medium',
-                marginLeft: 10,
-                fontWeight: 'bold',
-              }}>
-              Tell a Friend
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            Alert.alert('Signout');
-          }}
-          // onPress={navigation.navigate('Profile')}
-          style={{paddingVertical: 15}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="exit-outline" size={22} />
-            <Text
-              style={{
-                fontSize: 15,
-                fontFamily: 'Roboto-Medium',
-                marginLeft: 10,
-                fontWeight: 'bold',
-              }}>
-              Sign Out
-            </Text>
-          </View>
-        </TouchableOpacity>
+          style={{paddingVertical: 15}}> */}
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {/* <Ionicons name="share-social-outline" size={22} /> */}
+          <Text
+            style={{
+              fontSize: 15,
+              fontFamily: 'Roboto-Medium',
+              marginLeft: 10,
+              fontWeight: 'bold',
+            }}>
+            App Version 1.1
+          </Text>
+        </View>
+        {/* </TouchableOpacity> */}
       </View>
     </View>
   );

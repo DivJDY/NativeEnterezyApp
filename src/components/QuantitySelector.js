@@ -22,7 +22,7 @@ export default QuantitySelector;
 const styles = StyleSheet.create({
   operator: {
     fontSize: 20,
-    color: 'blue',
+    color: 'black',
     fontWeight: 'bold',
     marginLeft: 10,
   },

@@ -9,11 +9,12 @@ import {hostName} from '../../App';
 
 const CardComponent = ({name, item, fetchProduct}) => {
   const navigation = useNavigation();
+  const [imageError, setImageError] = React.useState(false);
 
   // console.warn('===> nav ' + name);
   const handleButtonPress = () => {
     // console.warn('******** ' + typeof item.product_image);
-    console.warn(' image address ==> ', item.product_image);
+    // console.warn(' image address ==> ', item.product_image);
     navigation.navigate(name, {data: item});
   };
 
@@ -61,14 +62,13 @@ const CardComponent = ({name, item, fetchProduct}) => {
       {cancelable: true},
     );
   };
-  const [imageError, setImageError] = React.useState(false);
 
   const handleImageError = () => {
     // Handle image loading error
     setImageError(true);
   };
 
-  console.warn(' image error ==> ', imageError);
+  // console.warn(' image error ==> ', imageError);
 
   return (
     <Card
@@ -80,17 +80,11 @@ const CardComponent = ({name, item, fetchProduct}) => {
         source={{
           uri: item.product_image,
         }}
-        // source={require('C:UsersPcDesktopPython Flasklays.jpg')}
-        // source={{
-        //   uri: 'https://images.pexels.com/photos/1252811/pexels-photo-1252811.jpeg?cs=srgb&dl=pexels-tgh-1252811.jpg&fm=jpg',
-        // }}
         resizeMode="contain"
         onError={handleImageError}
       />
       {imageError && (
-        <Text style={{textAlign: 'center', color: 'red'}}>
-          Error loading image
-        </Text>
+        <Text style={styles.imageLoadError}>Error loading image</Text>
       )}
       <Card.Content>
         <Text style={styles.cardTitle} variant="titleLarge">
@@ -111,7 +105,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
           Minimum order(quantity): {item?.minimum_product_order_quantity}
         </Text>
         <TouchableOpacity onPress={() => deleteProductItem(item.id)}>
-          <Icon name="delete" size={20} color="#900" />
+          <Icon name="delete" size={20} color="black" />
         </TouchableOpacity>
       </Card.Content>
     </Card>

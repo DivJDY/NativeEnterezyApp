@@ -60,6 +60,10 @@ const OrderListScreen = () => {
                 <View key={index}>
                   <List.Item
                     style={{marginBottom: -12}}
+                    titleStyle={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                    }}
                     title={order.product_name}
                     left={() => (
                       <Image
@@ -77,7 +81,11 @@ const OrderListScreen = () => {
                   <List.Item
                     title={'Expected Delivery Date : ' + order.delivery_date}
                     description={'Status : ' + order.delivery_status}
-                    style={{marginBottom: 12}}
+                    descriptionStyle={{
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                    }}
+                    style={{marginBottom: 3}}
                   />
                   <Divider style={{borderBottomWidth: 2}} />
                 </View>

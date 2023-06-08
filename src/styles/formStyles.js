@@ -3,9 +3,7 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',s
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
   formContainer: {
     marginLeft: '8%',
@@ -23,6 +21,12 @@ export const styles = StyleSheet.create({
   error: {
     paddingLeft: 12,
     marginBottom: 10,
-    color: 'red',
+    color: '#FECE00',
+    fontWeight: 'bold',
+  },
+  btnStyle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    lineHeight: 20,
   },
 });

@@ -44,8 +44,11 @@ const ProductPostScreen = () => {
   const [category, setCategory] = useState('');
   const [categoryList, setCategoryList] = useState([]);
   // const [categoryPost, setCategoryPost] = useState();
+  // eslint-disable-next-line no-unused-vars
   const [loadcategory, setLoadCategory] = useState(false);
   const [loading] = useState(true);
+
+  // const formik = useFormikContext();
 
   const requestOptions = {
     method: 'GET',
@@ -55,9 +58,15 @@ const ProductPostScreen = () => {
     },
   };
 
+  const clearFormData = () => {
+    // formik.resetForm();
+    setCategory('');
+    setUploadImage('');
+  };
+
   const navigation = useNavigation();
 
-  console.warn('category ', category[0]);
+  // console.warn('category ', category[0]);
 
   const fetchProductCategory = async () => {
     setLoadCategory(true);
@@ -73,19 +82,9 @@ const ProductPostScreen = () => {
       });
   };
 
-  // const fetchProductCategoryById = async id => {
-  //   await fetch(hostName + '/category/' + id, requestOptions)
-  //     .then(response => response.json())
-  //     .then(responseData => {
-  //       setCategoryPost(responseData);
-  //     })
-  //     .catch(error => {
-  //       console.error(error);
-  //     });
-  // };
-
   useEffect(() => {
     fetchProductCategory();
+    clearFormData();
   }, []);
 
   const handleFormSubmit = (values, {resetForm}) => {
@@ -314,9 +313,9 @@ export default ProductPostScreen;
 
 const style = StyleSheet.create({
   btnSuccess: {
-    backgroundColor: 'green',
+    backgroundColor: 'black',
   },
   btn: {
-    backgroundColor: 'blue',
+    backgroundColor: '#FECE00',
   },
 });
