@@ -1,4 +1,11 @@
 rootProject.name = 'Enterezy'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+apply from: file('../node_modules/@react-native-community/cli-platform-android/native_modules.gradle'); applyNativeModulesSettingsGradle(settings)
 include ':app'
 includeBuild('../node_modules/react-native-gradle-plugin')
+
+dependencyResolutionManagement { // Added dependencyResolutionManagement configuration
+
+    repositories {
+        maven { url 'https://jitpack.io' } // Added repository for jitpack
+    }
+}

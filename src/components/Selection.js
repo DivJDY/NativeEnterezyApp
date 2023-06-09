@@ -15,7 +15,7 @@ const Selection = ({
 }) => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={{flex: 1, width: 300}}>
+      <View style={{flex: 1, width: 320}}>
         <MultiSelect
           hideTags
           items={options}
@@ -29,12 +29,12 @@ const Selection = ({
           tagRemoveIconColor="#CCC"
           tagBorderColor="#CCC"
           tagTextColor="#CCC"
-          selectedItemTextColor="blue"
-          selectedItemIconColor="blue"
+          selectedItemTextColor="#FECE00"
+          selectedItemIconColor="#FECE00"
           itemTextColor="black"
           displayKey={displayKey}
           searchInputStyle={{color: 'black'}}
-          submitButtonColor="blue"
+          submitButtonColor="black"
           submitButtonText="Submit"
           hideDropdown={true}
           single={single}

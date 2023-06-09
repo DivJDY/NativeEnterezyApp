@@ -45,11 +45,15 @@ const multiselection = [
 function DisplayRental() {
   const [selectItems, setSelectItems] = useState([]);
   const [selectItem, setSelectItem] = useState([]);
+  const [productCost, setProductCost] = useState();
   const [address, setAddress] = useState('');
   const [avgStore, setAvgStore] = useState('');
   const [uploadImage, setUploadImage] = useState('');
   const [takeImage, setTakeImage] = useState('');
-  const [selectDimention, setSelectDimention] = useState([]);
+  // const [selectDimention, setSelectDimention] = useState([]);
+  const [breath, setBreath] = useState();
+  const [height, setHeight] = useState();
+  const [length, setLength] = useState();
 
   const navigation = useNavigation();
 
@@ -94,7 +98,7 @@ function DisplayRental() {
         console.log('User tapped on the custom button ', response.customButton);
       } else {
         // Handle the taken picture
-        console.log('Picture taken:', response.assets[0].uri);
+        // console.log('Picture taken:', response.assets[0].uri);
         setTakeImage(response.assets[0].uri);
       }
     });
@@ -114,9 +118,12 @@ function DisplayRental() {
   }, []);
 
   const clearFormData = () => {
+    setLength('');
+    setBreath('');
+    setHeight('');
     setAddress('');
     setAvgStore('');
-    setSelectDimention([]);
+    // setSelectDimention([]);
     setSelectItem([]);
     setSelectItems([]);
     setUploadImage('');
@@ -125,9 +132,10 @@ function DisplayRental() {
 
   const submitData = () => {
     if (
-      address !== '' &&
-      avgStore !== '' &&
-      selectDimention !== [] &&
+      // selectDimention !== [] &&
+      length === '' &&
+      breath === '' &&
+      height === '' &&
       selectItem !== [] &&
       selectItems !== [] &&
       (uploadImage !== '' || takeImage !== '')
@@ -154,7 +162,7 @@ function DisplayRental() {
         {cancelable: true},
       );
     } else {
-      Alert.alert('Please enter all the mentioned data');
+      Alert.alert('Please enter the mentioned mandatory data');
     }
   };
 
@@ -193,7 +201,7 @@ function DisplayRental() {
             selectedItem={selectItems}
           />
 
-          <View style={{marginBottom: 15}} />
+          {/* <View style={{marginBottom: 15}} />
           <Selection
             title="Dimentions *"
             placeholder="Search Item...."
@@ -202,11 +210,47 @@ function DisplayRental() {
             single={true}
             onChangeText={text => setSelectDimention(text)}
             selectedItem={selectDimention}
+          /> */}
+
+          <View style={{marginBottom: 15}} />
+          <TextInputComponent
+            placeholder={'Please Enter Product Length'}
+            onChangeText={text => setLength(text)}
+            keyboardType={'numeric'}
+            value={length}
+            style={[styles.input, {width: '100%'}]}
           />
 
           <View style={{marginBottom: 15}} />
           <TextInputComponent
-            placeholder={'Location of Shelf in Store *'}
+            placeholder={'Please Enter Product Breath'}
+            onChangeText={text => setBreath(text)}
+            keyboardType={'numeric'}
+            value={breath}
+            style={[styles.input, {width: '100%'}]}
+          />
+
+          <View style={{marginBottom: 15}} />
+          <TextInputComponent
+            placeholder={'Please Enter Product Height'}
+            onChangeText={text => setHeight(text)}
+            keyboardType={'numeric'}
+            value={height}
+            style={[styles.input, {width: '100%'}]}
+          />
+
+          <View style={{marginBottom: 15}} />
+          <TextInputComponent
+            placeholder={'Please Enter Product Cost *'}
+            onChangeText={text => setProductCost(text)}
+            keyboardType={'numeric'}
+            value={productCost}
+            style={[styles.input, {width: '100%'}]}
+          />
+
+          <View style={{marginBottom: 15}} />
+          <TextInputComponent
+            placeholder={'Location of Shelf in Store'}
             onChangeText={text => setAddress(text)}
             multiline={true}
             value={address}
@@ -215,7 +259,7 @@ function DisplayRental() {
 
           <View style={{marginBottom: 15}} />
           <TextInputComponent
-            placeholder={'Avg Store Foot Falls (Approx) *'}
+            placeholder={'Avg Store Foot Falls (Approx)'}
             onChangeText={text => setAvgStore(text)}
             value={avgStore}
             style={[styles.input, {width: '100%'}]}

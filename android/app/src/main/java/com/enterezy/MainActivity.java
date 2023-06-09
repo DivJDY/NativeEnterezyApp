@@ -5,6 +5,8 @@ import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 import android.os.Bundle;
+// import android.os.Bundle;
+import com.otpless.views.OtplessManager;
 
 public class MainActivity extends ReactActivity {
 
@@ -19,7 +21,9 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(null);
+    // OtplessManager.getInstance().init(this);
+    super.onCreate(savedInstanceState);
+    OtplessManager.getInstance().init(this);
   }
 
   /**

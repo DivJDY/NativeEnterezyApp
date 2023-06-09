@@ -56,6 +56,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#FECE00',
     fontWeight: 'bold',
+    fontSize: 12,
   },
   btnStyle: {
     fontWeight: 'bold',

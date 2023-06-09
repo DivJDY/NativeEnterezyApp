@@ -11,7 +11,12 @@ export const styles = StyleSheet.create({
   },
   input: {
     width: '90%',
-    marginBottom: 15,
+    marginBottom: 10,
+  },
+
+  subInp: {
+    width: '100%',
+    marginBottom: 10,
   },
 
   label: {
@@ -20,7 +25,7 @@ export const styles = StyleSheet.create({
   },
   error: {
     paddingLeft: 12,
-    marginBottom: 10,
+    marginBottom: 20,
     color: '#FECE00',
     fontWeight: 'bold',
   },
@@ -28,5 +33,15 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     lineHeight: 20,
+  },
+  submitBtn: {
+    backgroundColor: 'black',
+    marginTop: 10,
+    padding: 3,
+  },
+  subBtnTxt: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

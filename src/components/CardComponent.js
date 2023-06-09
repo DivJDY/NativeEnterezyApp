@@ -84,7 +84,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
         onError={handleImageError}
       />
       {imageError && (
-        <Text style={styles.imageLoadError}>Error loading image</Text>
+        <Text style={styles.imageLoadError}>Error while loading an image</Text>
       )}
       <Card.Content>
         <Text style={styles.cardTitle} variant="titleLarge">

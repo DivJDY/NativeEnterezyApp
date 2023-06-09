@@ -8,7 +8,7 @@ function TextInputComponent({
   onBlur,
   value,
   style,
-  label,
+
   multiline,
   disabled,
   keyboardType,

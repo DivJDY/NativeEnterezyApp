@@ -8,7 +8,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {styles} from './src/styles/header';
 import HomeScreen from './src/screens/HomeScreen';
-import SignupScreen from './src/screens/SignupScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import CartScreen from './src/screens/CartScreen';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -23,6 +22,8 @@ import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import ProductPostScreen from './src/screens/ProductPostScreen';
 import OrderListScreen from './src/screens/OrderListScreen';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import SignUpScreen from './src/screens/SignUpScreen';
+import MapScreen from './src/screens/Map';
 
 const Stack = createStackNavigator();
 
@@ -121,18 +122,6 @@ const DrawerNavigationList = ({route}) => {
       />
 
       <Drawer.Screen
-        name="SignUp"
-        component={SignupScreen}
-        options={{
-          title: 'SignUp',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <FontAwesome name="user-plus" size={22} color={color} />
-          ),
-        }}
-      />
-
-      <Drawer.Screen
         name="ProductPost"
         component={ProductPostScreen}
         options={{
@@ -185,6 +174,18 @@ const DrawerNavigationList = ({route}) => {
           ),
         }}
       />
+
+      {/* <Drawer.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          title: 'Map',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <MaterialIcons name="policy" size={22} color={color} />
+          ),
+        }}
+      /> */}
 
       {/* Header locked */}
 
@@ -251,9 +252,10 @@ const MainNavigation = () => {
   // <Stack.Screen name="Login" component={SignupScreen} />
   //   </Stack.Navigator>
   // );
+
   return (
     <Stack.Navigator>
-      {!isSignedIn ? (
+      {/* {isSignedIn ? (
         // User is already signed in, navigate to HomeScreen
         <Stack.Screen
           name="Main"
@@ -262,8 +264,30 @@ const MainNavigation = () => {
         />
       ) : (
         // User is not signed in, navigate to SignupScreen
-        <Stack.Screen name="Signup" component={SignupScreen} />
-      )}
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Signup"
+          component={Abc}
+        />
+      )} */}
+
+      <Stack.Screen
+        options={{headerShown: false}}
+        name="Signup"
+        component={SignUpScreen}
+      />
+
+      <Stack.Screen
+        name="Main"
+        options={{headerShown: false}}
+        component={DrawerNavigationList}
+      />
+
+      <Stack.Screen
+        name="GoogleMap"
+        options={{headerShown: false}}
+        component={MapScreen}
+      />
     </Stack.Navigator>
   );
 };
