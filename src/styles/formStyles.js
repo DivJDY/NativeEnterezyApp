@@ -1,6 +1,17 @@
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  mapCard: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10,
+    margin: 10,
+    elevation: 5,
+  },
+  map: {
+    height: 350,
+    borderRadius: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
