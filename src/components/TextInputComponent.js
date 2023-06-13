@@ -8,7 +8,6 @@ function TextInputComponent({
   onBlur,
   value,
   style,
-
   multiline,
   disabled,
   keyboardType,
@@ -29,19 +28,11 @@ function TextInputComponent({
   };
   return (
     <TextInput
-      // label={label}
       placeholder={placeholder}
       onChangeText={onChangeText}
       onBlur={onBlur}
       value={value}
-      // style={[
-      //   style,
-
-      //   // {backgroundColor: 'transparent'}
-      // ]}
       style={[style, {backgroundColor: 'transparent', borderWidth: 2}]}
-      // mode="Outlined"
-      outlineColor="red"
       keyboardType={keyboardType}
       multiline={multiline}
       contentContainerStyle={{alignItems: 'flex-start'}}

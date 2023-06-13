@@ -3,6 +3,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, FlatList, TouchableOpacity} from 'react-native';
 import {Button, Searchbar, Text} from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CardComponent from '../components/CardComponent';
 import BannerLists from '../components/BannerLists';
 import {useNavigation} from '@react-navigation/native';
@@ -72,13 +73,16 @@ const HomeScreen = ({route}) => {
     }
   };
 
-  const renderItem = ({item}) => (
-    <CardComponent
-      name="ProductDetails"
-      item={item}
-      fetchProduct={fetchProduct}
-    />
-  );
+  const renderItem = ({item}) => {
+    AsyncStorage.setItem('imageAddress', item?.product_image);
+    return (
+      <CardComponent
+        name="ProductDetails"
+        item={item}
+        fetchProduct={fetchProduct}
+      />
+    );
+  };
 
   const handleLoadMore = () => {
     setSearchQuery('');

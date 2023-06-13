@@ -1,23 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {View, Text, KeyboardAvoidingView, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import {TextInput, Button, Card} from 'react-native-paper';
 import MapView, {Marker} from 'react-native-maps';
+import {request, PERMISSIONS} from 'react-native-permissions';
 import {PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {styles} from '../styles/formStyles';
 import SinUpHeadingImg from '../components/SingUpHeadingImg';
 import {useNavigation} from '@react-navigation/native';
+import LoadingIndicator from '../components/LoadingIndicator';
+
+const API_KEY = 'AIzaSyAk2OZeHLSpPmGAlKWRSeWr4qsohRK5b2c';
 
 const MapScreen = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [location, setLocation] = useState(null);
   const [currentAddress, setCurrentAddress] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-
-  console.log(' == location ' + location);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -53,11 +62,13 @@ const MapScreen = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     // Get the current location
     Geolocation.getCurrentPosition(
       position => {
         const {latitude, longitude} = position.coords;
         setCurrentLocation({latitude, longitude});
+        console.warn(' current location ', latitude, ' - ', longitude);
         // Call the function to fetch and set the current address
         fetchAddress(latitude, longitude);
       },
@@ -69,14 +80,27 @@ const MapScreen = () => {
   }, []);
 
   const fetchAddress = async (latitude, longitude) => {
+    setLoading(true);
     // Make an API call to fetch the address using the Google Maps Geocoding API
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAk2OZeHLSpPmGAlKWRSeWr4qsohRK5b2c`,
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`,
     );
     const data = await response.json();
     console.warn(' *** => ', data);
     if (data.results.length > 0) {
+      setLoading(false);
+      const addressComponents = data.results[1].address_components;
+      const pincodeObj = addressComponents.find(component =>
+        component.types.includes('postal_code'),
+      );
+      const pincode = pincodeObj ? pincodeObj.long_name : '';
       const address = data.results[0].formatted_address;
+
+      const correctAddress = data.results[0].formatted_address.replace(
+        /\d{6},/,
+        `${pincode},`,
+      );
+      // setCurrentAddress(correctAddress);
       setCurrentAddress(address);
     }
   };
@@ -120,22 +144,26 @@ const MapScreen = () => {
       <KeyboardAvoidingView marginBottom={10}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.mapCard}>
-            {currentLocation && (
-              <MapView
-                style={styles.map}
-                initialRegion={{
-                  latitude: currentLocation.latitude,
-                  longitude: currentLocation.longitude,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
-                }}>
-                <Marker
-                  coordinate={{
+            {loading ? (
+              <LoadingIndicator />
+            ) : (
+              currentLocation && (
+                <MapView
+                  style={styles.map}
+                  initialRegion={{
                     latitude: currentLocation.latitude,
                     longitude: currentLocation.longitude,
-                  }}
-                />
-              </MapView>
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}>
+                  <Marker
+                    coordinate={{
+                      latitude: currentLocation.latitude,
+                      longitude: currentLocation.longitude,
+                    }}
+                  />
+                </MapView>
+              )
             )}
           </View>
 

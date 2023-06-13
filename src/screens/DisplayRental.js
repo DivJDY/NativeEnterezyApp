@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
   View,
@@ -10,14 +10,19 @@ import {
   Platform,
   Alert,
   StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {Button} from 'react-native-paper';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
+import dismissKeyboard from 'react-native-dismiss-keyboard';
 import TextInputComponent from '../components/TextInputComponent';
 import {styles} from '../styles/formStyles';
 import Selection from '../components/Selection';
+import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
+import {hostName} from '../../App';
 
 // Options data must contain 'item' & 'id' keys
 
@@ -54,6 +59,15 @@ function DisplayRental() {
   const [breath, setBreath] = useState();
   const [height, setHeight] = useState();
   const [length, setLength] = useState();
+
+  // Category list
+  const [category, setCategory] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+
+  // close the selection dropdown
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const requestOption = FetchUtilityOptions('GET');
 
   const navigation = useNavigation();
 
@@ -113,8 +127,24 @@ function DisplayRental() {
     });
   };
 
+  const fetchProductCategory = async () => {
+    // setLoadCategory(true);
+    await fetch(hostName + '/category', requestOption)
+      .then(response => response.json())
+      .then(responseData => {
+        console.warn('fetch data ==> ', responseData);
+        setCategoryList(responseData);
+        // setLoadCategory(false);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     requestCameraPermission();
+    fetchProductCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const clearFormData = () => {
@@ -125,7 +155,7 @@ function DisplayRental() {
     setAvgStore('');
     // setSelectDimention([]);
     setSelectItem([]);
-    setSelectItems([]);
+    setCategory([]);
     setUploadImage('');
     setTakeImage('');
   };
@@ -166,6 +196,17 @@ function DisplayRental() {
     }
   };
 
+  const multiSelectRef = useRef(null);
+
+  const onOutsidePress = () => {
+    // dismissKeyboard();
+    multiSelectRef.current._toggleDropdown(false);
+  };
+
+  console.warn(' category text ', category);
+
+  const handlePostProductCategory = () => {};
+
   return (
     <View style={{margin: 20}}>
       <KeyboardAvoidingView
@@ -180,26 +221,34 @@ function DisplayRental() {
             </Text>
           </View>
           <View style={{marginBottom: 15}} />
-          <Selection
-            title="Type of visibility *"
-            placeholder="Search Item...."
-            options={options}
-            displayKey={'item'}
-            single={true}
-            onChangeText={text => setSelectItem(text)}
-            selectedItem={selectItem}
-          />
+          <TouchableWithoutFeedback onPress={onOutsidePress}>
+            <Selection
+              title="Type of visibility *"
+              placeholder="Search Item...."
+              // isVisible={dropdownVisible}
+              ref={multiSelectRef}
+              options={options}
+              displayKey={'item'}
+              single={false}
+              onChangeText={text => setSelectItem(text)}
+              selectedItem={selectItem}
+            />
+            {/* <Button title="Post Category" onPress={handlePostProductCategory} /> */}
+          </TouchableWithoutFeedback>
 
           <View style={{marginBottom: 15}} />
-          <Selection
-            title="Type of category *"
-            placeholder="Search Items...."
-            options={multiselection}
-            displayKey={'item'}
-            single={false}
-            onChangeText={text => setSelectItems(text)}
-            selectedItem={selectItems}
-          />
+          <TouchableWithoutFeedback onPress={onOutsidePress}>
+            <Selection
+              title="Type of category *"
+              placeholder="Search Items...."
+              ref={multiSelectRef}
+              options={categoryList}
+              displayKey={'category_name'}
+              single={true}
+              onChangeText={text => setCategory(text)}
+              selectedItem={category}
+            />
+          </TouchableWithoutFeedback>
 
           {/* <View style={{marginBottom: 15}} />
           <Selection
@@ -221,14 +270,14 @@ function DisplayRental() {
             style={[styles.input, {width: '100%'}]}
           />
 
-          <View style={{marginBottom: 15}} />
+          {/* <View style={{marginBottom: 15}} />
           <TextInputComponent
             placeholder={'Please Enter Product Breath'}
             onChangeText={text => setBreath(text)}
             keyboardType={'numeric'}
             value={breath}
             style={[styles.input, {width: '100%'}]}
-          />
+          /> */}
 
           <View style={{marginBottom: 15}} />
           <TextInputComponent

@@ -52,6 +52,9 @@ export const styles = StyleSheet.create({
     right: 0,
     margin: 0,
   },
+  imageContainer: {
+    overflow: 'hidden',
+  },
   imageLoadError: {
     textAlign: 'center',
     color: '#FECE00',

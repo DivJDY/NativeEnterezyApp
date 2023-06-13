@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View} from 'react-native';
+import {View, Image} from 'react-native';
 import {Avatar, Title, Text, Button} from 'react-native-paper';
 import {styles} from '../styles/profileScreen';
 import {useNavigation} from '@react-navigation/native';
@@ -56,6 +56,13 @@ const ProfileScreen = () => {
             <Text style={styles.btnText}>Login</Text>
           </Button>
         </View>
+
+        <Image
+          source={{
+            uri: 'https://media.istockphoto.com/id/1382384282/photo/bangalore-or-bengaluru.jpg?s=612x612&w=0&k=20&c=6pxwL3JxNV2B_NZSLMZLhrSLqAbyCPlGuSZYKImpjKQ=',
+          }}
+          style={{width: 200, height: 100}}
+        />
       </View>
     </>
   );

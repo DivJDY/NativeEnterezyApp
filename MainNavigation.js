@@ -24,6 +24,7 @@ import OrderListScreen from './src/screens/OrderListScreen';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SignUpScreen from './src/screens/SignUpScreen';
 import MapScreen from './src/screens/Map';
+import PostProductCategory from './src/screens/PostProductCategory';
 
 const Stack = createStackNavigator();
 
@@ -129,6 +130,18 @@ const DrawerNavigationList = ({route}) => {
           headerTitle: () => <HeaderImage />,
           drawerIcon: ({color}) => (
             <FontAwesome name="product-hunt" size={22} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="ProductCategory"
+        component={PostProductCategory}
+        options={{
+          title: 'Post Category',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <MaterialIcons name="category" size={22} color={color} />
           ),
         }}
       />
@@ -272,15 +285,15 @@ const MainNavigation = () => {
       )} */}
 
       <Stack.Screen
-        options={{headerShown: false}}
-        name="Signup"
-        component={SignUpScreen}
-      />
-
-      <Stack.Screen
         name="Main"
         options={{headerShown: false}}
         component={DrawerNavigationList}
+      />
+
+      <Stack.Screen
+        options={{headerShown: false}}
+        name="Signup"
+        component={SignUpScreen}
       />
 
       <Stack.Screen

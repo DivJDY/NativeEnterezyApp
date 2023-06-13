@@ -1,15 +1,35 @@
 /* eslint-disable react-native/no-inline-styles */
-import * as React from 'react';
-import {TouchableOpacity, Alert} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, Alert, View, Image} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from '../styles/cardStyles';
 import {hostName} from '../../App';
 
 const CardComponent = ({name, item, fetchProduct}) => {
   const navigation = useNavigation();
-  const [imageError, setImageError] = React.useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageAddress, setImageAddress] = useState(null);
+
+  useEffect(() => {
+    // Retrieve the stored image address
+    const fetchImageAddress = async () => {
+      try {
+        const storedAddress = await AsyncStorage.getItem('imageAddress');
+        if (storedAddress) {
+          setImageAddress(storedAddress);
+        }
+      } catch (error) {
+        console.log('Error retrieving image address:', error);
+      }
+    };
+
+    fetchImageAddress();
+  }, []);
+
+  console.warn('image aaaaa ', imageAddress);
 
   // console.warn('===> nav ' + name);
   const handleButtonPress = () => {
@@ -63,9 +83,15 @@ const CardComponent = ({name, item, fetchProduct}) => {
     );
   };
 
-  const handleImageError = () => {
+  const handleImageError = error => {
     // Handle image loading error
+    console.log('Image Error:', error.nativeEvent.error);
     setImageError(true);
+    if (error.nativeEvent.error.indexOf('ENOENT') !== -1) {
+      console.log('The image file does not exist.');
+      console.log(' img add ', item?.product_image);
+      // Perform any additional error handling or actions
+    }
   };
 
   // console.warn(' image error ==> ', imageError);
@@ -78,11 +104,15 @@ const CardComponent = ({name, item, fetchProduct}) => {
       <Card.Cover
         style={{marginBottom: 10}}
         source={{
-          uri: item.product_image,
+          uri: imageAddress,
         }}
         resizeMode="contain"
         onError={handleImageError}
       />
+
+      {/* <View style={styles.imageContainer}>
+        <Image source={{uri: item?.product_image}} style={styles.image} />
+      </View> */}
       {imageError && (
         <Text style={styles.imageLoadError}>Error while loading an image</Text>
       )}

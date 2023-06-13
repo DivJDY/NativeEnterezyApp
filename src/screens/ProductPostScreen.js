@@ -13,15 +13,17 @@ import {
 import {Provider as PaperProvider, Button, Text} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import {launchImageLibrary} from 'react-native-image-picker';
+import ImagePicker, {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from '@react-navigation/native';
+import Selection from '../components/Selection';
+import uuid from 'react-native-uuid';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
-import {useNavigation} from '@react-navigation/native';
-import Selection from '../components/Selection';
+import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 
 // validation schema
 const validationSchema = Yup.object().shape({
@@ -47,16 +49,122 @@ const ProductPostScreen = () => {
   // eslint-disable-next-line no-unused-vars
   const [loadcategory, setLoadCategory] = useState(false);
   const [loading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [cloudImageAddress, setCloudImageAddress] = useState(null);
 
-  // const formik = useFormikContext();
+  const handleImageUpload = () => {
+    //     ImagePicker.showImagePicker({}, response => {
+    //       if (response.didCancel) {
+    //         console.log('Image selection canceled');
+    //       } else if (response.error) {
+    //         console.log('ImagePicker Error:', response.error);
+    //       } else {
+    //         const {uri} = response;
 
-  const requestOptions = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
-    },
+    //         generateUniqueIdentifier()
+    //           .then(uniqueIdentifier => {
+    //             console.warn(" unique identifier ",uniqueIdentifier)
+    //             const imageName = `${uniqueIdentifier}.jpg`;
+
+    //             uploadImageToCloudStorage(uri, imageName)`
+    //               .then(cloudImageAddressValue => {
+    //                 setCloudImageAddress(cloudImageAddressValue);
+    // console.warn(" cloudImageAddressValue after indentifier ", cloudImageAddressValue)
+
+    //                 postImageToBackend(cloudImageAddressValue)
+    //                   .then(() => {
+    //                     console.log('Image posted to backend successfully');
+    //                   })
+    //                   .catch(error => {
+    //                     console.log('Error posting image to backend:', error);
+    //                   });
+    //               })
+    //               .catch(error => {
+    //                 console.log('Error uploading image to cloud storage:', error);
+    //               });
+
+    //             setSelectedImage(uri);
+    //           })
+    //           .catch(error => {
+    //             console.log('Error generating unique identifier:', error);
+    //           });
+    //       }
+    //     });
+
+    launchImageLibrary({noData: true}, response => {
+      // console.log(response);
+      if (response) {
+        setUploadImage(response);
+
+        const uri = response?.assets[0]?.uri;
+
+        const imageType = response?.assets[0]?.type.split('/')[1];
+        console.warn('launchImageLibrary => ', uri, ' type ', imageType);
+
+        const uniqueIdentifier = generateUniqueIdentifier();
+        // .then(uniqueIdentifier => {
+        console.warn(' unique identifier ', uniqueIdentifier);
+        const imageName = `${uniqueIdentifier}.${imageType}`;
+
+        uploadImageToCloudStorage(uri, imageName)
+          .then(cloudImageAddressValue => {
+            setCloudImageAddress(cloudImageAddressValue);
+            console.warn(
+              ' cloudImageAddressValue after indentifier ',
+              cloudImageAddressValue,
+            );
+
+            postImageToBackend(cloudImageAddressValue)
+              .then(() => {
+                console.log('Image posted to backend successfully');
+              })
+              .catch(error => {
+                console.log('Error posting image to backend:', error);
+              });
+          })
+          .catch(error => {
+            console.log('Error uploading image to cloud storage:', error);
+          });
+
+        setSelectedImage(uri);
+        // })
+        // .catch(error => {
+        //   console.log('Error generating unique identifier:', error);
+        // });
+      }
+    });
   };
+
+  const uploadImageToCloudStorage = (imageUri, imageName) => {
+    // Upload logic to Google Cloud Storage
+    // Use the generated unique identifier (imageName) to store the image in the cloud
+
+    console.warn(
+      'uploadImageToCloudStorage return ',
+      imageUri,
+      ' *** ',
+      imageName,
+    );
+
+    // Example code (not complete)
+    // const cloudImageAddressValue = `https://your-bucket-url.com/${imageName}`;
+    // return Promise.resolve(cloudImageAddressValue);
+  };
+
+  const postImageToBackend = imageAddress => {
+    // Backend communication logic
+
+    console.warn(' Image in backend ', imageAddress);
+
+    // Example code (not complete)
+    return Promise.resolve();
+  };
+
+  const generateUniqueIdentifier = () => {
+    return uuid.v4();
+  };
+
+  const requestOptions = FetchUtilityOptions('GET');
 
   const clearFormData = () => {
     // formik.resetForm();
@@ -102,6 +210,7 @@ const ProductPostScreen = () => {
         minimum_product_order_quantity: values.minimum_product_order_quantity,
         product_image: values.product_image,
       };
+      const requestHeader = FetchUtilityOptions('POST');
 
       fetch(hostName + '/products', {
         method: 'POST',

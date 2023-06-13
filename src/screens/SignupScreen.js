@@ -39,24 +39,25 @@ const SignUpScreen = () => {
     navigation.navigate('GoogleMap');
     // Alert.alert('SignUp Done');
     // / to show OTPLESS popup
-    // OtplessModule.startOtplessWithEvent();
+    OtplessModule.startOtplessWithEvent();
 
-    // // to receive otplessUser details and token
-    // const eventListener = new NativeEventEmitter(OtplessModule).addListener(
-    //   'OTPlessSignResult',
-    //   result => {
-    //     if (result.data == null || result.data == undefined) {
-    //       let error = result.errorMessage;
-    //     } else {
-    //       const token = result.data.token;
-    //       console.warn(' token ', token);
-    //       // send this token to your backend to validate user details
-    //       setOtplessResult(token);
-    //     }
-    //   },
-    // );
-    // // call this method when you login is completed
-    // OtplessModule.onSignInCompleted();
+    // to receive otplessUser details and token
+    const eventListener = new NativeEventEmitter(OtplessModule).addListener(
+      'OTPlessSignResult',
+      result => {
+        if (result.data == null || result.data == undefined) {
+          let error = result.errorMessage;
+          console.log(' error ', error);
+        } else {
+          const token = result.data.token;
+          console.warn(' token ', result);
+          // send this token to your backend to validate user details
+          setOtplessResult(token);
+        }
+      },
+    );
+    // call this method when you login is completed
+    OtplessModule.onSignInCompleted();
   };
 
   const sinupfirststep = () => {
