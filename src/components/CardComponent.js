@@ -11,30 +11,10 @@ import {hostName} from '../../App';
 const CardComponent = ({name, item, fetchProduct}) => {
   const navigation = useNavigation();
   const [imageError, setImageError] = useState(false);
-  const [imageAddress, setImageAddress] = useState(null);
 
-  useEffect(() => {
-    // Retrieve the stored image address
-    const fetchImageAddress = async () => {
-      try {
-        const storedAddress = await AsyncStorage.getItem('imageAddress');
-        if (storedAddress) {
-          setImageAddress(storedAddress);
-        }
-      } catch (error) {
-        console.log('Error retrieving image address:', error);
-      }
-    };
+  // console.warn('image aaaaa ', imageAddress);
 
-    fetchImageAddress();
-  }, []);
-
-  console.warn('image aaaaa ', imageAddress);
-
-  // console.warn('===> nav ' + name);
   const handleButtonPress = () => {
-    // console.warn('******** ' + typeof item.product_image);
-    // console.warn(' image address ==> ', item.product_image);
     navigation.navigate(name, {data: item});
   };
 
@@ -85,7 +65,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
 
   const handleImageError = error => {
     // Handle image loading error
-    console.log('Image Error:', error.nativeEvent.error);
+    // console.log('Image Error:', error.nativeEvent.error);
     setImageError(true);
     if (error.nativeEvent.error.indexOf('ENOENT') !== -1) {
       console.log('The image file does not exist.');
@@ -103,16 +83,10 @@ const CardComponent = ({name, item, fetchProduct}) => {
       onPress={handleButtonPress}>
       <Card.Cover
         style={{marginBottom: 10}}
-        source={{
-          uri: imageAddress,
-        }}
+        source={{uri: 'file://' + item?.product_image}}
         resizeMode="contain"
         onError={handleImageError}
       />
-
-      {/* <View style={styles.imageContainer}>
-        <Image source={{uri: item?.product_image}} style={styles.image} />
-      </View> */}
       {imageError && (
         <Text style={styles.imageLoadError}>Error while loading an image</Text>
       )}

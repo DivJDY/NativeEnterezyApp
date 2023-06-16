@@ -13,17 +13,13 @@ import {useNavigation} from '@react-navigation/native';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
 import {styles} from '../styles/formStyles';
-import {NativeModules, NativeEventEmitter} from 'react-native';
 import SinUpHeadingImg from '../components/SingUpHeadingImg';
-
-const {OtplessModule} = NativeModules;
 
 const SignUpScreen = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [mobileNumber, setMobileNumber] = useState('');
   const [name, setName] = useState('');
   const [shopName, setShopName] = useState('');
-  const [otplessResult, setOtplessResult] = useState();
 
   const navigation = useNavigation();
 
@@ -36,28 +32,8 @@ const SignUpScreen = () => {
   };
 
   const handleSubmit = () => {
-    navigation.navigate('GoogleMap');
-    // Alert.alert('SignUp Done');
-    // / to show OTPLESS popup
-    OtplessModule.startOtplessWithEvent();
-
-    // to receive otplessUser details and token
-    const eventListener = new NativeEventEmitter(OtplessModule).addListener(
-      'OTPlessSignResult',
-      result => {
-        if (result.data == null || result.data == undefined) {
-          let error = result.errorMessage;
-          console.log(' error ', error);
-        } else {
-          const token = result.data.token;
-          console.warn(' token ', result);
-          // send this token to your backend to validate user details
-          setOtplessResult(token);
-        }
-      },
-    );
-    // call this method when you login is completed
-    OtplessModule.onSignInCompleted();
+    const data = {mobileNumber: mobileNumber, name: name, shopName: shopName};
+    navigation.navigate('GoogleMap', {data: data});
   };
 
   const sinupfirststep = () => {

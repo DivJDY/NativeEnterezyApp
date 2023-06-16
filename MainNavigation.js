@@ -78,117 +78,119 @@ const HeaderImage = () => (
 );
 
 const DrawerNavigationList = ({route}) => {
+  const {isSignedIn} = route.params;
   return (
-    <Drawer.Navigator
-      screenOptions={({navigation}) => ({
-        headerStyle: {
-          backgroundColor: 'black',
-          height: 60,
-        },
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => navigation.toggleDrawer()}
-            style={styles.headerLeft}>
-            <Icon name="bars" size={20} color="#fff" />
-          </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <View style={styles.headerRight}>
-            <Icon name="bell" size={20} color="#fff" />
-          </View>
-        ),
-        drawerLabelStyle: {
-          marginLeft: -10,
-          fontFamily: 'Roboto-Medium',
-          fontSize: 15,
-          fontWeight: 'bold',
-        },
-        drawerActiveBackgroundColor: 'black',
-        drawerActiveTintColor: '#fff',
-        // drawerInactiveTintColor: '#333',
-      })}
-      drawerContent={props => <CustomDrawer {...props} />}>
-      <Drawer.Screen
-        name="Home"
-        // initialParams={{params: route.params}}
-        component={BottomTabNavigator}
-        options={{
-          title: 'Home',
-
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <Ionicons name="home-outline" size={22} color={color} />
+    isSignedIn && (
+      <Drawer.Navigator
+        screenOptions={({navigation}) => ({
+          headerStyle: {
+            backgroundColor: 'black',
+            height: 60,
+          },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.toggleDrawer()}
+              style={styles.headerLeft}>
+              <Icon name="bars" size={20} color="#fff" />
+            </TouchableOpacity>
           ),
-        }}
-      />
-
-      <Drawer.Screen
-        name="ProductPost"
-        component={ProductPostScreen}
-        options={{
-          title: 'Create Product',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <FontAwesome name="product-hunt" size={22} color={color} />
+          headerRight: () => (
+            <View style={styles.headerRight}>
+              <Icon name="bell" size={20} color="#fff" />
+            </View>
           ),
-        }}
-      />
+          drawerLabelStyle: {
+            marginLeft: -10,
+            fontFamily: 'Roboto-Medium',
+            fontSize: 15,
+            fontWeight: 'bold',
+          },
+          drawerActiveBackgroundColor: 'black',
+          drawerActiveTintColor: '#fff',
+          // drawerInactiveTintColor: '#333',
+        })}
+        drawerContent={props => <CustomDrawer {...props} />}>
+        <Drawer.Screen
+          name="Home"
+          // initialParams={{params: route.params}}
+          component={BottomTabNavigator}
+          options={{
+            title: 'Home',
 
-      <Drawer.Screen
-        name="ProductCategory"
-        component={PostProductCategory}
-        options={{
-          title: 'Post Category',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <MaterialIcons name="category" size={22} color={color} />
-          ),
-        }}
-      />
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <Ionicons name="home-outline" size={22} color={color} />
+            ),
+          }}
+        />
 
-      <Drawer.Screen
-        name="OrderList"
-        component={OrderListScreen}
-        options={{
-          title: 'My Order',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <MaterialIcons name="shopping-cart" size={22} color={color} />
-          ),
-        }}
-      />
+        <Drawer.Screen
+          name="ProductPost"
+          component={ProductPostScreen}
+          options={{
+            title: 'Create Product',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <FontAwesome name="product-hunt" size={22} color={color} />
+            ),
+          }}
+        />
 
-      <Drawer.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Profile',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <Ionicons name="person-outline" size={22} color={color} />
-          ),
-        }}
-        // options={{
-        //   drawerLockMode: 'locked-closed',
-        //   headerTitle: () => <HeaderImage />,
-        //   hidden: true,
-        //   drawerItemStyle: {display: 'none'},
-        // }}
-      />
+        <Drawer.Screen
+          name="ProductCategory"
+          component={PostProductCategory}
+          options={{
+            title: 'Post Category',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <MaterialIcons name="category" size={22} color={color} />
+            ),
+          }}
+        />
 
-      <Drawer.Screen
-        name="PrivacyPolicy"
-        component={PrivacyPolicyScreen}
-        options={{
-          title: 'Privacy Policy',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <MaterialIcons name="policy" size={22} color={color} />
-          ),
-        }}
-      />
+        <Drawer.Screen
+          name="OrderList"
+          component={OrderListScreen}
+          options={{
+            title: 'My Order',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <MaterialIcons name="shopping-cart" size={22} color={color} />
+            ),
+          }}
+        />
 
-      {/* <Drawer.Screen
+        <Drawer.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <Ionicons name="person-outline" size={22} color={color} />
+            ),
+          }}
+          // options={{
+          //   drawerLockMode: 'locked-closed',
+          //   headerTitle: () => <HeaderImage />,
+          //   hidden: true,
+          //   drawerItemStyle: {display: 'none'},
+          // }}
+        />
+
+        <Drawer.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicyScreen}
+          options={{
+            title: 'Privacy Policy',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <MaterialIcons name="policy" size={22} color={color} />
+            ),
+          }}
+        />
+
+        {/* <Drawer.Screen
         name="Map"
         component={MapScreen}
         options={{
@@ -200,41 +202,42 @@ const DrawerNavigationList = ({route}) => {
         }}
       /> */}
 
-      {/* Header locked */}
+        {/* Header locked */}
 
-      <Drawer.Screen
-        name="ProductDetails"
-        component={ProductDetailsScreen}
-        options={{
-          drawerLockMode: 'locked-closed',
-          headerTitle: () => <HeaderImage />,
-          hidden: true,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
+        <Drawer.Screen
+          name="ProductDetails"
+          component={ProductDetailsScreen}
+          options={{
+            drawerLockMode: 'locked-closed',
+            headerTitle: () => <HeaderImage />,
+            hidden: true,
+            drawerItemStyle: {display: 'none'},
+          }}
+        />
 
-      <Drawer.Screen
-        name="Payment"
-        component={PaymentScreen}
-        options={{
-          drawerLockMode: 'locked-closed',
-          headerTitle: () => <HeaderImage />,
-          hidden: true,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
+        <Drawer.Screen
+          name="Payment"
+          component={PaymentScreen}
+          options={{
+            drawerLockMode: 'locked-closed',
+            headerTitle: () => <HeaderImage />,
+            hidden: true,
+            drawerItemStyle: {display: 'none'},
+          }}
+        />
 
-      <Drawer.Screen
-        name="DisplayRental"
-        component={DisplayRental}
-        options={{
-          drawerLockMode: 'locked-closed',
-          headerTitle: () => <HeaderImage />,
-          hidden: true,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
-    </Drawer.Navigator>
+        <Drawer.Screen
+          name="DisplayRental"
+          component={DisplayRental}
+          options={{
+            drawerLockMode: 'locked-closed',
+            headerTitle: () => <HeaderImage />,
+            hidden: true,
+            drawerItemStyle: {display: 'none'},
+          }}
+        />
+      </Drawer.Navigator>
+    )
   );
 };
 
@@ -243,14 +246,25 @@ const MainNavigation = () => {
 
   useEffect(() => {
     // Check if user is already logged in
-    checkLoginStatus();
+    getUserLoggedIn();
+    // AsyncStorage.clear();
   }, []);
+
+  const getUserLoggedIn = async () => {
+    try {
+      const userLoggedIn = await AsyncStorage.getItem('userLoggedIn');
+      setIsSignedIn(userLoggedIn);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
 
   const checkLoginStatus = async () => {
     try {
       // Check if user is already logged in by checking AsyncStorage
-      const userToken = await AsyncStorage.getItem('userToken');
-      setIsSignedIn(!!userToken);
+      const userSignUp = await AsyncStorage.getItem('userSignUp');
+      setIsSignedIn(userSignUp);
     } catch (error) {
       console.log('Error checking login status:', error);
     }
@@ -283,23 +297,35 @@ const MainNavigation = () => {
           component={Abc}
         />
       )} */}
+      {console.warn(' isnnh ', isSignedIn)}
+
+      {!isSignedIn && (
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Signup"
+          component={SignUpScreen}
+        />
+      )}
 
       <Stack.Screen
         name="Main"
         options={{headerShown: false}}
         component={DrawerNavigationList}
-      />
-
-      <Stack.Screen
-        options={{headerShown: false}}
-        name="Signup"
-        component={SignUpScreen}
+        initialParams={{
+          isSignedIn: isSignedIn,
+        }}
       />
 
       <Stack.Screen
         name="GoogleMap"
         options={{headerShown: false}}
         component={MapScreen}
+      />
+
+      <Stack.Screen
+        name="LogIn"
+        options={{headerShown: false}}
+        component={LoginScreen}
       />
     </Stack.Navigator>
   );

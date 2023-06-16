@@ -14,12 +14,24 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const CustomDrawer = props => {
   const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.warn('AsyncStorage cleared successfully');
+      navigation.navigate('Signup');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView
@@ -35,6 +47,26 @@ const CustomDrawer = props => {
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
+      <TouchableOpacity onPress={handleLogout}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginLeft: '30%',
+            marginBottom: 10,
+          }}>
+          <MaterialIcons name="logout" size={22} />
+          <Text
+            style={{
+              fontSize: 15,
+              fontFamily: 'Roboto-Medium',
+              marginLeft: 10,
+              fontWeight: 'bold',
+            }}>
+            LogOut
+          </Text>
+        </View>
+      </TouchableOpacity>
       <View
         style={{
           paddingVertical: 10,
@@ -48,6 +80,8 @@ const CustomDrawer = props => {
             Alert.alert('Share to friend');
           }}
           style={{paddingVertical: 15}}> */}
+
+        {/* </TouchableOpacity> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {/* <Ionicons name="share-social-outline" size={22} /> */}
           <Text

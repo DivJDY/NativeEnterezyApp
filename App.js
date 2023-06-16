@@ -18,6 +18,4 @@ const App = () => {
 
 export default App;
 
-// export const hostName = 'http://127.0.0.1:8000';
-
-export const hostName = 'https://b360-202-131-135-209.ngrok-free.app';
+export const hostName = 'https://26bd-202-131-134-207.ngrok-free.app';

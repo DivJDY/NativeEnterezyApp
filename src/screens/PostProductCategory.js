@@ -20,7 +20,7 @@ const PostProductCategory = () => {
   const [discount, setDiscount] = useState();
   const [loading, setLoading] = useState(false);
 
-  const requestOptions = FetchUtilityOptions('POST');
+  const requestHeader = FetchUtilityOptions();
   const handleSubmit = async () => {
     if (category !== '' && discount !== '') {
       const data = {
@@ -28,15 +28,10 @@ const PostProductCategory = () => {
         discount: discount,
       };
 
-      console.warn(' data ', requestOptions, ' => ', data);
-
       setLoading(true);
       fetch(hostName + '/category', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: requestHeader,
         body: JSON.stringify(data),
       })
         .then(response => response.json())

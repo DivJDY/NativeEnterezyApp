@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {View, FlatList, TouchableOpacity} from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  PermissionsAndroid,
+} from 'react-native';
 import {Button, Searchbar, Text} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CardComponent from '../components/CardComponent';
@@ -23,6 +28,28 @@ const HomeScreen = ({route}) => {
   // eslint-disable-next-line no-unused-vars
   const [hasNoData, setHasNoData] = useState(false);
   const [page_limit, setPageLimit] = useState(2);
+
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
+
+      if (
+        granted['android.permission.CAMERA'] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE'] ===
+          PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('Camera and storage permissions granted');
+      } else {
+        console.log('Camera and storage permissions denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   const navigation = useNavigation();
 
@@ -54,6 +81,7 @@ const HomeScreen = ({route}) => {
 
   useEffect(() => {
     fetchProduct();
+    requestCameraPermission();
   }, []);
 
   useEffect(() => {

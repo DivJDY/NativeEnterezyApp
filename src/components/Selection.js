@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useRef} from 'react';
 import {View, ScrollView} from 'react-native';
@@ -15,22 +14,7 @@ const Selection = ({
   selectedItem,
   onChangeText,
 }) => {
-  const handlePostData = () => {
-    alert('hello');
-  };
-
-  const customRowRenderer = (item, index, isSelected, onPressItem) => (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-      {/* <Button title={item.name} onPress={onPressItem} /> */}
-      {/* Add your custom button */}
-      <Button onPress={handlePostData}>Custom Button</Button>
-    </View>
-  );
+  // console.warn('shelf rack selected value => ', selectedItem[0]);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View style={{flex: 1, width: 320}}>
@@ -57,7 +41,6 @@ const Selection = ({
           submitButtonText="Submit"
           hideDropdown={true}
           single={single}
-          customRowRenderer={customRowRenderer}
         />
       </View>
     </ScrollView>

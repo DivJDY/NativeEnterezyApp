@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import {
   View,
@@ -99,3 +100,4 @@ function LoginScreen({navigation}) {
 }
 
 export default LoginScreen;
+

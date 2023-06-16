@@ -18,12 +18,14 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import Selection from '../components/Selection';
 import uuid from 'react-native-uuid';
+import RNFS from 'react-native-fs';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 // validation schema
 const validationSchema = Yup.object().shape({
@@ -48,121 +50,124 @@ const ProductPostScreen = () => {
   // const [categoryPost, setCategoryPost] = useState();
   // eslint-disable-next-line no-unused-vars
   const [loadcategory, setLoadCategory] = useState(false);
-  const [loading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [cloudImageAddress, setCloudImageAddress] = useState(null);
 
-  const handleImageUpload = () => {
-    //     ImagePicker.showImagePicker({}, response => {
-    //       if (response.didCancel) {
-    //         console.log('Image selection canceled');
-    //       } else if (response.error) {
-    //         console.log('ImagePicker Error:', response.error);
-    //       } else {
-    //         const {uri} = response;
+  const requestHeader = FetchUtilityOptions();
+  console.warn(' request header ', requestHeader);
 
-    //         generateUniqueIdentifier()
-    //           .then(uniqueIdentifier => {
-    //             console.warn(" unique identifier ",uniqueIdentifier)
-    //             const imageName = `${uniqueIdentifier}.jpg`;
+  // const handleImageUpload = () => {
+  //   //     ImagePicker.showImagePicker({}, response => {
+  //   //       if (response.didCancel) {
+  //   //         console.log('Image selection canceled');
+  //   //       } else if (response.error) {
+  //   //         console.log('ImagePicker Error:', response.error);
+  //   //       } else {
+  //   //         const {uri} = response;
 
-    //             uploadImageToCloudStorage(uri, imageName)`
-    //               .then(cloudImageAddressValue => {
-    //                 setCloudImageAddress(cloudImageAddressValue);
-    // console.warn(" cloudImageAddressValue after indentifier ", cloudImageAddressValue)
+  //   //         generateUniqueIdentifier()
+  //   //           .then(uniqueIdentifier => {
+  //   //             console.warn(" unique identifier ",uniqueIdentifier)
+  //   //             const imageName = `${uniqueIdentifier}.jpg`;
 
-    //                 postImageToBackend(cloudImageAddressValue)
-    //                   .then(() => {
-    //                     console.log('Image posted to backend successfully');
-    //                   })
-    //                   .catch(error => {
-    //                     console.log('Error posting image to backend:', error);
-    //                   });
-    //               })
-    //               .catch(error => {
-    //                 console.log('Error uploading image to cloud storage:', error);
-    //               });
+  //   //             uploadImageToCloudStorage(uri, imageName)`
+  //   //               .then(cloudImageAddressValue => {
+  //   //                 setCloudImageAddress(cloudImageAddressValue);
+  //   // console.warn(" cloudImageAddressValue after indentifier ", cloudImageAddressValue)
 
-    //             setSelectedImage(uri);
-    //           })
-    //           .catch(error => {
-    //             console.log('Error generating unique identifier:', error);
-    //           });
-    //       }
-    //     });
+  //   //                 postImageToBackend(cloudImageAddressValue)
+  //   //                   .then(() => {
+  //   //                     console.log('Image posted to backend successfully');
+  //   //                   })
+  //   //                   .catch(error => {
+  //   //                     console.log('Error posting image to backend:', error);
+  //   //                   });
+  //   //               })
+  //   //               .catch(error => {
+  //   //                 console.log('Error uploading image to cloud storage:', error);
+  //   //               });
 
-    launchImageLibrary({noData: true}, response => {
-      // console.log(response);
-      if (response) {
-        setUploadImage(response);
+  //   //             setSelectedImage(uri);
+  //   //           })
+  //   //           .catch(error => {
+  //   //             console.log('Error generating unique identifier:', error);
+  //   //           });
+  //   //       }
+  //   //     });
 
-        const uri = response?.assets[0]?.uri;
+  //   launchImageLibrary({noData: true}, response => {
+  //     // console.log(response);
+  //     if (response) {
+  //       setUploadImage(response);
 
-        const imageType = response?.assets[0]?.type.split('/')[1];
-        console.warn('launchImageLibrary => ', uri, ' type ', imageType);
+  //       const uri = response?.assets[0]?.uri;
 
-        const uniqueIdentifier = generateUniqueIdentifier();
-        // .then(uniqueIdentifier => {
-        console.warn(' unique identifier ', uniqueIdentifier);
-        const imageName = `${uniqueIdentifier}.${imageType}`;
+  //       const imageType = response?.assets[0]?.type.split('/')[1];
+  //       console.warn('launchImageLibrary => ', uri, ' type ', imageType);
 
-        uploadImageToCloudStorage(uri, imageName)
-          .then(cloudImageAddressValue => {
-            setCloudImageAddress(cloudImageAddressValue);
-            console.warn(
-              ' cloudImageAddressValue after indentifier ',
-              cloudImageAddressValue,
-            );
+  //       const uniqueIdentifier = generateUniqueIdentifier();
+  //       // .then(uniqueIdentifier => {
+  //       console.warn(' unique identifier ', uniqueIdentifier);
+  //       const imageName = `${uniqueIdentifier}.${imageType}`;
 
-            postImageToBackend(cloudImageAddressValue)
-              .then(() => {
-                console.log('Image posted to backend successfully');
-              })
-              .catch(error => {
-                console.log('Error posting image to backend:', error);
-              });
-          })
-          .catch(error => {
-            console.log('Error uploading image to cloud storage:', error);
-          });
+  //       uploadImageToCloudStorage(uri, imageName)
+  //         .then(cloudImageAddressValue => {
+  //           setCloudImageAddress(cloudImageAddressValue);
+  //           console.warn(
+  //             ' cloudImageAddressValue after indentifier ',
+  //             cloudImageAddressValue,
+  //           );
 
-        setSelectedImage(uri);
-        // })
-        // .catch(error => {
-        //   console.log('Error generating unique identifier:', error);
-        // });
-      }
-    });
-  };
+  //           postImageToBackend(cloudImageAddressValue)
+  //             .then(() => {
+  //               console.log('Image posted to backend successfully');
+  //             })
+  //             .catch(error => {
+  //               console.log('Error posting image to backend:', error);
+  //             });
+  //         })
+  //         .catch(error => {
+  //           console.log('Error uploading image to cloud storage:', error);
+  //         });
 
-  const uploadImageToCloudStorage = (imageUri, imageName) => {
-    // Upload logic to Google Cloud Storage
-    // Use the generated unique identifier (imageName) to store the image in the cloud
+  //       setSelectedImage(uri);
+  //       // })
+  //       // .catch(error => {
+  //       //   console.log('Error generating unique identifier:', error);
+  //       // });
+  //     }
+  //   });
+  // };
 
-    console.warn(
-      'uploadImageToCloudStorage return ',
-      imageUri,
-      ' *** ',
-      imageName,
-    );
+  // const uploadImageToCloudStorage = (imageUri, imageName) => {
+  //   // Upload logic to Google Cloud Storage
+  //   // Use the generated unique identifier (imageName) to store the image in the cloud
 
-    // Example code (not complete)
-    // const cloudImageAddressValue = `https://your-bucket-url.com/${imageName}`;
-    // return Promise.resolve(cloudImageAddressValue);
-  };
+  //   console.warn(
+  //     'uploadImageToCloudStorage return ',
+  //     imageUri,
+  //     ' *** ',
+  //     imageName,
+  //   );
 
-  const postImageToBackend = imageAddress => {
-    // Backend communication logic
+  //   // Example code (not complete)
+  //   // const cloudImageAddressValue = `https://your-bucket-url.com/${imageName}`;
+  //   // return Promise.resolve(cloudImageAddressValue);
+  // };
 
-    console.warn(' Image in backend ', imageAddress);
+  // const postImageToBackend = imageAddress => {
+  //   // Backend communication logic
 
-    // Example code (not complete)
-    return Promise.resolve();
-  };
+  //   console.warn(' Image in backend ', imageAddress);
 
-  const generateUniqueIdentifier = () => {
-    return uuid.v4();
-  };
+  //   // Example code (not complete)
+  //   return Promise.resolve();
+  // };
+
+  // const generateUniqueIdentifier = () => {
+  //   return uuid.v4();
+  // };
 
   const requestOptions = FetchUtilityOptions('GET');
 
@@ -177,13 +182,15 @@ const ProductPostScreen = () => {
   // console.warn('category ', category[0]);
 
   const fetchProductCategory = async () => {
+    setLoading(true);
     setLoadCategory(true);
-    await fetch(hostName + '/category', requestOptions)
+    await fetch(hostName + '/category', {method: 'GET', headers: requestHeader})
       .then(response => response.json())
       .then(responseData => {
         console.warn('fetch data ==> ', responseData);
         setCategoryList(responseData);
         setLoadCategory(false);
+        setLoading(false);
       })
       .catch(error => {
         console.error(error);
@@ -191,6 +198,8 @@ const ProductPostScreen = () => {
   };
 
   useEffect(() => {
+    setLoadCategory(true);
+    setLoading(true);
     fetchProductCategory();
     clearFormData();
   }, []);
@@ -198,8 +207,8 @@ const ProductPostScreen = () => {
   const handleFormSubmit = (values, {resetForm}) => {
     // Handle form submission logic here
     if (uploadImage !== '') {
-      const product_image = uploadImage?.assets[0].uri;
-      values.product_image = product_image;
+      // const product_image = uploadImage?.assets[0].uri;
+      values.product_image = uploadImage;
 
       const data = {
         category_id: category[0],
@@ -210,14 +219,12 @@ const ProductPostScreen = () => {
         minimum_product_order_quantity: values.minimum_product_order_quantity,
         product_image: values.product_image,
       };
-      const requestHeader = FetchUtilityOptions('POST');
+
+      console.warn('Product post data ==> ', data);
 
       fetch(hostName + '/products', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: requestHeader,
         body: JSON.stringify(data),
       })
         .then(response => response.json())
@@ -247,173 +254,203 @@ const ProductPostScreen = () => {
     product_mrp: '',
   };
 
-  const selectImage = () => {
-    launchImageLibrary({noData: true}, response => {
-      // console.log(response);
-      if (response) {
-        setUploadImage(response);
+  const handleImageSelection = () => {
+    const options = {
+      mediaType: 'photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images', // Desired permanent location in the device's storage
+      },
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('Image selection canceled');
+      } else if (response.error) {
+        console.log('Image selection error: ', response.error);
+      } else {
+        const sourcePath = response.assets[0].uri;
+        const targetPath =
+          RNFS.DocumentDirectoryPath + `/${response.assets[0].fileName}`;
+
+        RNFS.copyFile(sourcePath, targetPath)
+          .then(() => {
+            console.warn(' Image uploaded ', sourcePath, targetPath);
+            setUploadImage(targetPath); // Set the permanent image URI to display it
+          })
+          .catch(error => {
+            console.log('Image copy error: ', error);
+          });
       }
     });
   };
 
   return (
     <PaperProvider>
-      <KeyboardAvoidingView
-        enabled
-        behavior={Platform.OS === 'ios' ? 'padding' : null}>
-        <ScrollView style={{marginBottom: 18}}>
-          <Text
-            variant="headlineSmall"
-            style={{
-              textAlign: 'center',
-              marginTop: 12,
-              textDecorationLine: 'underline',
-            }}>
-            Create Product
-          </Text>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleFormSubmit}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
-              <View style={styles.formContainer}>
-                <TextInputComponent
-                  label="Product Name"
-                  placeholder={'Enter Product Name *'}
-                  onChangeText={handleChange('product_name')}
-                  onBlur={handleBlur('product_name')}
-                  value={values.product_name}
-                  style={styles.input}
-                />
-                {errors.product_name && touched.product_name && (
-                  <TextComponent
-                    text={errors.product_name}
-                    style={styles.error}
-                  />
-                )}
+      <Text
+        variant="headlineSmall"
+        style={{
+          textAlign: 'center',
+          marginTop: 12,
+          marginBottom: 6,
+          textDecorationLine: 'underline',
+        }}>
+        Create Product
+      </Text>
 
-                <View marginBottom={10}>
-                  <Selection
-                    title="Select product category *"
-                    placeholder="Search Item...."
-                    options={categoryList}
-                    displayKey={'category_name'}
-                    single={true}
-                    onChangeText={text => setCategory(text)}
-                    selectedItem={category}
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <KeyboardAvoidingView
+          enabled
+          behavior={Platform.OS === 'ios' ? 'padding' : null}>
+          <ScrollView style={{marginBottom: 18}}>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleFormSubmit}>
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                values,
+                errors,
+                touched,
+              }) => (
+                <View style={styles.formContainer}>
+                  <TextInputComponent
+                    label="Product Name"
+                    placeholder={'Enter Product Name *'}
+                    onChangeText={handleChange('product_name')}
+                    onBlur={handleBlur('product_name')}
+                    value={values.product_name}
+                    style={styles.input}
                   />
-                </View>
-
-                <TextInputComponent
-                  label="Product Description"
-                  placeholder={'Enter Product Description *'}
-                  onChangeText={handleChange('product_desc')}
-                  onBlur={handleBlur('product_desc')}
-                  value={values.product_desc}
-                  style={styles.input}
-                  multiline={true}
-                />
-                {errors.product_desc && touched.product_desc && (
-                  <TextComponent
-                    text={errors.product_desc}
-                    style={styles.error}
-                  />
-                )}
-
-                <TextInputComponent
-                  label="Minimum Product Order Quantity"
-                  placeholder={'Enter Minimum Product Order Quantity *'}
-                  onChangeText={handleChange('minimum_product_order_quantity')}
-                  onBlur={handleBlur('minimum_product_order_quantity')}
-                  value={values.minimum_product_order_quantity}
-                  keyboardType="numeric"
-                  style={styles.input}
-                />
-                {errors.minimum_product_order_quantity &&
-                  touched.minimum_product_order_quantity && (
+                  {errors.product_name && touched.product_name && (
                     <TextComponent
-                      text={errors.minimum_product_order_quantity}
+                      text={errors.product_name}
                       style={styles.error}
                     />
                   )}
 
-                <TextInputComponent
-                  label="Product Price"
-                  placeholder={'Enter Product Price *'}
-                  onChangeText={handleChange('product_price')}
-                  onBlur={handleBlur('product_price')}
-                  value={values.product_price}
-                  keyboardType="numeric"
-                  style={styles.input}
-                />
-                {errors.product_price && touched.product_price && (
-                  <TextComponent
-                    text={errors.product_price}
-                    style={styles.error}
+                  <View marginBottom={10}>
+                    <Selection
+                      title="Select product category *"
+                      placeholder="Search Item...."
+                      options={categoryList}
+                      displayKey={'category_name'}
+                      single={true}
+                      onChangeText={text => setCategory(text)}
+                      selectedItem={category}
+                    />
+                  </View>
+
+                  <TextInputComponent
+                    label="Product Description"
+                    placeholder={'Enter Product Description *'}
+                    onChangeText={handleChange('product_desc')}
+                    onBlur={handleBlur('product_desc')}
+                    value={values.product_desc}
+                    style={styles.input}
+                    multiline={true}
                   />
-                )}
+                  {errors.product_desc && touched.product_desc && (
+                    <TextComponent
+                      text={errors.product_desc}
+                      style={styles.error}
+                    />
+                  )}
 
-                <TextInputComponent
-                  label="Product MRP"
-                  placeholder={'Enter Product MRP *'}
-                  onChangeText={handleChange('product_mrp')}
-                  onBlur={handleBlur('product_mrp')}
-                  value={values.product_mrp}
-                  keyboardType="numeric"
-                  style={styles.input}
-                />
-                {errors.product_mrp && touched.product_mrp && (
-                  <TextComponent
-                    text={errors.product_mrp}
-                    style={styles.error}
+                  <TextInputComponent
+                    label="Minimum Product Order Quantity"
+                    placeholder={'Enter Minimum Product Order Quantity *'}
+                    onChangeText={handleChange(
+                      'minimum_product_order_quantity',
+                    )}
+                    onBlur={handleBlur('minimum_product_order_quantity')}
+                    value={values.minimum_product_order_quantity}
+                    keyboardType="numeric"
+                    style={styles.input}
                   />
-                )}
+                  {errors.minimum_product_order_quantity &&
+                    touched.minimum_product_order_quantity && (
+                      <TextComponent
+                        text={errors.minimum_product_order_quantity}
+                        style={styles.error}
+                      />
+                    )}
 
-                <Button
-                  mode="contained"
-                  icon={
-                    uploadImage
-                      ? ({size, color}) => (
-                          <FontAwesome5
-                            name="check-double"
-                            size={size}
-                            color={color}
-                          />
-                        )
-                      : ({size, color}) => (
-                          <FontAwesome5
-                            name="upload"
-                            size={size}
-                            color={color}
-                          />
-                        )
-                  }
-                  onPress={selectImage}
-                  style={[
-                    uploadImage ? style.btnSuccess : style.btn,
-                    {marginVertical: 15, borderRadius: 8, width: '90%'},
-                  ]}>
-                  <Text
-                    style={{color: '#fff', fontWeight: 'bold', fontSize: 17}}>
-                    {uploadImage
-                      ? 'Product Image Uploaded'
-                      : 'Upload a Product Image *'}
-                  </Text>
-                </Button>
+                  <TextInputComponent
+                    label="Product Price"
+                    placeholder={'Enter Product Price *'}
+                    onChangeText={handleChange('product_price')}
+                    onBlur={handleBlur('product_price')}
+                    value={values.product_price}
+                    keyboardType="numeric"
+                    style={styles.input}
+                  />
+                  {errors.product_price && touched.product_price && (
+                    <TextComponent
+                      text={errors.product_price}
+                      style={styles.error}
+                    />
+                  )}
 
-                <ButtonComponent name="Submit" onPress={handleSubmit} />
-              </View>
-            )}
-          </Formik>
-        </ScrollView>
-      </KeyboardAvoidingView>
+                  <TextInputComponent
+                    label="Product MRP"
+                    placeholder={'Enter Product MRP *'}
+                    onChangeText={handleChange('product_mrp')}
+                    onBlur={handleBlur('product_mrp')}
+                    value={values.product_mrp}
+                    keyboardType="numeric"
+                    style={styles.input}
+                  />
+                  {errors.product_mrp && touched.product_mrp && (
+                    <TextComponent
+                      text={errors.product_mrp}
+                      style={styles.error}
+                    />
+                  )}
+
+                  <Button
+                    mode="contained"
+                    icon={
+                      uploadImage
+                        ? ({size, color}) => (
+                            <FontAwesome5
+                              name="check-double"
+                              size={size}
+                              color={color}
+                            />
+                          )
+                        : ({size, color}) => (
+                            <FontAwesome5
+                              name="upload"
+                              size={size}
+                              color={color}
+                            />
+                          )
+                    }
+                    onPress={handleImageSelection}
+                    style={[
+                      uploadImage ? style.btnSuccess : style.btn,
+                      {marginVertical: 15, borderRadius: 8, width: '90%'},
+                    ]}>
+                    <Text
+                      style={{color: '#fff', fontWeight: 'bold', fontSize: 17}}>
+                      {uploadImage
+                        ? 'Product Image Uploaded'
+                        : 'Upload a Product Image *'}
+                    </Text>
+                  </Button>
+
+                  <ButtonComponent name="Submit" onPress={handleSubmit} />
+                </View>
+              )}
+            </Formik>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
     </PaperProvider>
   );
 };

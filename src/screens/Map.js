@@ -5,28 +5,42 @@ import {
   Text,
   KeyboardAvoidingView,
   ScrollView,
-  Platform,
+  Alert,
 } from 'react-native';
-import {TextInput, Button, Card} from 'react-native-paper';
+import {TextInput, Button} from 'react-native-paper';
 import MapView, {Marker} from 'react-native-maps';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {PermissionsAndroid} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from 'react-native-geolocation-service';
 import {styles} from '../styles/formStyles';
 import SinUpHeadingImg from '../components/SingUpHeadingImg';
 import {useNavigation} from '@react-navigation/native';
 import LoadingIndicator from '../components/LoadingIndicator';
+import {API_KEY} from '../fetchUtility/GoogleMapApiKey';
+import {hostName} from '../../App';
+import {NativeModules, NativeEventEmitter} from 'react-native';
 
-const API_KEY = 'AIzaSyAk2OZeHLSpPmGAlKWRSeWr4qsohRK5b2c';
+const {OtplessModule} = NativeModules;
 
-const MapScreen = () => {
+const MapScreen = ({route}) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [location, setLocation] = useState(null);
   const [currentAddress, setCurrentAddress] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const [otplessResult, setOtplessResult] = useState();
+  let userData;
   const navigation = useNavigation();
+  console.warn(' param data ', route?.params?.data);
+
+  const setUserLoggedIn = async () => {
+    try {
+      await AsyncStorage.setItem('userLoggedIn', 'true');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -105,10 +119,45 @@ const MapScreen = () => {
     }
   };
 
-  const handleSubmit = () => {};
+  const postUserInformations = userDataValue => {
+    fetch(hostName + '/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(userDataValue),
+    })
+      .then(response => response.json())
+      .then(response => {
+        // Handle the response data
+        // console.log('data response ', response);
+        Alert.alert(response.message);
+        setUserLoggedIn();
+        // call this method when you login is completed
+        OtplessModule.onSignInCompleted();
+        navigation.navigate('Main');
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error('post error ', error);
+      });
+  };
 
   const handleStart = () => {
-    navigation.navigate('Main');
+    userData = {
+      user_mobile_number: route?.params?.data.mobileNumber,
+      user_name: route?.params?.data.name,
+      shop_name: route?.params?.data.shopName,
+      address: currentAddress,
+      user_email: otplessResult?.data?.email?.email,
+      waNumber: otplessResult?.data?.waNumber,
+      user_signup_time: otplessResult?.data?.timestamp,
+    };
+
+    postUserInformations(userData);
+
+    console.warn(' User data ', userData);
   };
 
   const handlePreviousStep = () => {
@@ -117,7 +166,33 @@ const MapScreen = () => {
 
   const handleNextStep = () => {
     setCurrentStep(currentStep + 1);
+
+    // Otpless
+    OtplessModule.startOtplessWithEvent();
+
+    // to receive otplessUser details and token
+    const eventListener = new NativeEventEmitter(OtplessModule).addListener(
+      'OTPlessSignResult',
+      result => {
+        if (result.data == null || result.data === undefined) {
+          let error = result.errorMessage;
+          console.log(' error ', error);
+        } else {
+          const token = result.data.token;
+          console.warn(' token ', result);
+          // send this token to your backend to validate user details
+          setOtplessResult(result);
+
+          // console.warn(
+          //   ' ************** => email ',
+          //   otplessResult.data.email.email,
+          // );
+        }
+      },
+    );
   };
+
+  console.warn(' ************** => email 0000 ', otplessResult);
 
   const finalSignUp = () => {
     return (
@@ -205,7 +280,7 @@ const MapScreen = () => {
               <Text style={styles.subBtnTxt}>Previous</Text>
             </Button>
             <Button style={[styles.submitBtn]} onPress={handleNextStep}>
-              <Text style={styles.subBtnTxt}>Next</Text>
+              <Text style={styles.subBtnTxt}>SignUp</Text>
             </Button>
           </View>
         </ScrollView>
