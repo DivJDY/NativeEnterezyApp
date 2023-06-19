@@ -38,6 +38,7 @@ export const styles = StyleSheet.create({
   },
   info: {
     fontSize: 16,
+    textAlign: 'justify',
     flex: 1,
   },
   btn: {

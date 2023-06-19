@@ -1,69 +1,119 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Image} from 'react-native';
 import {Avatar, Title, Text, Button} from 'react-native-paper';
 import {styles} from '../styles/profileScreen';
+import {hostName} from '../../App';
+import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingIndicator from '../components/LoadingIndicator';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({}) => {
   const navigation = useNavigation();
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const fetchUser = async id => {
+    setLoading(true);
+    await fetch(hostName + '/user/' + id, {
+      method: 'GET',
+      FetchUtilityOptions,
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.warn('User response ', response);
+        setData(response);
+        setLoading(false);
+      })
+      .catch(error => console.warn('Error while fetch user ', error));
+  };
+
+  const getUserId = async () => {
+    await AsyncStorage.getItem('userId')
+      .then(id => {
+        if (id !== null) {
+          // Value found in AsyncStorage
+          console.log(id);
+          fetchUser(id);
+        } else {
+          // Value not found in AsyncStorage
+          console.log('No value found for key "userId"');
+        }
+      })
+      .catch(error => {
+        // Handle any errors that occur during AsyncStorage retrieval
+        console.log('Error retrieving value:', error);
+      });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    getUserId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // console.warn(' ---- > ', data?.user_name.charAt(0).toUpperCase());
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.userInfoSection}>
-          <Avatar.Image
-            source={require('../../assets/profile.jpeg')}
-            size={120}
-          />
+      {loading ? (
+        <View style={{marginTop: '10%'}}>
+          <LoadingIndicator />
         </View>
+      ) : (
+        data && (
+          <View style={styles.container}>
+            <View style={styles.userInfoSection}>
+              <Avatar.Text
+                size={100}
+                label={data?.user_name?.charAt(0).toUpperCase()}
+              />
+            </View>
 
-        <View style={styles.titleContainer}>
-          <Title style={styles.title}>John Doe</Title>
-        </View>
+            <View style={styles.titleContainer}>
+              <Title style={styles.title}>{data?.user_name}</Title>
+            </View>
 
-        <View style={styles.listContainer}>
-          <View style={{flex: 0.5}}>
-            <Text style={styles.label}>Phone Number : </Text>
-          </View>
-          <View style={{flex: 0.5}}>
-            <Text style={styles.info}>123-456-7890</Text>
-          </View>
-        </View>
+            <View style={styles.listContainer}>
+              <View style={{flex: 0.5}}>
+                <Text style={styles.label}>Phone Number : </Text>
+              </View>
+              <View style={{flex: 0.5}}>
+                <Text style={styles.info}>
+                  +{data?.user_verified_mobile_number}
+                </Text>
+              </View>
+            </View>
 
-        <View style={styles.listContainer}>
-          <View style={{flex: 0.5}}>
-            <Text style={styles.label}>Email :</Text>
-          </View>
-          <View style={{flex: 0.5}}>
-            <Text style={styles.info}>johndoe@example.com</Text>
-          </View>
-        </View>
+            <View style={styles.listContainer}>
+              <View style={{flex: 0.5}}>
+                <Text style={styles.label}>Email :</Text>
+              </View>
+              <View style={{flex: 0.5}}>
+                <Text style={styles.info}>{data?.user_email}</Text>
+              </View>
+            </View>
 
-        <View style={styles.listContainer}>
-          <View style={{flex: 0.5}}>
-            <Text style={styles.label}>Location : </Text>
+            <View style={styles.listContainer}>
+              <View style={{flex: 0.5}}>
+                <Text style={styles.label}>Location : </Text>
+              </View>
+              <View style={{flex: 0.5}}>
+                <Text style={styles.info}>India</Text>
+              </View>
+            </View>
+            <View style={styles.titleContainer}>
+              <Button
+                mode="contained"
+                buttonColor="blue"
+                onPress={() => navigation.navigate('LogIn')}
+                style={styles.btn}>
+                <Text style={styles.btnText}>Login</Text>
+              </Button>
+            </View>
           </View>
-          <View style={{flex: 0.5}}>
-            <Text style={styles.info}>India</Text>
-          </View>
-        </View>
-        <View style={styles.titleContainer}>
-          <Button
-            mode="contained"
-            buttonColor="blue"
-            onPress={() => navigation.navigate('Login')}
-            style={styles.btn}>
-            <Text style={styles.btnText}>Login</Text>
-          </Button>
-        </View>
-
-        <Image
-          source={{
-            uri: 'https://media.istockphoto.com/id/1382384282/photo/bangalore-or-bengaluru.jpg?s=612x612&w=0&k=20&c=6pxwL3JxNV2B_NZSLMZLhrSLqAbyCPlGuSZYKImpjKQ=',
-          }}
-          style={{width: 200, height: 100}}
-        />
-      </View>
+        )
+      )}
     </>
   );
 };

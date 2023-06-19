@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
 import MapView, {Marker} from 'react-native-maps';
@@ -17,6 +18,8 @@ import {styles} from '../styles/formStyles';
 import SinUpHeadingImg from '../components/SingUpHeadingImg';
 import {useNavigation} from '@react-navigation/native';
 import LoadingIndicator from '../components/LoadingIndicator';
+import TextComponent from '../components/TextComponent';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {API_KEY} from '../fetchUtility/GoogleMapApiKey';
 import {hostName} from '../../App';
 import {NativeModules, NativeEventEmitter} from 'react-native';
@@ -29,10 +32,19 @@ const MapScreen = ({route}) => {
   const [location, setLocation] = useState(null);
   const [currentAddress, setCurrentAddress] = useState('');
   const [loading, setLoading] = useState(false);
-  const [otplessResult, setOtplessResult] = useState();
+  // const [otplessResult, setOtplessResult] = useState();
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(false);
+
   let userData;
   const navigation = useNavigation();
-  console.warn(' param data ', route?.params?.data);
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // console.warn(' param data ', route?.params?.data);
 
   const setUserLoggedIn = async () => {
     try {
@@ -119,8 +131,8 @@ const MapScreen = ({route}) => {
     }
   };
 
-  const postUserInformations = userDataValue => {
-    fetch(hostName + '/user', {
+  const postUserData = async userDataValue => {
+    await fetch(hostName + '/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -132,11 +144,13 @@ const MapScreen = ({route}) => {
       .then(response => {
         // Handle the response data
         // console.log('data response ', response);
+        setLoadingUser(false);
         Alert.alert(response.message);
+        console.warn(' user id ===> ', response.user_id);
+        AsyncStorage.setItem('userId', JSON.stringify(response.user_id));
         setUserLoggedIn();
+        setCurrentStep(currentStep + 1);
         // call this method when you login is completed
-        OtplessModule.onSignInCompleted();
-        navigation.navigate('Main');
       })
       .catch(error => {
         // Handle any errors
@@ -144,29 +158,48 @@ const MapScreen = ({route}) => {
       });
   };
 
+  const postUserInformations = async userDataValue => {
+    setLoadingUser(true);
+
+    const value = {mobile_number: userDataValue?.user_verified_mobile_number};
+    console.warn(' mmmmmmmm ', JSON.stringify(value));
+
+    await fetch(hostName + '/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(value),
+    })
+      .then(res => res.json())
+      .then(response => {
+        console.warn('7777', response);
+        Alert.alert(response.message);
+
+        if (response.status === 409) {
+          Alert.alert(response.message);
+          navigation.navigate('LogIn');
+        } else if (response.status === 201) {
+          // postUserData(userDataValue);
+          console.warn(' **********8 ', response.status);
+        } else {
+          Alert.alert('Something went wrong ....');
+        }
+      })
+      .catch(err => console.warn(' **** ==> ', err));
+  };
+
   const handleStart = () => {
-    userData = {
-      user_mobile_number: route?.params?.data.mobileNumber,
-      user_name: route?.params?.data.name,
-      shop_name: route?.params?.data.shopName,
-      address: currentAddress,
-      user_email: otplessResult?.data?.email?.email,
-      waNumber: otplessResult?.data?.waNumber,
-      user_signup_time: otplessResult?.data?.timestamp,
-    };
-
-    postUserInformations(userData);
-
-    console.warn(' User data ', userData);
+    navigation.navigate('MainScreen');
   };
 
   const handlePreviousStep = () => {
     navigation.navigate('Signup');
   };
 
-  const handleNextStep = () => {
-    setCurrentStep(currentStep + 1);
-
+  const handleNextStep = async () => {
+    setLoadingUser(true);
     // Otpless
     OtplessModule.startOtplessWithEvent();
 
@@ -178,21 +211,34 @@ const MapScreen = ({route}) => {
           let error = result.errorMessage;
           console.log(' error ', error);
         } else {
-          const token = result.data.token;
-          console.warn(' token ', result);
-          // send this token to your backend to validate user details
-          setOtplessResult(result);
+          // const token = result.data.token;
 
-          // console.warn(
-          //   ' ************** => email ',
-          //   otplessResult.data.email.email,
-          // );
+          console.warn(' token ', result);
+          // OtplessModule.shouldHideButton();
+          OtplessModule.onSignInCompleted();
+          // send this token to your backend to validate user details
+          // setOtplessResult(result);
+
+          userData = {
+            user_mobile_number: route?.params?.data.mobileNumber,
+            user_verified_mobile_number: result?.data?.mobile?.number,
+            password: password,
+            user_name: route?.params?.data.name,
+            shop_name: route?.params?.data.shopName,
+            address: currentAddress,
+            user_email: result?.data?.email?.email,
+            waNumber: result?.data?.waNumber,
+            user_signup_time: result?.data?.timestamp,
+          };
+
+          setTimeout(async () => {
+            await postUserInformations(userData);
+            // await postUserData(userData);
+          }, 1000);
         }
       },
     );
   };
-
-  console.warn(' ************** => email 0000 ', otplessResult);
 
   const finalSignUp = () => {
     return (
@@ -216,75 +262,140 @@ const MapScreen = ({route}) => {
 
   const googleMap = () => {
     return (
-      <KeyboardAvoidingView marginBottom={10}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.mapCard}>
-            {loading ? (
-              <LoadingIndicator />
-            ) : (
-              currentLocation && (
-                <MapView
-                  style={styles.map}
-                  initialRegion={{
-                    latitude: currentLocation.latitude,
-                    longitude: currentLocation.longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                  }}>
-                  <Marker
-                    coordinate={{
+      <>
+        <KeyboardAvoidingView marginBottom={10}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View
+              style={{
+                marginTop: '10%',
+                marginHorizontal: '10%',
+                marginBottom: '-8%',
+              }}>
+              <SinUpHeadingImg />
+            </View>
+            <View style={styles.mapCard}>
+              {loading ? (
+                <LoadingIndicator />
+              ) : (
+                currentLocation && (
+                  <MapView
+                    style={styles.map}
+                    initialRegion={{
                       latitude: currentLocation.latitude,
                       longitude: currentLocation.longitude,
-                    }}
-                  />
-                </MapView>
-              )
+                      latitudeDelta: 0.0922,
+                      longitudeDelta: 0.0421,
+                    }}>
+                    <Marker
+                      coordinate={{
+                        latitude: currentLocation.latitude,
+                        longitude: currentLocation.longitude,
+                      }}
+                    />
+                  </MapView>
+                )
+              )}
+            </View>
+
+            <Text
+              style={{
+                textAlign: 'center',
+                marginTop: 10,
+                fontSize: 16,
+                fontWeight: 'bold',
+                color: 'black',
+              }}>
+              Your Current Address
+            </Text>
+            <TextInput
+              mode="contain"
+              label={''}
+              value={currentAddress}
+              onChangeText={text => setCurrentAddress(text)}
+              placeholder="Current Address"
+              multiline={true}
+              theme={{
+                colors: {
+                  primary: 'black', // Change this to the desired color for the cursor
+                },
+              }}
+              style={styles.pwTxtInp}
+            />
+
+            <View>
+              <TextInput
+                mode="contain"
+                label={''}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Create Password"
+                theme={{
+                  colors: {
+                    primary: 'black', // Change this to the desired color for the cursor
+                  },
+                }}
+                style={styles.pwTxtInp}
+              />
+
+              <TouchableOpacity
+                onPress={toggleShowPassword}
+                style={{
+                  position: 'absolute',
+                  top: 37,
+                  right: 30,
+                }}>
+                <Entypo
+                  name={!showPassword ? 'eye-with-line' : 'eye'}
+                  size={22}
+                  color={'black'}
+                />
+              </TouchableOpacity>
+              {password.length !== 6 ? (
+                <TextComponent
+                  text={'Please Create 6 Digits Password'}
+                  style={styles.error}
+                />
+              ) : (
+                <View style={{marginBottom: 20}} />
+              )}
+            </View>
+
+            {loadingUser ? (
+              <LoadingIndicator />
+            ) : (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'baseline',
+                  justifyContent: 'space-between',
+                  marginHorizontal: '5%',
+                  marginBottom: '10%',
+                }}>
+                <Button style={styles.submitBtn} onPress={handlePreviousStep}>
+                  <Text style={styles.subBtnTxt}>Previous</Text>
+                </Button>
+
+                <Button
+                  onPress={handleNextStep}
+                  style={{
+                    backgroundColor: password.length !== 6 ? '#ccc' : 'black',
+                    marginTop: 10,
+                    padding: 3,
+                  }}
+                  labelStyle={{
+                    color: password.length !== 6 ? '#888' : '#fff',
+                    fontWeight: 'bold',
+                    fontSize: 18,
+                  }}
+                  disabled={password.length !== 6 ? true : false}>
+                  SignUp
+                </Button>
+              </View>
             )}
-          </View>
-
-          <Text
-            style={{
-              textAlign: 'center',
-              marginTop: 10,
-              fontSize: 16,
-              fontWeight: 'bold',
-              color: 'black',
-            }}>
-            Your Current Address
-          </Text>
-          <TextInput
-            mode="contain"
-            label={''}
-            value={currentAddress}
-            onChangeText={text => setCurrentAddress(text)}
-            placeholder="Current Address"
-            multiline={true}
-            style={{
-              marginVertical: 10,
-              marginHorizontal: 10,
-              backgroundColor: '#FECE00',
-              fontWeight: 'bold',
-              fontSize: 16,
-            }}
-          />
-
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'baseline',
-              justifyContent: 'space-between',
-              marginHorizontal: '5%',
-              marginBottom: '10%',
-            }}>
-            <Button style={styles.submitBtn} onPress={handlePreviousStep}>
-              <Text style={styles.subBtnTxt}>Previous</Text>
-            </Button>
-            <Button style={[styles.submitBtn]} onPress={handleNextStep}>
-              <Text style={styles.subBtnTxt}>SignUp</Text>
-            </Button>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </>
     );
   };
 

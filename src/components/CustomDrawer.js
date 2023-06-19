@@ -5,7 +5,6 @@ import {
   View,
   Text,
   ImageBackground,
-  Image,
   TouchableOpacity,
   Alert,
 } from 'react-native';
@@ -15,8 +14,6 @@ import {
 } from '@react-navigation/drawer';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const CustomDrawer = props => {
@@ -24,9 +21,10 @@ const CustomDrawer = props => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.clear();
+      // await AsyncStorage.clear();
+      await AsyncStorage.removeItem('userLoggedIn');
       console.warn('AsyncStorage cleared successfully');
-      navigation.navigate('Signup');
+      navigation.navigate('LogIn');
     } catch (error) {
       console.log(error);
     }
@@ -47,54 +45,35 @@ const CustomDrawer = props => {
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
-      <TouchableOpacity onPress={handleLogout}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginLeft: '30%',
-            marginBottom: 10,
-          }}>
-          <MaterialIcons name="logout" size={22} />
-          <Text
-            style={{
-              fontSize: 15,
-              fontFamily: 'Roboto-Medium',
-              marginLeft: 10,
-              fontWeight: 'bold',
-            }}>
-            LogOut
-          </Text>
-        </View>
-      </TouchableOpacity>
-      <View
-        style={{
-          paddingVertical: 10,
-          borderTopWidth: 1.5,
-          borderTopColor: '#ccc',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            Alert.alert('Share to friend');
-          }}
-          style={{paddingVertical: 15}}> */}
 
-        {/* </TouchableOpacity> */}
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Ionicons name="share-social-outline" size={22} /> */}
-          <Text
-            style={{
-              fontSize: 15,
-              fontFamily: 'Roboto-Medium',
-              marginLeft: 10,
-              fontWeight: 'bold',
-            }}>
-            App Version 1.1
-          </Text>
-        </View>
-        {/* </TouchableOpacity> */}
+      <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{marginTop: 5, marginBottom: 18}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <MaterialIcons name="logout" size={22} />
+            <Text
+              style={{
+                fontSize: 15,
+                fontFamily: 'Roboto-Medium',
+                marginLeft: 10,
+                fontWeight: 'bold',
+              }}>
+              LogOut
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            fontSize: 15,
+            fontFamily: 'Roboto-Medium',
+            marginLeft: 10,
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}>
+          App Version 1.1
+        </Text>
       </View>
     </View>
   );

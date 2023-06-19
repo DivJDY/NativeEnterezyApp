@@ -36,6 +36,19 @@ const SignUpScreen = () => {
     navigation.navigate('GoogleMap', {data: data});
   };
 
+  const handleInputChange = value => {
+    // Check if the value starts with the prefix "91"
+    // if (value.startsWith('91')) {
+    //   // Update the mobile number state without the prefix
+    //   setMobileNumber(value.substring(2));
+    // } else {
+    // Update the mobile number state with the entered value
+    setMobileNumber(`91${value}`);
+    // }
+  };
+
+  // console.warn('Mobile number ', mobileNumber);
+
   const sinupfirststep = () => {
     return (
       <View style={{marginTop: '15%', marginHorizontal: '10%'}}>
@@ -47,19 +60,20 @@ const SignUpScreen = () => {
           label="Mobile Number"
           placeholder={'Enter Mobile Number'}
           onChangeText={text => setMobileNumber(text)}
+          // onChangeText={handleInputChange}
           keyboardType="numeric"
           value={mobileNumber}
+          // value={`+91${mobileNumber}`}
           width="100%"
           style={styles.subInp}
         />
-        {mobileNumber.length === 0 || mobileNumber.length !== 10 ? (
-          <TextComponent
-            text={'Please Enter 10 Digits Mobile Number'}
-            style={styles.error}
-          />
-        ) : (
-          <View style={{marginBottom: 20}} />
-        )}
+        {mobileNumber.length === 0 ||
+          (mobileNumber.length !== 10 && (
+            <TextComponent
+              text={'Please Enter 10 Digits Mobile Number'}
+              style={styles.error}
+            />
+          ))}
         <Button
           onPress={handleNextStep}
           style={{

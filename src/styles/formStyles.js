@@ -55,4 +55,13 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+
+  // map file textinput styles
+  pwTxtInp: {
+    marginVertical: 20,
+    marginHorizontal: 10,
+    backgroundColor: '#FECE00',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });

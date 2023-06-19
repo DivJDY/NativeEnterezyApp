@@ -12,20 +12,6 @@ function TextInputComponent({
   disabled,
   keyboardType,
 }) {
-  const theme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      placeholder: 'transparent',
-    },
-    fonts: {
-      ...DefaultTheme.fonts,
-      regular: {
-        ...DefaultTheme.fonts.regular,
-        padding: 0,
-      },
-    },
-  };
   return (
     <TextInput
       placeholder={placeholder}
@@ -36,8 +22,12 @@ function TextInputComponent({
       keyboardType={keyboardType}
       multiline={multiline}
       contentContainerStyle={{alignItems: 'flex-start'}}
-      theme={theme}
       disabled={disabled}
+      theme={{
+        colors: {
+          primary: 'black', // Change this to the desired color for the cursor
+        },
+      }}
     />
   );
 }
