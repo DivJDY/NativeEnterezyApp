@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {View, Image} from 'react-native';
+import {View} from 'react-native';
 import {Avatar, Title, Text, Button} from 'react-native-paper';
 import {styles} from '../styles/profileScreen';
 import {hostName} from '../../App';
@@ -8,10 +8,12 @@ import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingIndicator from '../components/LoadingIndicator';
+import NoDataFound from '../components/NoDataFound';
 
 const ProfileScreen = ({}) => {
   const navigation = useNavigation();
-  const [data, setData] = useState();
+  const [userId, setUserId] = useState();
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchUser = async id => {
@@ -29,12 +31,15 @@ const ProfileScreen = ({}) => {
       .catch(error => console.warn('Error while fetch user ', error));
   };
 
+  // console.warn(' User Id ', userId);
+
   const getUserId = async () => {
     await AsyncStorage.getItem('userId')
       .then(id => {
         if (id !== null) {
           // Value found in AsyncStorage
           console.log(id);
+          setUserId(id);
           fetchUser(id);
         } else {
           // Value not found in AsyncStorage
@@ -60,60 +65,60 @@ const ProfileScreen = ({}) => {
         <View style={{marginTop: '10%'}}>
           <LoadingIndicator />
         </View>
-      ) : (
-        data && (
-          <View style={styles.container}>
-            <View style={styles.userInfoSection}>
-              <Avatar.Text
-                size={100}
-                label={data?.user_name?.charAt(0).toUpperCase()}
-              />
-            </View>
+      ) : Object.keys(data).length !== 0 ? (
+        <View style={styles.container}>
+          <View style={styles.userInfoSection}>
+            <Avatar.Text
+              size={100}
+              label={data?.user_name?.charAt(0).toUpperCase()}
+            />
+          </View>
 
-            <View style={styles.titleContainer}>
-              <Title style={styles.title}>{data?.user_name}</Title>
-            </View>
+          <View style={styles.titleContainer}>
+            <Title style={styles.title}>{data?.user_name}</Title>
+          </View>
 
-            <View style={styles.listContainer}>
-              <View style={{flex: 0.5}}>
-                <Text style={styles.label}>Phone Number : </Text>
-              </View>
-              <View style={{flex: 0.5}}>
-                <Text style={styles.info}>
-                  +{data?.user_verified_mobile_number}
-                </Text>
-              </View>
+          <View style={styles.listContainer}>
+            <View style={{flex: 0.5}}>
+              <Text style={styles.label}>Phone Number : </Text>
             </View>
-
-            <View style={styles.listContainer}>
-              <View style={{flex: 0.5}}>
-                <Text style={styles.label}>Email :</Text>
-              </View>
-              <View style={{flex: 0.5}}>
-                <Text style={styles.info}>{data?.user_email}</Text>
-              </View>
-            </View>
-
-            <View style={styles.listContainer}>
-              <View style={{flex: 0.5}}>
-                <Text style={styles.label}>Location : </Text>
-              </View>
-              <View style={{flex: 0.5}}>
-                <Text style={styles.info}>India</Text>
-              </View>
-            </View>
-            <View style={styles.titleContainer}>
-              <Button
-                mode="contained"
-                buttonColor="blue"
-                onPress={() => navigation.navigate('LogIn')}
-                style={styles.btn}>
-                <Text style={styles.btnText}>Login</Text>
-              </Button>
+            <View style={{flex: 0.5}}>
+              <Text style={styles.info}>
+                +{data?.user_verified_mobile_number}
+              </Text>
             </View>
           </View>
-        )
+
+          <View style={styles.listContainer}>
+            <View style={{flex: 0.5}}>
+              <Text style={styles.label}>Email :</Text>
+            </View>
+            <View style={{flex: 0.5}}>
+              <Text style={styles.info}>{data?.user_email}</Text>
+            </View>
+          </View>
+
+          <View style={styles.listContainer}>
+            <View style={{flex: 0.5}}>
+              <Text style={styles.label}>Location : </Text>
+            </View>
+            <View style={{flex: 0.5}}>
+              <Text style={styles.info}>India</Text>
+            </View>
+          </View>
+        </View>
+      ) : (
+        <NoDataFound message="Profile data not found please do login" />
       )}
+      <View style={[styles.titleContainer, {marginBottom: '10%'}]}>
+        <Button
+          mode="contained"
+          buttonColor="blue"
+          onPress={() => navigation.navigate('LogIn')}
+          style={styles.btn}>
+          <Text style={styles.btnText}>Login</Text>
+        </Button>
+      </View>
     </>
   );
 };

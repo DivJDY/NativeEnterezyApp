@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {TextInput, DefaultTheme} from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
 
 function TextInputComponent({
   placeholder,

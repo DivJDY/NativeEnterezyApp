@@ -19,10 +19,15 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const CustomDrawer = props => {
   const navigation = useNavigation();
 
+  const handleCloseDrawer = () => {
+    navigation.closeDrawer();
+  };
+
   const handleLogout = async () => {
     try {
       // await AsyncStorage.clear();
       await AsyncStorage.removeItem('userLoggedIn');
+      handleCloseDrawer();
       console.warn('AsyncStorage cleared successfully');
       navigation.navigate('LogIn');
     } catch (error) {
@@ -48,7 +53,26 @@ const CustomDrawer = props => {
 
       <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
         <TouchableOpacity
-          onPress={handleLogout}
+          onPress={() => {
+            Alert.alert(
+              'Confirmation',
+              'Are you sure you want do logout ',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                  onPress: () => {},
+                },
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    handleLogout();
+                  },
+                },
+              ],
+              {cancelable: true},
+            );
+          }}
           style={{marginTop: 5, marginBottom: 18}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <MaterialIcons name="logout" size={22} />

@@ -199,7 +199,7 @@ const CartScreen = () => {
           </View>
         </>
       ) : (
-        <NoDataFound />
+        <NoDataFound message="No Cart Item Found" />
       )}
       <View
         style={{

@@ -231,12 +231,7 @@ function DisplayRental() {
             text: 'OK',
             onPress: () => {
               // Action to perform when OK is pressed
-              // handleSubmitData(ShelfArray, formData);
               fetchRental(formData);
-              // Alert.alert('data Submitted successfully');
-              // clearFormData();
-              // navigation.navigate('HomeStack');
-              // console.log('OK pressed');
             },
           },
         ],

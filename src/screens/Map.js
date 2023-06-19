@@ -181,8 +181,8 @@ const MapScreen = ({route}) => {
           Alert.alert(response.message);
           navigation.navigate('LogIn');
         } else if (response.status === 201) {
-          // postUserData(userDataValue);
-          console.warn(' **********8 ', response.status);
+          postUserData(userDataValue);
+          // console.warn(' **********8 ', response.status);
         } else {
           Alert.alert('Something went wrong ....');
         }

@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
+
 import React, {useState} from 'react';
 import {
   View,
@@ -7,14 +7,13 @@ import {
   ScrollView,
   Platform,
   Alert,
-  // Text,
   TouchableOpacity,
-  // Button,
 } from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import TextComponent from '../components/TextComponent';
 import {styles} from '../styles/formStyles';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TextInput} from 'react-native-paper';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {hostName} from '../../App';
@@ -44,7 +43,9 @@ function LoginScreen({navigation}) {
         setMobileNumber('');
         setPassword('');
         if (response.status === 201) {
-          navigation.navigate('HomeStack');
+          AsyncStorage.setItem('userId', JSON.stringify(response.user_id));
+          Alert.alert(response.message);
+          navigation.navigate('Home');
         } else {
           navigation.navigate('LogIn');
         }

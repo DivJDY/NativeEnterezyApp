@@ -9,9 +9,7 @@ const App = () => {
   return (
     <>
       <PaperProvider theme={theme}>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+        <AppNavigator />
       </PaperProvider>
     </>
   );
