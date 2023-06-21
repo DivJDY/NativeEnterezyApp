@@ -36,17 +36,6 @@ const SignUpScreen = () => {
     navigation.navigate('GoogleMap', {data: data});
   };
 
-  const handleInputChange = value => {
-    // Check if the value starts with the prefix "91"
-    // if (value.startsWith('91')) {
-    //   // Update the mobile number state without the prefix
-    //   setMobileNumber(value.substring(2));
-    // } else {
-    // Update the mobile number state with the entered value
-    setMobileNumber(`91${value}`);
-    // }
-  };
-
   // console.warn('Mobile number ', mobileNumber);
 
   const sinupfirststep = () => {

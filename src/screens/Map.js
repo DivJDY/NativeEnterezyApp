@@ -161,6 +161,8 @@ const MapScreen = ({route}) => {
   const postUserInformations = async userDataValue => {
     setLoadingUser(true);
 
+    console.warn(' user datatdsfcfcdfg ', userDataValue);
+
     const value = {mobile_number: userDataValue?.user_verified_mobile_number};
     console.warn(' mmmmmmmm ', JSON.stringify(value));
 
@@ -175,13 +177,16 @@ const MapScreen = ({route}) => {
       .then(res => res.json())
       .then(response => {
         console.warn('7777', response);
-        Alert.alert(response.message);
 
         if (response.status === 409) {
           Alert.alert(response.message);
           navigation.navigate('LogIn');
         } else if (response.status === 201) {
-          postUserData(userDataValue);
+          setTimeout(() => {
+            Alert.alert(response.message);
+            postUserData(userDataValue);
+          }, 2000);
+
           // console.warn(' **********8 ', response.status);
         } else {
           Alert.alert('Something went wrong ....');
@@ -213,8 +218,13 @@ const MapScreen = ({route}) => {
         } else {
           // const token = result.data.token;
 
-          console.warn(' token ', result);
-          // OtplessModule.shouldHideButton();
+          // console.warn(
+          //   ' OtlpLESSSSSS token ',`
+          //   result?.data,
+          //   ' ******** ',
+          //   result,
+          // );
+
           OtplessModule.onSignInCompleted();
           // send this token to your backend to validate user details
           // setOtplessResult(result);
@@ -226,14 +236,12 @@ const MapScreen = ({route}) => {
             user_name: route?.params?.data.name,
             shop_name: route?.params?.data.shopName,
             address: currentAddress,
-            user_email: result?.data?.email?.email,
             waNumber: result?.data?.waNumber,
             user_signup_time: result?.data?.timestamp,
           };
 
           setTimeout(async () => {
             await postUserInformations(userData);
-            // await postUserData(userData);
           }, 1000);
         }
       },

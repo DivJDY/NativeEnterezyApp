@@ -27,9 +27,9 @@ const CustomDrawer = props => {
     try {
       // await AsyncStorage.clear();
       await AsyncStorage.removeItem('userLoggedIn');
-      handleCloseDrawer();
+      // handleCloseDrawer();
       console.warn('AsyncStorage cleared successfully');
-      navigation.navigate('LogIn');
+      navigation.navigate('ProfileLogIn');
     } catch (error) {
       console.log(error);
     }

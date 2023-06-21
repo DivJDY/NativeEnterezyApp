@@ -44,8 +44,9 @@ function LoginScreen({navigation}) {
         setPassword('');
         if (response.status === 201) {
           AsyncStorage.setItem('userId', JSON.stringify(response.user_id));
+          setUserLoggedIn();
           Alert.alert(response.message);
-          navigation.navigate('Home');
+          navigation.navigate('MainScreen');
         } else {
           navigation.navigate('LogIn');
         }
@@ -55,6 +56,14 @@ function LoginScreen({navigation}) {
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const setUserLoggedIn = async () => {
+    try {
+      await AsyncStorage.setItem('userLoggedIn', 'true');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

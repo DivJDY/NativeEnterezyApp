@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingIndicator from '../components/LoadingIndicator';
 import NoDataFound from '../components/NoDataFound';
 
-const ProfileScreen = ({}) => {
+const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userId, setUserId] = useState();
   const [data, setData] = useState([]);
@@ -89,14 +89,14 @@ const ProfileScreen = ({}) => {
             </View>
           </View>
 
-          <View style={styles.listContainer}>
+          {/* <View style={styles.listContainer}>
             <View style={{flex: 0.5}}>
               <Text style={styles.label}>Email :</Text>
             </View>
             <View style={{flex: 0.5}}>
               <Text style={styles.info}>{data?.user_email}</Text>
             </View>
-          </View>
+          </View> */}
 
           <View style={styles.listContainer}>
             <View style={{flex: 0.5}}>
@@ -114,7 +114,7 @@ const ProfileScreen = ({}) => {
         <Button
           mode="contained"
           buttonColor="blue"
-          onPress={() => navigation.navigate('LogIn')}
+          onPress={() => navigation.navigate('ProfileLogIn')}
           style={styles.btn}>
           <Text style={styles.btnText}>Login</Text>
         </Button>

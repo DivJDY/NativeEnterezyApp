@@ -13,11 +13,12 @@ import {
 import {Provider as PaperProvider, Button, Text} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import ImagePicker, {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
-import Selection from '../components/Selection';
-import uuid from 'react-native-uuid';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {dropdownstyle} from '../styles/dropdownStyles';
+import DropDownSelection from '../components/DropDownSelection';
 import RNFS from 'react-native-fs';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
@@ -47,38 +48,26 @@ const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState('');
   const [category, setCategory] = useState('');
   const [categoryList, setCategoryList] = useState([]);
-  // const [categoryPost, setCategoryPost] = useState();
-  // eslint-disable-next-line no-unused-vars
   const [loadcategory, setLoadCategory] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [cloudImageAddress, setCloudImageAddress] = useState(null);
 
   const requestHeader = FetchUtilityOptions();
-  console.warn(' request header ', requestHeader);
-
-  const requestOptions = FetchUtilityOptions('GET');
 
   const clearFormData = () => {
-    // formik.resetForm();
     setCategory('');
     setUploadImage('');
   };
 
   const navigation = useNavigation();
 
-  // console.warn('category ', category[0]);
-
   const fetchProductCategory = async () => {
-    // setLoading(true);
     setLoadCategory(true);
     await fetch(hostName + '/category', {method: 'GET', headers: requestHeader})
       .then(response => response.json())
       .then(responseData => {
-        console.warn('fetch data ==> ', responseData);
+        // console.warn('fetch data ==> ', responseData);
         setCategoryList(responseData);
         setLoadCategory(false);
-        // setLoading(false);
       })
       .catch(error => {
         console.error(error);
@@ -100,7 +89,7 @@ const ProductPostScreen = () => {
       values.product_image = uploadImage;
 
       const data = {
-        category_id: category[0],
+        category_id: category,
         product_name: values.product_name,
         product_price: values.product_price,
         product_mrp: values.product_mrp,
@@ -122,7 +111,7 @@ const ProductPostScreen = () => {
           // console.log('data response ', response);
           setLoading(false);
           Alert.alert(response.message);
-          navigation.navigate('HomeStack', {loading: loading});
+          navigation.navigate('Home', {loading: loading});
         })
         .catch(error => {
           // Handle any errors
@@ -175,26 +164,42 @@ const ProductPostScreen = () => {
     });
   };
 
+  const handleChangeItem = item => {
+    setCategory(item.id);
+  };
+
+  const renderCategoryItem = item => {
+    return (
+      <View style={dropdownstyle.item}>
+        <Text style={dropdownstyle.textItem}>{item.category_name}</Text>
+        {item.id === category && (
+          <AntDesign
+            style={dropdownstyle.icon}
+            color="black"
+            name="check"
+            size={20}
+          />
+        )}
+      </View>
+    );
+  };
+
   return (
     <PaperProvider>
-      <Text
-        variant="headlineSmall"
-        style={{
-          textAlign: 'center',
-          marginTop: 12,
-          marginBottom: 6,
-          textDecorationLine: 'underline',
-        }}>
-        Create Product
-      </Text>
+      <View style={{alignItems: 'center', marginTop: 12}}>
+        <Text style={{fontSize: 28, marginBottom: 8, fontWeight: 'bold'}}>
+          Create Product
+        </Text>
+      </View>
 
       {loadcategory && loading ? (
         <LoadingIndicator />
       ) : (
         <KeyboardAvoidingView
           enabled
-          behavior={Platform.OS === 'ios' ? 'padding' : null}>
-          <ScrollView style={{marginBottom: 18}}>
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          style={{marginBottom: 80}}>
+          <ScrollView>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
@@ -223,84 +228,95 @@ const ProductPostScreen = () => {
                     />
                   )}
 
-                  <View marginBottom={10}>
-                    <Selection
-                      title="Select product category *"
-                      placeholder="Search Item...."
-                      options={categoryList}
-                      displayKey={'category_name'}
-                      single={true}
-                      onChangeText={text => setCategory(text)}
-                      selectedItem={category}
-                    />
+                  <View marginBottom={10} marginLeft={-15}>
+                    {categoryList && (
+                      <DropDownSelection
+                        data={categoryList}
+                        selectedValue={category}
+                        onChange={handleChangeItem}
+                        renderItem={renderCategoryItem}
+                        labelField={'category_name'}
+                        valueField={'id'}
+                        placeholder={'Select product category *'}
+                        searchPlaceholder={'Search category....'}
+                      />
+                    )}
                   </View>
 
-                  <TextInputComponent
-                    label="Product Description"
-                    placeholder={'Enter Product Description *'}
-                    onChangeText={handleChange('product_desc')}
-                    onBlur={handleBlur('product_desc')}
-                    value={values.product_desc}
-                    style={styles.input}
-                    multiline={true}
-                  />
-                  {errors.product_desc && touched.product_desc && (
-                    <TextComponent
-                      text={errors.product_desc}
-                      style={styles.error}
+                  <View marginBottom={10}>
+                    <TextInputComponent
+                      label="Product Description"
+                      placeholder={'Enter Product Description *'}
+                      onChangeText={handleChange('product_desc')}
+                      onBlur={handleBlur('product_desc')}
+                      value={values.product_desc}
+                      style={styles.input}
+                      multiline={true}
                     />
-                  )}
-
-                  <TextInputComponent
-                    label="Minimum Product Order Quantity"
-                    placeholder={'Enter Minimum Product Order Quantity *'}
-                    onChangeText={handleChange(
-                      'minimum_product_order_quantity',
-                    )}
-                    onBlur={handleBlur('minimum_product_order_quantity')}
-                    value={values.minimum_product_order_quantity}
-                    keyboardType="numeric"
-                    style={styles.input}
-                  />
-                  {errors.minimum_product_order_quantity &&
-                    touched.minimum_product_order_quantity && (
+                    {errors.product_desc && touched.product_desc && (
                       <TextComponent
-                        text={errors.minimum_product_order_quantity}
+                        text={errors.product_desc}
                         style={styles.error}
                       />
                     )}
+                  </View>
 
-                  <TextInputComponent
-                    label="Product Price"
-                    placeholder={'Enter Product Price *'}
-                    onChangeText={handleChange('product_price')}
-                    onBlur={handleBlur('product_price')}
-                    value={values.product_price}
-                    keyboardType="numeric"
-                    style={styles.input}
-                  />
-                  {errors.product_price && touched.product_price && (
-                    <TextComponent
-                      text={errors.product_price}
-                      style={styles.error}
+                  <View marginBottom={10}>
+                    <TextInputComponent
+                      label="Minimum Product Order Quantity"
+                      placeholder={'Enter Minimum Product Order Quantity *'}
+                      onChangeText={handleChange(
+                        'minimum_product_order_quantity',
+                      )}
+                      onBlur={handleBlur('minimum_product_order_quantity')}
+                      value={values.minimum_product_order_quantity}
+                      keyboardType="numeric"
+                      style={styles.input}
                     />
-                  )}
+                    {errors.minimum_product_order_quantity &&
+                      touched.minimum_product_order_quantity && (
+                        <TextComponent
+                          text={errors.minimum_product_order_quantity}
+                          style={styles.error}
+                        />
+                      )}
+                  </View>
 
-                  <TextInputComponent
-                    label="Product MRP"
-                    placeholder={'Enter Product MRP *'}
-                    onChangeText={handleChange('product_mrp')}
-                    onBlur={handleBlur('product_mrp')}
-                    value={values.product_mrp}
-                    keyboardType="numeric"
-                    style={styles.input}
-                  />
-                  {errors.product_mrp && touched.product_mrp && (
-                    <TextComponent
-                      text={errors.product_mrp}
-                      style={styles.error}
+                  <View marginBottom={10}>
+                    <TextInputComponent
+                      label="Product Price"
+                      placeholder={'Enter Product Price *'}
+                      onChangeText={handleChange('product_price')}
+                      onBlur={handleBlur('product_price')}
+                      value={values.product_price}
+                      keyboardType="numeric"
+                      style={styles.input}
                     />
-                  )}
+                    {errors.product_price && touched.product_price && (
+                      <TextComponent
+                        text={errors.product_price}
+                        style={styles.error}
+                      />
+                    )}
+                  </View>
+
+                  <View marginBottom={4}>
+                    <TextInputComponent
+                      label="Product MRP"
+                      placeholder={'Enter Product MRP *'}
+                      onChangeText={handleChange('product_mrp')}
+                      onBlur={handleBlur('product_mrp')}
+                      value={values.product_mrp}
+                      keyboardType="numeric"
+                      style={styles.input}
+                    />
+                    {errors.product_mrp && touched.product_mrp && (
+                      <TextComponent
+                        text={errors.product_mrp}
+                        style={styles.error}
+                      />
+                    )}
+                  </View>
 
                   <Button
                     mode="contained"

@@ -26,6 +26,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SignUpScreen from './src/screens/SignUpScreen';
 import MapScreen from './src/screens/Map';
 import PostProductCategory from './src/screens/PostProductCategory';
+import UserRoleUpdateScreen from './src/screens/UserRoleUpdateScreen';
+import {FetchUtilityOptions} from './src/fetchUtility/FetchRequestOption';
+import {hostName} from './App';
 
 const Stack = createStackNavigator();
 // const AuthStackNavigator = ({route}) => {
@@ -123,144 +126,167 @@ const HeaderImage = () => (
   />
 );
 
-const DrawerNavigationList = () => (
-  <Drawer.Navigator
-    screenOptions={({navigation}) => ({
-      headerStyle: {
-        backgroundColor: 'black',
-        height: 60,
-      },
-      headerLeft: () => (
-        <TouchableOpacity
-          onPress={() => navigation.toggleDrawer()}
-          style={styles.headerLeft}>
-          <Icon name="bars" size={20} color="#fff" />
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <View style={styles.headerRight}>
-          <Icon name="bell" size={20} color="#fff" />
-        </View>
-      ),
-      drawerLabelStyle: {
-        marginLeft: -10,
-        fontFamily: 'Roboto-Medium',
-        fontSize: 15,
-        fontWeight: 'bold',
-      },
-      drawerActiveBackgroundColor: 'black',
-      drawerActiveTintColor: '#fff',
-    })}
-    drawerContent={props => <CustomDrawer {...props} />}>
-    <Drawer.Screen
-      name="HomeScreen"
-      component={BottomTabNavigator}
-      options={{
-        title: 'Home',
+const DrawerNavigationList = ({route}) => {
+  const {role} = route.params;
 
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <Ionicons name="home-outline" size={22} color={color} />
+  // console.warn(' ftgcdgfcv ====> Data ', ' 88888 ', role);
+  return (
+    <Drawer.Navigator
+      screenOptions={({navigation}) => ({
+        headerStyle: {
+          backgroundColor: 'black',
+          height: 60,
+        },
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => navigation.toggleDrawer()}
+            style={styles.headerLeft}>
+            <Icon name="bars" size={20} color="#fff" />
+          </TouchableOpacity>
         ),
-      }}
-    />
-
-    <Drawer.Screen
-      name="ProductPost"
-      component={ProductPostScreen}
-      options={{
-        title: 'Create Product',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <FontAwesome name="product-hunt" size={22} color={color} />
+        headerRight: () => (
+          <View style={styles.headerRight}>
+            <Icon name="bell" size={20} color="#fff" />
+          </View>
         ),
-      }}
-    />
+        drawerLabelStyle: {
+          marginLeft: -10,
+          fontFamily: 'Roboto-Medium',
+          fontSize: 15,
+          fontWeight: 'bold',
+        },
+        drawerActiveBackgroundColor: 'black',
+        drawerActiveTintColor: '#fff',
+      })}
+      drawerContent={props => <CustomDrawer {...props} />}>
+      <Drawer.Screen
+        name="HomeScreen"
+        component={BottomTabNavigator}
+        options={{
+          title: 'Home',
 
-    <Drawer.Screen
-      name="ProductCategory"
-      component={PostProductCategory}
-      options={{
-        title: 'Post Category',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <MaterialIcons name="category" size={22} color={color} />
-        ),
-      }}
-    />
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <Ionicons name="home-outline" size={22} color={color} />
+          ),
+        }}
+      />
 
-    <Drawer.Screen
-      name="OrderList"
-      component={OrderListScreen}
-      options={{
-        title: 'My Order',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <MaterialIcons name="shopping-cart" size={22} color={color} />
-        ),
-      }}
-    />
+      {role === 'super_admin' ||
+        (role === 'admin' && (
+          <>
+            <Drawer.Screen
+              name="ProductPost"
+              component={ProductPostScreen}
+              options={{
+                title: 'Create Product',
+                headerTitle: () => <HeaderImage />,
+                drawerIcon: ({color}) => (
+                  <FontAwesome name="product-hunt" size={22} color={color} />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="ProductCategory"
+              component={PostProductCategory}
+              options={{
+                title: 'Post Category',
+                headerTitle: () => <HeaderImage />,
+                drawerIcon: ({color}) => (
+                  <MaterialIcons name="category" size={22} color={color} />
+                ),
+              }}
+            />
+          </>
+        ))}
 
-    <Drawer.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        title: 'Profile',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <Ionicons name="person-outline" size={22} color={color} />
-        ),
-      }}
-    />
+      <Drawer.Screen
+        name="OrderList"
+        component={OrderListScreen}
+        options={{
+          title: 'My Order',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <MaterialIcons name="shopping-cart" size={22} color={color} />
+          ),
+        }}
+      />
 
-    <Drawer.Screen
-      name="PrivacyPolicy"
-      component={PrivacyPolicyScreen}
-      options={{
-        title: 'Privacy Policy',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <MaterialIcons name="policy" size={22} color={color} />
-        ),
-      }}
-    />
+      <Drawer.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: 'Profile',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <Ionicons name="person-outline" size={22} color={color} />
+          ),
+        }}
+      />
 
-    {/* Header locked */}
+      {role === 'super_admin' && (
+        <Drawer.Screen
+          name="UpdateRole"
+          component={UserRoleUpdateScreen}
+          options={{
+            title: 'User Role',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <MaterialIcons name="policy" size={22} color={color} />
+            ),
+          }}
+        />
+      )}
 
-    <Drawer.Screen
-      name="ProductDetails"
-      component={ProductDetailsScreen}
-      options={{
-        drawerLockMode: 'locked-closed',
-        headerTitle: () => <HeaderImage />,
-        hidden: true,
-        drawerItemStyle: {display: 'none'},
-      }}
-    />
+      <Drawer.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{
+          title: 'Privacy Policy',
+          headerTitle: () => <HeaderImage />,
+          drawerIcon: ({color}) => (
+            <MaterialIcons name="policy" size={22} color={color} />
+          ),
+        }}
+      />
 
-    <Drawer.Screen
-      name="Payment"
-      component={PaymentScreen}
-      options={{
-        drawerLockMode: 'locked-closed',
-        headerTitle: () => <HeaderImage />,
-        hidden: true,
-        drawerItemStyle: {display: 'none'},
-      }}
-    />
+      {/* Header locked */}
 
-    <Drawer.Screen
-      name="DisplayRental"
-      component={DisplayRental}
-      options={{
-        drawerLockMode: 'locked-closed',
-        headerTitle: () => <HeaderImage />,
-        hidden: true,
-        drawerItemStyle: {display: 'none'},
-      }}
-    />
-  </Drawer.Navigator>
-);
+      <Drawer.Screen
+        name="ProductDetails"
+        component={ProductDetailsScreen}
+        options={{
+          drawerLockMode: 'locked-closed',
+          headerTitle: () => <HeaderImage />,
+          hidden: true,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+
+      <Drawer.Screen
+        name="Payment"
+        component={PaymentScreen}
+        options={{
+          drawerLockMode: 'locked-closed',
+          headerTitle: () => <HeaderImage />,
+          hidden: true,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+
+      <Drawer.Screen
+        name="DisplayRental"
+        component={DisplayRental}
+        options={{
+          drawerLockMode: 'locked-closed',
+          headerTitle: () => <HeaderImage />,
+          hidden: true,
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
+    </Drawer.Navigator>
+  );
+};
 
 const HomeBottomTabNavigator = () => (
   <Tab.Navigator>
@@ -269,11 +295,14 @@ const HomeBottomTabNavigator = () => (
 );
 
 const AppNavigator = () => {
-  const [isSignedIn, setIsSignedIn] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [data, setData] = useState();
 
   useEffect(() => {
     // Check if user is already logged in
     getUserLoggedIn();
+    getUserId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getUserLoggedIn = async () => {
@@ -282,6 +311,39 @@ const AppNavigator = () => {
   };
 
   console.warn(' istgvfhbcvbfhbbf ', isSignedIn);
+
+  const fetchUser = async id => {
+    // setLoading(true);
+    await fetch(hostName + '/user/' + id, {
+      method: 'GET',
+      FetchUtilityOptions,
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.warn('User response ', response);
+        setData(response);
+        // setLoading(false);
+      })
+      .catch(error => console.warn('Error while fetch user ', error));
+  };
+
+  const getUserId = async () => {
+    await AsyncStorage.getItem('userId')
+      .then(id => {
+        if (id !== null) {
+          // Value found in AsyncStorage
+          console.log(id);
+          fetchUser(id);
+        } else {
+          // Value not found in AsyncStorage
+          console.log('No value found for key "userId"');
+        }
+      })
+      .catch(error => {
+        // Handle any errors that occur during AsyncStorage retrieval
+        console.log('Error retrieving value:', error);
+      });
+  };
 
   return (
     <NavigationContainer>
@@ -299,31 +361,32 @@ const AppNavigator = () => {
               options={{headerShown: false}}
               component={LoginScreen}
             />
-            <Stack.Screen
-              name="GoogleMap"
-              options={{headerShown: false}}
-              component={MapScreen}
-            />
-            <Stack.Screen
-              name="Home"
-              options={{headerShown: false}}
-              component={DrawerNavigationList}
-            />
           </>
         ) : (
-          <>
-            <Stack.Screen
-              name="Home"
-              options={{headerShown: false}}
-              component={DrawerNavigationList}
-            />
-            <Stack.Screen
-              name="LogIn"
-              options={{headerShown: false}}
-              component={LoginScreen}
-            />
-          </>
+          <Stack.Screen
+            name="Home"
+            options={{headerShown: false}}
+            initialParams={{data: data?.role}}
+            component={DrawerNavigationList}
+          />
         )}
+        <Stack.Screen
+          name="ProfileLogIn"
+          options={{headerShown: false}}
+          component={LoginScreen}
+        />
+
+        <Stack.Screen
+          name="MainScreen"
+          options={{headerShown: false}}
+          initialParams={{data: data?.role}}
+          component={DrawerNavigationList}
+        />
+        <Stack.Screen
+          name="GoogleMap"
+          options={{headerShown: false}}
+          component={MapScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

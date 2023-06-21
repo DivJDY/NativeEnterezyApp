@@ -18,4 +18,4 @@ const App = () => {
 export default App;
 
 export const hostName =
-  'https://2e08-2405-204-568f-1b18-751e-53f3-eae5-cbf1.ngrok-free.app';
+  'https://6a73-2409-4071-e01-d030-34f9-67a9-177-c8a9.ngrok-free.app';

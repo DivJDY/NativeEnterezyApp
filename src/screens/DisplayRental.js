@@ -9,15 +9,10 @@ import {
   Platform,
   Alert,
   StyleSheet,
-  Image,
-  TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Button} from 'react-native-paper';
-import ImagePicker, {
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import {Button, Provider as PaperProvider} from 'react-native-paper';
+import {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
@@ -28,6 +23,9 @@ import Selection from '../components/Selection';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {hostName} from '../../App';
 import LoadingIndicator from '../components/LoadingIndicator';
+import DropDownSelection from '../components/DropDownSelection';
+import {dropdownstyle} from '../styles/dropdownStyles';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 // Options
 const shelfRackOptions = [
@@ -173,30 +171,28 @@ function DisplayRental() {
       });
   };
 
-  const handleSubmitData = (ShelfArrayData, formData) => {
-    console.warn('Form Data => ShelfArrayData ', ShelfArrayData);
-    // formData.push({
-    //   id: ShelfArrayData.id,
-    // });
+  // const handleSubmitData = (ShelfArrayData, formData) => {
+  //   console.warn('Form Data => ShelfArrayData ', ShelfArrayData);
+  //   // formData.push({
+  //   //   id: ShelfArrayData.id,
+  //   // });
 
-    fetch(hostName + '/type_of_shelf_vibility', {
-      method: 'POST',
-      headers: requestHeader,
-      body: JSON.stringify(ShelfArrayData),
-    })
-      .then(response => response.json())
-      .then(response => {
-        // setLoading(false);
-        // clearFormData()
-        Alert.alert(response.message);
-      })
-      .catch(error => {
-        // Handle any errors
-        console.error('post error ', error);
-      });
-  };
-
-  // console.warn(' shelffff ', ShelfArray);
+  //   fetch(hostName + '/type_of_shelf_vibility', {
+  //     method: 'POST',
+  //     headers: requestHeader,
+  //     body: JSON.stringify(ShelfArrayData),
+  //   })
+  //     .then(response => response.json())
+  //     .then(response => {
+  //       // setLoading(false);
+  //       // clearFormData()
+  //       Alert.alert(response.message);
+  //     })
+  //     .catch(error => {
+  //       // Handle any errors
+  //       console.error('post error ', error);
+  //     });
+  // };
 
   const submitData = () => {
     let formData;
@@ -242,19 +238,56 @@ function DisplayRental() {
     }
   };
 
-  const multiSelectRef = useRef(null);
-
-  const onOutsidePress = () => {
-    // dismissKeyboard();
-    multiSelectRef.current._toggleDropdown(false);
+  const renderRentalItem = item => {
+    return (
+      <View style={dropdownstyle.item}>
+        <Text style={dropdownstyle.textItem}>{item.shelf_name}</Text>
+        {item.id === shelfvisibility && (
+          <AntDesign
+            style={dropdownstyle.icon}
+            color="black"
+            name="check"
+            size={20}
+          />
+        )}
+      </View>
+    );
   };
 
-  const handlePostProductCategory = () => {};
+  const renderCategoryItem = item => {
+    return (
+      <View style={dropdownstyle.item}>
+        <Text style={dropdownstyle.textItem}>{item.category_name}</Text>
+        {item.id === category && (
+          <AntDesign
+            style={dropdownstyle.icon}
+            color="black"
+            name="check"
+            size={20}
+          />
+        )}
+      </View>
+    );
+  };
+
+  const handleChangeItem = item => {
+    setCategory(item.id);
+  };
+
+  const handleChangeRental = item => {
+    setShelfvisibility(item.id);
+  };
 
   return (
-    <View style={{margin: 20}}>
-      <View style={{alignItems: 'center'}}>
-        <Text style={{fontSize: 28, marginBottom: 8, fontWeight: 'bold'}}>
+    <PaperProvider>
+      <View style={{alignItems: 'center', marginTop: 15}}>
+        <Text
+          style={{
+            fontSize: 28,
+            marginBottom: 8,
+            fontWeight: 'bold',
+            color: 'black',
+          }}>
           Display Rental
         </Text>
       </View>
@@ -264,38 +297,36 @@ function DisplayRental() {
       ) : (
         <KeyboardAvoidingView
           enabled
-          style={{marginBottom: 100}}
+          style={{marginBottom: 100, marginLeft: 12}}
           behavior={Platform.OS === 'ios' ? 'padding' : null}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{marginBottom: 15}} />
-            <TouchableWithoutFeedback onPress={onOutsidePress}>
-              <Selection
-                title="Type of visibility *"
-                placeholder="Search Item...."
-                // isVisible={dropdownVisible}
-                ref={multiSelectRef}
-                options={shelfvisibilityList}
-                displayKey={'shelf_name'}
-                single={true}
-                onChangeText={text => setShelfvisibility(text)}
-                selectedItem={shelfvisibility}
-              />
-              {/* <Button title="Post Category" onPress={handlePostProductCategory} /> */}
-            </TouchableWithoutFeedback>
 
-            <View style={{marginBottom: 15}} />
-            <TouchableWithoutFeedback onPress={onOutsidePress}>
-              <Selection
-                title="Type of category *"
-                placeholder="Search Items...."
-                ref={multiSelectRef}
-                options={categoryList}
-                displayKey={'category_name'}
-                single={true}
-                onChangeText={text => setCategory(text)}
-                selectedItem={category}
+            {shelfvisibilityList && (
+              <DropDownSelection
+                data={shelfvisibilityList}
+                selectedValue={shelfvisibility}
+                onChange={handleChangeRental}
+                renderItem={renderRentalItem}
+                labelField={'shelf_name'}
+                valueField={'id'}
+                placeholder={'Type of Rental *'}
+                searchPlaceholder={'Search rental....'}
               />
-            </TouchableWithoutFeedback>
+            )}
+
+            {categoryList && (
+              <DropDownSelection
+                data={categoryList}
+                selectedValue={category}
+                onChange={handleChangeItem}
+                renderItem={renderCategoryItem}
+                labelField={'category_name'}
+                valueField={'id'}
+                placeholder={'Type of category * *'}
+                searchPlaceholder={'Search category....'}
+              />
+            )}
 
             <View style={{marginBottom: 15}} />
             <TextInputComponent
@@ -303,7 +334,7 @@ function DisplayRental() {
               onChangeText={text => setLength(text)}
               keyboardType={'numeric'}
               value={length}
-              style={[styles.input, {width: '100%'}]}
+              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
             />
 
             <View style={{marginBottom: 15}} />
@@ -312,7 +343,7 @@ function DisplayRental() {
               onChangeText={text => setHeight(text)}
               keyboardType={'numeric'}
               value={height}
-              style={[styles.input, {width: '100%'}]}
+              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
             />
 
             <View style={{marginBottom: 15}} />
@@ -321,7 +352,7 @@ function DisplayRental() {
               onChangeText={text => setProductCost(text)}
               keyboardType={'numeric'}
               value={productCost}
-              style={[styles.input, {width: '100%'}]}
+              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
             />
 
             <View style={{marginBottom: 15}} />
@@ -330,7 +361,7 @@ function DisplayRental() {
               onChangeText={text => setAddress(text)}
               multiline={true}
               value={address}
-              style={[styles.input, {width: '100%'}]}
+              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
             />
 
             <View style={{marginBottom: 15}} />
@@ -339,7 +370,7 @@ function DisplayRental() {
               onChangeText={text => setAvgStore(text)}
               keyboardType={'numeric'}
               value={avgStore}
-              style={[styles.input, {width: '100%'}]}
+              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
             />
 
             <View style={{marginBottom: 15}} />
@@ -361,15 +392,18 @@ function DisplayRental() {
               onPress={handleImageSelection}
               style={[
                 shelfImage ? style.btnSuccess : style.btn,
-                {marginBottom: 15},
+                {
+                  marginBottom: 15,
+                  width: '85%',
+                  marginLeft: 18,
+                  borderRadius: 10,
+                },
               ]}>
               {' '}
               <Text style={{fontWeight: 'bold'}}>
                 {shelfImage ? 'Shelf Pic uploaded' : 'Upload a Shelf Pic *'}
               </Text>
             </Button>
-            {/* </TouchableOpacity>
-   )} */}
 
             <View
               style={{
@@ -379,10 +413,15 @@ function DisplayRental() {
                 justifyContent: 'center',
                 marginBottom: 10,
                 marginTop: 15,
+                marginLeft: '-4%',
               }}>
               <Button
                 mode="contained"
-                style={{marginRight: 15, backgroundColor: 'black'}}
+                style={{
+                  marginRight: 15,
+                  backgroundColor: 'black',
+                  borderRadius: 10,
+                }}
                 onPress={submitData}>
                 <Text style={[styles.btnStyle, {color: '#FECE00'}]}>
                   Submit Data
@@ -390,7 +429,7 @@ function DisplayRental() {
               </Button>
               <Button
                 mode="contained"
-                style={{backgroundColor: 'black'}}
+                style={{backgroundColor: 'black', borderRadius: 10}}
                 onPress={clearFormData}>
                 {' '}
                 <Text style={[styles.btnStyle, {color: '#FECE00'}]}>
@@ -401,7 +440,7 @@ function DisplayRental() {
           </ScrollView>
         </KeyboardAvoidingView>
       )}
-    </View>
+    </PaperProvider>
   );
 }
 
