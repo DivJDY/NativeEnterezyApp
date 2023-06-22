@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import {Text, Button} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import Geolocation from 'react-native-geolocation-service';
+import {PermissionsAndroid} from 'react-native';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
 import {styles} from '../styles/formStyles';
@@ -35,6 +37,39 @@ const SignUpScreen = () => {
     const data = {mobileNumber: mobileNumber, name: name, shopName: shopName};
     navigation.navigate('GoogleMap', {data: data});
   };
+
+  useEffect(() => {
+    const requestLocationPermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location permission',
+            message:
+              'This app needs access to your location ' +
+              'to get your current location.',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          Geolocation.getCurrentPosition(
+            position => {
+              const {latitude, longitude} = position.coords;
+              // setLocation(`${latitude}, ${longitude}`);
+            },
+            error => {
+              console.log(error.code, error.message);
+            },
+            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+          );
+        } else {
+          console.log('Location permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    };
+    requestLocationPermission();
+  }, []);
 
   // console.warn('Mobile number ', mobileNumber);
 

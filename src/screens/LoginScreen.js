@@ -19,13 +19,11 @@ import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {hostName} from '../../App';
 
 function LoginScreen({navigation}) {
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [mobileNumber, setMobileNumber] = useState('');
 
   const requestOption = FetchUtilityOptions();
   const userLogin = async () => {
-    const data = {mobile_number: mobileNumber, password: password};
+    const data = {mobile_number: mobileNumber};
     // Alert.alert(JSON.stringify(data));
 
     await fetch(hostName + '/login', {
@@ -41,7 +39,7 @@ function LoginScreen({navigation}) {
         console.warn('7777', response);
         Alert.alert(response.message);
         setMobileNumber('');
-        setPassword('');
+
         if (response.status === 201) {
           AsyncStorage.setItem('userId', JSON.stringify(response.user_id));
           setUserLoggedIn();
@@ -52,10 +50,6 @@ function LoginScreen({navigation}) {
         }
       })
       .catch(err => console.warn(' **** ==> ', err));
-  };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
   };
 
   const setUserLoggedIn = async () => {
@@ -105,64 +99,19 @@ function LoginScreen({navigation}) {
             />
           )}
 
-          <View>
-            <TextInput
-              mode="contain"
-              label={''}
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Enter Your Password"
-              theme={{
-                colors: {
-                  primary: 'black', // Change this to the desired color for the cursor
-                },
-              }}
-              style={styles.pwTxtInp}
-            />
-
-            <TouchableOpacity
-              onPress={toggleShowPassword}
-              style={{
-                position: 'absolute',
-                top: 37,
-                right: 30,
-              }}>
-              <Entypo
-                name={!showPassword ? 'eye-with-line' : 'eye'}
-                size={22}
-                color={'black'}
-              />
-            </TouchableOpacity>
-            {password.length !== 6 && (
-              <TextComponent
-                text={'Please enter 6 digits Password'}
-                style={styles.error}
-              />
-            )}
-          </View>
-
           <Button
             style={{
-              backgroundColor:
-                mobileNumber.length !== 10 || password.length !== 6
-                  ? '#ccc'
-                  : 'black',
+              backgroundColor: mobileNumber.length !== 10 ? '#ccc' : 'black',
               marginTop: 15,
               padding: 3,
               marginHorizontal: 10,
             }}
             labelStyle={{
-              color:
-                mobileNumber.length !== 10 || password.length !== 6
-                  ? '#888'
-                  : '#fff',
+              color: mobileNumber.length !== 10 ? '#888' : '#fff',
               fontWeight: 'bold',
               fontSize: 18,
             }}
-            disabled={
-              mobileNumber.length !== 10 || password.length !== 6 ? true : false
-            }
+            disabled={mobileNumber.length !== 10 ? true : false}
             onPress={userLogin}>
             <Text style={{color: 'white', fontWeight: 'bold'}}>LogIn</Text>
           </Button>

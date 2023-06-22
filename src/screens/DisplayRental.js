@@ -19,7 +19,6 @@ import RNFS from 'react-native-fs';
 import dismissKeyboard from 'react-native-dismiss-keyboard';
 import TextInputComponent from '../components/TextInputComponent';
 import {styles} from '../styles/formStyles';
-import Selection from '../components/Selection';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {hostName} from '../../App';
 import LoadingIndicator from '../components/LoadingIndicator';

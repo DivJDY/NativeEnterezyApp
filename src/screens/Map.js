@@ -33,16 +33,10 @@ const MapScreen = ({route}) => {
   const [currentAddress, setCurrentAddress] = useState('');
   const [loading, setLoading] = useState(false);
   // const [otplessResult, setOtplessResult] = useState();
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [loadingUser, setLoadingUser] = useState(false);
 
   let userData;
   const navigation = useNavigation();
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
 
   // console.warn(' param data ', route?.params?.data);
 
@@ -54,38 +48,38 @@ const MapScreen = ({route}) => {
     }
   };
 
-  useEffect(() => {
-    const requestLocationPermission = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Location permission',
-            message:
-              'This app needs access to your location ' +
-              'to get your current location.',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          Geolocation.getCurrentPosition(
-            position => {
-              const {latitude, longitude} = position.coords;
-              setLocation(`${latitude}, ${longitude}`);
-            },
-            error => {
-              console.log(error.code, error.message);
-            },
-            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-          );
-        } else {
-          console.log('Location permission denied');
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    };
-    requestLocationPermission();
-  }, []);
+  // useEffect(() => {
+  //   const requestLocationPermission = async () => {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //         {
+  //           title: 'Location permission',
+  //           message:
+  //             'This app needs access to your location ' +
+  //             'to get your current location.',
+  //         },
+  //       );
+  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //         Geolocation.getCurrentPosition(
+  //           position => {
+  //             const {latitude, longitude} = position.coords;
+  //             setLocation(`${latitude}, ${longitude}`);
+  //           },
+  //           error => {
+  //             console.log(error.code, error.message);
+  //           },
+  //           {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //         );
+  //       } else {
+  //         console.log('Location permission denied');
+  //       }
+  //     } catch (err) {
+  //       console.warn(err);
+  //     }
+  //   };
+  //   requestLocationPermission();
+  // }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -216,23 +210,11 @@ const MapScreen = ({route}) => {
           let error = result.errorMessage;
           console.log(' error ', error);
         } else {
-          // const token = result.data.token;
-
-          // console.warn(
-          //   ' OtlpLESSSSSS token ',`
-          //   result?.data,
-          //   ' ******** ',
-          //   result,
-          // );
-
           OtplessModule.onSignInCompleted();
-          // send this token to your backend to validate user details
-          // setOtplessResult(result);
 
           userData = {
             user_mobile_number: route?.params?.data.mobileNumber,
             user_verified_mobile_number: result?.data?.mobile?.number,
-            password: password,
             user_name: route?.params?.data.name,
             shop_name: route?.params?.data.shopName,
             address: currentAddress,
@@ -330,45 +312,6 @@ const MapScreen = ({route}) => {
               style={styles.pwTxtInp}
             />
 
-            <View>
-              <TextInput
-                mode="contain"
-                label={''}
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Create Password"
-                theme={{
-                  colors: {
-                    primary: 'black', // Change this to the desired color for the cursor
-                  },
-                }}
-                style={styles.pwTxtInp}
-              />
-
-              <TouchableOpacity
-                onPress={toggleShowPassword}
-                style={{
-                  position: 'absolute',
-                  top: 37,
-                  right: 30,
-                }}>
-                <Entypo
-                  name={!showPassword ? 'eye-with-line' : 'eye'}
-                  size={22}
-                  color={'black'}
-                />
-              </TouchableOpacity>
-              {password.length !== 6 ? (
-                <TextComponent
-                  text={'Please Create 6 Digits Password'}
-                  style={styles.error}
-                />
-              ) : (
-                <View style={{marginBottom: 20}} />
-              )}
-            </View>
-
             {loadingUser ? (
               <LoadingIndicator />
             ) : (
@@ -387,16 +330,15 @@ const MapScreen = ({route}) => {
                 <Button
                   onPress={handleNextStep}
                   style={{
-                    backgroundColor: password.length !== 6 ? '#ccc' : 'black',
+                    backgroundColor: 'black',
                     marginTop: 10,
                     padding: 3,
                   }}
                   labelStyle={{
-                    color: password.length !== 6 ? '#888' : '#fff',
+                    color: '#fff',
                     fontWeight: 'bold',
                     fontSize: 18,
-                  }}
-                  disabled={password.length !== 6 ? true : false}>
+                  }}>
                   SignUp
                 </Button>
               </View>

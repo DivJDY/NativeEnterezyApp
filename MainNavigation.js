@@ -17,6 +17,7 @@ import ProductDetailsScreen from './src/screens/ProductDetailsScreen';
 import CustomDrawer from './src/components/CustomDrawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Entypo from 'react-native-vector-icons/Entypo';
 import PaymentScreen from './src/screens/PaymentScreen';
 import DisplayRental from './src/screens/DisplayRental';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
@@ -29,6 +30,7 @@ import PostProductCategory from './src/screens/PostProductCategory';
 import UserRoleUpdateScreen from './src/screens/UserRoleUpdateScreen';
 import {FetchUtilityOptions} from './src/fetchUtility/FetchRequestOption';
 import {hostName} from './App';
+import UserLists from './src/screens/UserLists';
 
 const Stack = createStackNavigator();
 // const AuthStackNavigator = ({route}) => {
@@ -126,11 +128,17 @@ const HeaderImage = () => (
   />
 );
 
-const DrawerNavigationList = ({route}) => {
-  const {role} = route.params;
+const HomeBottomTabNavigator = () => (
+  <Tab.Navigator>
+    <Tab.Screen name="Home" component={HomeScreen} />
+  </Tab.Navigator>
+);
 
-  // console.warn(' ftgcdgfcv ====> Data ', ' 88888 ', role);
-  return (
+const AppNavigator = () => {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [role, setRole] = useState();
+
+  const DrawerNavigationList = () => (
     <Drawer.Navigator
       screenOptions={({navigation}) => ({
         headerStyle: {
@@ -172,33 +180,32 @@ const DrawerNavigationList = ({route}) => {
         }}
       />
 
-      {role === 'super_admin' ||
-        (role === 'admin' && (
-          <>
-            <Drawer.Screen
-              name="ProductPost"
-              component={ProductPostScreen}
-              options={{
-                title: 'Create Product',
-                headerTitle: () => <HeaderImage />,
-                drawerIcon: ({color}) => (
-                  <FontAwesome name="product-hunt" size={22} color={color} />
-                ),
-              }}
-            />
-            <Drawer.Screen
-              name="ProductCategory"
-              component={PostProductCategory}
-              options={{
-                title: 'Post Category',
-                headerTitle: () => <HeaderImage />,
-                drawerIcon: ({color}) => (
-                  <MaterialIcons name="category" size={22} color={color} />
-                ),
-              }}
-            />
-          </>
-        ))}
+      {(role === 'super_admin' || role === 'admin') && (
+        <>
+          <Drawer.Screen
+            name="ProductPost"
+            component={ProductPostScreen}
+            options={{
+              title: 'Create Product',
+              headerTitle: () => <HeaderImage />,
+              drawerIcon: ({color}) => (
+                <FontAwesome name="product-hunt" size={22} color={color} />
+              ),
+            }}
+          />
+          <Drawer.Screen
+            name="ProductCategory"
+            component={PostProductCategory}
+            options={{
+              title: 'Post Category',
+              headerTitle: () => <HeaderImage />,
+              drawerIcon: ({color}) => (
+                <MaterialIcons name="category" size={22} color={color} />
+              ),
+            }}
+          />
+        </>
+      )}
 
       <Drawer.Screen
         name="OrderList"
@@ -232,7 +239,21 @@ const DrawerNavigationList = ({route}) => {
             title: 'User Role',
             headerTitle: () => <HeaderImage />,
             drawerIcon: ({color}) => (
-              <MaterialIcons name="policy" size={22} color={color} />
+              <MaterialIcons name="edit" size={22} color={color} />
+            ),
+          }}
+        />
+      )}
+
+      {role === 'super_admin' && (
+        <Drawer.Screen
+          name="UserList"
+          component={UserLists}
+          options={{
+            title: 'User Lists',
+            headerTitle: () => <HeaderImage />,
+            drawerIcon: ({color}) => (
+              <Entypo name="users" size={22} color={color} />
             ),
           }}
         />
@@ -286,17 +307,6 @@ const DrawerNavigationList = ({route}) => {
       />
     </Drawer.Navigator>
   );
-};
-
-const HomeBottomTabNavigator = () => (
-  <Tab.Navigator>
-    <Tab.Screen name="Home" component={HomeScreen} />
-  </Tab.Navigator>
-);
-
-const AppNavigator = () => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [data, setData] = useState();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -321,11 +331,13 @@ const AppNavigator = () => {
       .then(response => response.json())
       .then(response => {
         console.warn('User response ', response);
-        setData(response);
+        setRole(response.role);
         // setLoading(false);
       })
       .catch(error => console.warn('Error while fetch user ', error));
   };
+
+  console.warn(' data ===> ', role);
 
   const getUserId = async () => {
     await AsyncStorage.getItem('userId')
@@ -366,7 +378,7 @@ const AppNavigator = () => {
           <Stack.Screen
             name="Home"
             options={{headerShown: false}}
-            initialParams={{data: data?.role}}
+            initialParams={{role: role}}
             component={DrawerNavigationList}
           />
         )}
@@ -378,8 +390,8 @@ const AppNavigator = () => {
 
         <Stack.Screen
           name="MainScreen"
+          initialParams={{role: role}}
           options={{headerShown: false}}
-          initialParams={{data: data?.role}}
           component={DrawerNavigationList}
         />
         <Stack.Screen
