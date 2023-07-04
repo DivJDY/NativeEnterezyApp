@@ -31,6 +31,7 @@ import UserRoleUpdateScreen from './src/screens/UserRoleUpdateScreen';
 import {FetchUtilityOptions} from './src/fetchUtility/FetchRequestOption';
 import {hostName} from './App';
 import UserLists from './src/screens/UserLists';
+import LoadingIndicator from './src/components/LoadingIndicator';
 
 const Stack = createStackNavigator();
 // const AuthStackNavigator = ({route}) => {
@@ -137,204 +138,285 @@ const HomeBottomTabNavigator = () => (
 const AppNavigator = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [role, setRole] = useState();
+  const [loading, setLoading] = useState(false);
+  console.warn(' prophdbcjcvc cjb data === ', role);
 
-  const DrawerNavigationList = () => (
-    <Drawer.Navigator
-      screenOptions={({navigation}) => ({
-        headerStyle: {
-          backgroundColor: 'black',
-          height: 60,
-        },
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => navigation.toggleDrawer()}
-            style={styles.headerLeft}>
-            <Icon name="bars" size={20} color="#fff" />
-          </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <View style={styles.headerRight}>
-            <Icon name="bell" size={20} color="#fff" />
-          </View>
-        ),
-        drawerLabelStyle: {
-          marginLeft: -10,
-          fontFamily: 'Roboto-Medium',
-          fontSize: 15,
-          fontWeight: 'bold',
-        },
-        drawerActiveBackgroundColor: 'black',
-        drawerActiveTintColor: '#fff',
-      })}
-      drawerContent={props => <CustomDrawer {...props} />}>
-      <Drawer.Screen
-        name="HomeScreen"
-        component={BottomTabNavigator}
-        options={{
-          title: 'Home',
+  // const [userRole, setUserRole] = useState(null);
 
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <Ionicons name="home-outline" size={22} color={color} />
-          ),
-        }}
-      />
-
-      {(role === 'super_admin' || role === 'admin') && (
-        <>
-          <Drawer.Screen
-            name="ProductPost"
-            component={ProductPostScreen}
-            options={{
-              title: 'Create Product',
-              headerTitle: () => <HeaderImage />,
-              drawerIcon: ({color}) => (
-                <FontAwesome name="product-hunt" size={22} color={color} />
-              ),
-            }}
-          />
-          <Drawer.Screen
-            name="ProductCategory"
-            component={PostProductCategory}
-            options={{
-              title: 'Post Category',
-              headerTitle: () => <HeaderImage />,
-              drawerIcon: ({color}) => (
-                <MaterialIcons name="category" size={22} color={color} />
-              ),
-            }}
-          />
-        </>
-      )}
-
-      <Drawer.Screen
-        name="OrderList"
-        component={OrderListScreen}
-        options={{
-          title: 'My Order',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <MaterialIcons name="shopping-cart" size={22} color={color} />
-          ),
-        }}
-      />
-
-      <Drawer.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Profile',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <Ionicons name="person-outline" size={22} color={color} />
-          ),
-        }}
-      />
-
-      {role === 'super_admin' && (
-        <Drawer.Screen
-          name="UpdateRole"
-          component={UserRoleUpdateScreen}
-          options={{
-            title: 'User Role',
-            headerTitle: () => <HeaderImage />,
-            drawerIcon: ({color}) => (
-              <MaterialIcons name="edit" size={22} color={color} />
-            ),
-          }}
-        />
-      )}
-
-      {role === 'super_admin' && (
-        <Drawer.Screen
-          name="UserList"
-          component={UserLists}
-          options={{
-            title: 'User Lists',
-            headerTitle: () => <HeaderImage />,
-            drawerIcon: ({color}) => (
-              <Entypo name="users" size={22} color={color} />
-            ),
-          }}
-        />
-      )}
-
-      <Drawer.Screen
-        name="PrivacyPolicy"
-        component={PrivacyPolicyScreen}
-        options={{
-          title: 'Privacy Policy',
-          headerTitle: () => <HeaderImage />,
-          drawerIcon: ({color}) => (
-            <MaterialIcons name="policy" size={22} color={color} />
-          ),
-        }}
-      />
-
-      {/* Header locked */}
-
-      <Drawer.Screen
-        name="ProductDetails"
-        component={ProductDetailsScreen}
-        options={{
-          drawerLockMode: 'locked-closed',
-          headerTitle: () => <HeaderImage />,
-          hidden: true,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
-
-      <Drawer.Screen
-        name="Payment"
-        component={PaymentScreen}
-        options={{
-          drawerLockMode: 'locked-closed',
-          headerTitle: () => <HeaderImage />,
-          hidden: true,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
-
-      <Drawer.Screen
-        name="DisplayRental"
-        component={DisplayRental}
-        options={{
-          drawerLockMode: 'locked-closed',
-          headerTitle: () => <HeaderImage />,
-          hidden: true,
-          drawerItemStyle: {display: 'none'},
-        }}
-      />
-    </Drawer.Navigator>
-  );
+  const fetchUserRole = async () => {
+    setLoading(true);
+    try {
+      // Perform the asynchronous operation to fetch the user role
+      // const userRole = await fetchUserRoleFromServer();
+      setLoading(true);
+      await getUserLoggedIn();
+      // await getUserRole();
+      getUserId();
+    } catch (error) {
+      setLoading(false);
+      console.error('Error fetching user role:', error);
+      // Handle the error case if necessary
+    }
+  };
 
   useEffect(() => {
-    // Check if user is already logged in
-    getUserLoggedIn();
-    getUserId();
+    fetchUserRole();
+    // setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [role]);
+
+  useEffect(() => {
+    fetchUserRole();
+    // setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [role]);
+
+  // Render the appropriate screen based on the user role
+  // if (role === 'super_admin') {
+  //   // Render a loading indicator or blank screen
+  //   // DrawerNavigationList();
+  //   setLoading(t)
+  // } else if (role === 'admin') {
+  //   // Render the admin screen
+  //   DrawerNavigationList();
+  // } else if (role === null) {
+  //   // Render the regular user screen
+  //   return null;
+  // } else {
+  //   DrawerNavigationList();
+  // }
+
+  const DrawerNavigationList = () => (
+    <>
+      {loading ? null : (
+        <Drawer.Navigator
+          screenOptions={({navigation}) => ({
+            headerStyle: {
+              backgroundColor: 'black',
+              height: 60,
+            },
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.toggleDrawer()}
+                style={styles.headerLeft}>
+                <Icon name="bars" size={20} color="#fff" />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <View style={styles.headerRight}>
+                <Icon name="bell" size={20} color="#fff" />
+              </View>
+            ),
+            drawerLabelStyle: {
+              marginLeft: -10,
+              fontFamily: 'Roboto-Medium',
+              fontSize: 15,
+              fontWeight: 'bold',
+            },
+            drawerActiveBackgroundColor: 'black',
+            drawerActiveTintColor: '#fff',
+          })}
+          drawerContent={props => <CustomDrawer {...props} />}>
+          <Drawer.Screen
+            name="HomeScreen"
+            component={BottomTabNavigator}
+            options={{
+              title: 'Home',
+
+              headerTitle: () => <HeaderImage />,
+              drawerIcon: ({color}) => (
+                <Ionicons name="home-outline" size={22} color={color} />
+              ),
+            }}
+          />
+
+          {(role === 'super_admin' || role === 'admin') && (
+            <>
+              <Drawer.Screen
+                name="ProductPost"
+                component={ProductPostScreen}
+                options={{
+                  title: 'Create Product',
+                  headerTitle: () => <HeaderImage />,
+                  drawerIcon: ({color}) => (
+                    <FontAwesome name="product-hunt" size={22} color={color} />
+                  ),
+                }}
+              />
+              <Drawer.Screen
+                name="ProductCategory"
+                component={PostProductCategory}
+                options={{
+                  title: 'Post Category',
+                  headerTitle: () => <HeaderImage />,
+                  drawerIcon: ({color}) => (
+                    <MaterialIcons name="category" size={22} color={color} />
+                  ),
+                }}
+              />
+            </>
+          )}
+
+          <Drawer.Screen
+            name="OrderList"
+            component={OrderListScreen}
+            options={{
+              title: 'My Order',
+              headerTitle: () => <HeaderImage />,
+              drawerIcon: ({color}) => (
+                <MaterialIcons name="shopping-cart" size={22} color={color} />
+              ),
+            }}
+          />
+
+          <Drawer.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              title: 'Profile',
+              headerTitle: () => <HeaderImage />,
+              drawerIcon: ({color}) => (
+                <Ionicons name="person-outline" size={22} color={color} />
+              ),
+            }}
+          />
+
+          {/* {role === 'super_admin' && (
+   <Drawer.Screen
+     name="UpdateRole"
+     component={UserRoleUpdateScreen}
+     options={{
+       title: 'User Role',
+       headerTitle: () => <HeaderImage />,
+       drawerIcon: ({color}) => (
+         <MaterialIcons name="edit" size={22} color={color} />
+       ),
+     }}
+   />
+ )} */}
+
+          {role === 'super_admin' && (
+            <Drawer.Screen
+              name="UserList"
+              component={UserLists}
+              options={{
+                title: 'User Lists',
+                headerTitle: () => <HeaderImage />,
+                drawerIcon: ({color}) => (
+                  <Entypo name="users" size={22} color={color} />
+                ),
+              }}
+            />
+          )}
+
+          <Drawer.Screen
+            name="PrivacyPolicy"
+            component={PrivacyPolicyScreen}
+            options={{
+              title: 'Privacy Policy',
+              headerTitle: () => <HeaderImage />,
+              drawerIcon: ({color}) => (
+                <MaterialIcons name="policy" size={22} color={color} />
+              ),
+            }}
+          />
+
+          {/* Header locked */}
+
+          <Drawer.Screen
+            name="ProductDetails"
+            component={ProductDetailsScreen}
+            options={{
+              drawerLockMode: 'locked-closed',
+              headerTitle: () => <HeaderImage />,
+              hidden: true,
+              drawerItemStyle: {display: 'none'},
+            }}
+          />
+
+          <Drawer.Screen
+            name="Payment"
+            component={PaymentScreen}
+            options={{
+              drawerLockMode: 'locked-closed',
+              headerTitle: () => <HeaderImage />,
+              hidden: true,
+              drawerItemStyle: {display: 'none'},
+            }}
+          />
+
+          <Drawer.Screen
+            name="DisplayRental"
+            component={DisplayRental}
+            options={{
+              drawerLockMode: 'locked-closed',
+              headerTitle: () => <HeaderImage />,
+              hidden: true,
+              drawerItemStyle: {display: 'none'},
+            }}
+          />
+        </Drawer.Navigator>
+      )}
+    </>
+  );
+
+  // useEffect(() => {
+  //   // Check if user is already logged in
+  //   setLoading(true);
+  //   getUserLoggedIn();
+  //   getUserRole();
+  //   getUserId();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  const getUserRole = async () => {
+    setLoading(true);
+    await AsyncStorage.getItem('role')
+      .then(role => {
+        if (role !== null) {
+          // Value found in AsyncStorage
+          console.log('Role asyncfffffffff ', role);
+          setRole(role);
+          setLoading(false);
+        } else {
+          // Value not found in AsyncStorage
+          console.log('No value found for key "role"');
+          getUserId();
+          setLoading(false);
+        }
+      })
+      .catch(error => {
+        // Handle any errors that occur during AsyncStorage retrieval
+        console.log('Error retrieving value:', error);
+      });
+  };
 
   const getUserLoggedIn = async () => {
+    setLoading(true);
     const signedInStatus = await AsyncStorage.getItem('userLoggedIn');
     setIsSignedIn(signedInStatus === 'true');
+    setLoading(false);
   };
 
   console.warn(' istgvfhbcvbfhbbf ', isSignedIn);
 
   const fetchUser = async id => {
-    // setLoading(true);
+    setLoading(true);
     await fetch(hostName + '/user/' + id, {
       method: 'GET',
       FetchUtilityOptions,
     })
       .then(response => response.json())
       .then(response => {
+        setLoading(false);
         console.warn('User response ', response);
         setRole(response.role);
-        // setLoading(false);
+        setLoading(false);
       })
-      .catch(error => console.warn('Error while fetch user ', error));
+      .catch(error => {
+        console.warn('Error while fetch user ', error);
+        // setLoading(false);
+      });
   };
 
   console.warn(' data ===> ', role);
@@ -343,9 +425,12 @@ const AppNavigator = () => {
     await AsyncStorage.getItem('userId')
       .then(id => {
         if (id !== null) {
+          setLoading(true);
           // Value found in AsyncStorage
           console.log(id);
           fetchUser(id);
+          // const roleValue = AsyncStorage.getItem('role');
+          // setRole(roleValue);
         } else {
           // Value not found in AsyncStorage
           console.log('No value found for key "userId"');
@@ -378,7 +463,6 @@ const AppNavigator = () => {
           <Stack.Screen
             name="Home"
             options={{headerShown: false}}
-            initialParams={{role: role}}
             component={DrawerNavigationList}
           />
         )}
@@ -390,7 +474,6 @@ const AppNavigator = () => {
 
         <Stack.Screen
           name="MainScreen"
-          initialParams={{role: role}}
           options={{headerShown: false}}
           component={DrawerNavigationList}
         />

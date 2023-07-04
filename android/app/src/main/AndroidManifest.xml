@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     
 
 
@@ -15,6 +16,7 @@
       android:icon="@mipmap/app_logo"
       android:roundIcon="@mipmap/app_logo"
       android:requestLegacyExternalStorage="true"
+      android:usesCleartextTraffic="true"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity

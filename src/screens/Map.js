@@ -142,6 +142,7 @@ const MapScreen = ({route}) => {
         Alert.alert(response.message);
         console.warn(' user id ===> ', response.user_id);
         AsyncStorage.setItem('userId', JSON.stringify(response.user_id));
+        // AsyncStorage.setItem('role', JSON.stringify(response.role));
         setUserLoggedIn();
         setCurrentStep(currentStep + 1);
         // call this method when you login is completed

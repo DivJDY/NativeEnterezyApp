@@ -42,6 +42,7 @@ function LoginScreen({navigation}) {
 
         if (response.status === 201) {
           AsyncStorage.setItem('userId', JSON.stringify(response.user_id));
+          AsyncStorage.setItem('role', JSON.stringify(response.role));
           setUserLoggedIn();
           Alert.alert(response.message);
           navigation.navigate('MainScreen');
