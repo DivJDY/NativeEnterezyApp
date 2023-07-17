@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
   ImageBackground,
   TouchableOpacity,
   Alert,
+  AppState,
 } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -15,21 +16,54 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {AuthContext} from '../context/AuthContext';
 
 const CustomDrawer = props => {
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+  const {logout} = useContext(AuthContext);
+
   const navigation = useNavigation();
 
-  const handleCloseDrawer = () => {
-    navigation.closeDrawer();
-  };
+  //useEffect(() => {
+  //const handleAppStateChange = nextAppState => {
+  //if (appState.match(/inactive|background/) && nextAppState === 'active') {
+  // App has come back to the foreground
+  // Check if the user is logged out and perform any necessary actions
+  // if (isLoggedOut) {
+  // Reload the app
+  //reloadApp();
+  //  }
+  //}
+  //setAppState(nextAppState);
+  //};
+
+  //AppState.addEventListener('change', handleAppStateChange);
+
+  // return () => {
+  // AppState.removeEventListener('change', handleAppStateChange);
+  // };
+  // }, [appState, isLoggedOut]);
+
+  
 
   const handleLogout = async () => {
     try {
       // await AsyncStorage.clear();
-      await AsyncStorage.removeItem('userLoggedIn');
+      // await AsyncStorage.removeItem('isSignedUp');
+      //setIsLoggedOut(true);
       // handleCloseDrawer();
-      console.warn('AsyncStorage cleared successfully');
-      navigation.navigate('ProfileLogIn');
+      // console.warn('AsyncStorage cleared successfully');
+      // Clear the signup status from AsyncStorage
+      // await AsyncStorage.removeItem('isSignedUp');
+
+      // Navigate to the signup screen
+      // navigation.navigate('Login');
+      //RNRestart.Restart();
+      // navigation.replace('Login');
+      logout();
+      
     } catch (error) {
       console.log(error);
     }
@@ -46,7 +80,7 @@ const CustomDrawer = props => {
           resizeMode="stretch"
         />
 
-        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
+        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 30}}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>

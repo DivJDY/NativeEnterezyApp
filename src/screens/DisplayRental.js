@@ -1,6 +1,6 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState, useEffect, useRef} from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -9,14 +9,12 @@ import {
   Platform,
   Alert,
   StyleSheet,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {Button, Provider as PaperProvider} from 'react-native-paper';
 import {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
-import dismissKeyboard from 'react-native-dismiss-keyboard';
 import TextInputComponent from '../components/TextInputComponent';
 import {styles} from '../styles/formStyles';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
@@ -25,15 +23,6 @@ import LoadingIndicator from '../components/LoadingIndicator';
 import DropDownSelection from '../components/DropDownSelection';
 import {dropdownstyle} from '../styles/dropdownStyles';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
-// Options
-const shelfRackOptions = [
-  {shelf_name: 'Gondola'},
-  {shelf_name: 'Shelf'},
-  {shelf_name: 'Clip Strip'},
-  {shelf_name: 'Store Wall Branding'},
-  {shelf_name: 'Store Name Branding'},
-];
 
 function DisplayRental() {
   const [selectShelf, setSelectShelf] = useState([]);
@@ -71,17 +60,6 @@ function DisplayRental() {
   // close the selection dropdown
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
-  // const ShelfArray = shelfvisibility?.map(itemId => {
-  //   const shelfRackOption = shelfvisibilityList.find(
-  //     option => option.id === itemId,
-  //   );
-  //   return {
-  //     shelf_id: shelfRackOption ? shelfRackOption.id : '',
-  //   };
-  // });
-
-  // const shelf_ids = ShelfArray.map(obj => obj.shelf_id);
-
   const navigation = useNavigation();
 
   const handleImageSelection = () => {
@@ -105,12 +83,6 @@ function DisplayRental() {
 
         RNFS.copyFile(sourcePath, targetPath)
           .then(() => {
-            // console.warn(
-            //   'Image copied to permanent location ',
-            //   targetPath,
-            //   ' 888 ',
-            //   sourcePath,
-            // );
             setShelfImage(targetPath); // Set the permanent image URI to display it
           })
           .catch(error => {
@@ -169,29 +141,6 @@ function DisplayRental() {
         console.error('post error ', error);
       });
   };
-
-  // const handleSubmitData = (ShelfArrayData, formData) => {
-  //   console.warn('Form Data => ShelfArrayData ', ShelfArrayData);
-  //   // formData.push({
-  //   //   id: ShelfArrayData.id,
-  //   // });
-
-  //   fetch(hostName + '/type_of_shelf_vibility', {
-  //     method: 'POST',
-  //     headers: requestHeader,
-  //     body: JSON.stringify(ShelfArrayData),
-  //   })
-  //     .then(response => response.json())
-  //     .then(response => {
-  //       // setLoading(false);
-  //       // clearFormData()
-  //       Alert.alert(response.message);
-  //     })
-  //     .catch(error => {
-  //       // Handle any errors
-  //       console.error('post error ', error);
-  //     });
-  // };
 
   const submitData = () => {
     let formData;
@@ -282,12 +231,12 @@ function DisplayRental() {
       <View style={{alignItems: 'center', marginTop: 15}}>
         <Text
           style={{
-            fontSize: 28,
+            fontSize: 30,
             marginBottom: 8,
             fontWeight: 'bold',
             color: 'black',
           }}>
-          Display Rental
+          Display Rentals
         </Text>
       </View>
 
@@ -422,7 +371,7 @@ function DisplayRental() {
                   borderRadius: 10,
                 }}
                 onPress={submitData}>
-                <Text style={[styles.btnStyle, {color: '#FECE00'}]}>
+                <Text style={[styles.btnStyle, {color: '#fff'}]}>
                   Submit Data
                 </Text>
               </Button>
@@ -431,7 +380,7 @@ function DisplayRental() {
                 style={{backgroundColor: 'black', borderRadius: 10}}
                 onPress={clearFormData}>
                 {' '}
-                <Text style={[styles.btnStyle, {color: '#FECE00'}]}>
+                <Text style={[styles.btnStyle, {color: '#fff'}]}>
                   Clear Data
                 </Text>
               </Button>

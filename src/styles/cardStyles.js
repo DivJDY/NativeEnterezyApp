@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 const {StyleSheet} = require('react-native');
 
 export const styles = StyleSheet.create({
@@ -26,7 +27,7 @@ export const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: 14,
-    fontWeight: 500,
+    fontWeight: 'bold',
   },
   cardPara: {
     marginTop: 5,

@@ -350,7 +350,18 @@ const ProductPostScreen = () => {
                     </Text>
                   </Button>
 
-                  <ButtonComponent name="Submit" onPress={handleSubmit} />
+                  <Button
+                    mode="contained"
+                    style={{
+                      marginRight: 15,
+                      backgroundColor: 'black',
+                      borderRadius: 10,
+                    }}
+                    onPress={handleSubmit}>
+                    <Text style={[styles.btnStyle, {color: '#fff'}]}>
+                      Submit
+                    </Text>
+                  </Button>
                 </View>
               )}
             </Formik>

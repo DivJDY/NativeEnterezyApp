@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -28,6 +29,7 @@ export const styles = StyleSheet.create({
     color: 'gray',
   },
   btnStyle: {
+    color:'white',
     fontWeight: 'bold',
     fontSize: 16,
     lineHeight: 20,

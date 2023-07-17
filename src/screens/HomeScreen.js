@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
@@ -15,7 +16,6 @@ import {useNavigation} from '@react-navigation/native';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {styles} from '../styles/homeScreen';
 import {hostName} from '../../App';
-
 const keyExtractor = item => item.id;
 
 const HomeScreen = ({route}) => {
@@ -67,6 +67,7 @@ const HomeScreen = ({route}) => {
 
       const jsonData = await response.json();
       const newData = jsonData.products;
+      console.log('product data ', newData);
       setFilteredData(newData);
 
       setLoading(false);
@@ -75,6 +76,7 @@ const HomeScreen = ({route}) => {
 
       // setHasNoData(jsonData.total === filteredData.length ? true : false);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching data:', error);
     }
   };
@@ -151,12 +153,19 @@ const HomeScreen = ({route}) => {
 
   return (
     <>
+      <Text
+        variant="titleLarge"
+        style={{marginLeft: 10, marginTop: 10, fontWeight: 'bold'}}>
+        Click here
+      </Text>
       <Button
         mode="contained"
         style={{
-          marginBottom: 8,
-          marginTop: 15,
+          marginBottom: 10,
+          marginTop: 5,
           marginHorizontal: 10,
+          width: '40%',
+          backgroundColor: 'black',
         }}
         onPress={() => navigation.navigate('DisplayRental')}>
         <Text style={styles.btnStyle}>Display Rentals</Text>

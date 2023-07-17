@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import {StyleSheet} from 'react-native';
 
-export const styles = StyleSheet.create({
+export const header_styles = StyleSheet.create({
   tabBarLabel: {
     color: 'black',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   headerLeft: {

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import {Dropdown} from 'react-native-element-dropdown';
 import {dropdownstyle} from '../styles/dropdownStyles';

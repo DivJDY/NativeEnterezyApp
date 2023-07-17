@@ -1,11 +1,20 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useState, useEffect} from 'react';
-import {View, Text, FlatList, Alert, PermissionsAndroid} from 'react-native';
-import {List, IconButton, Menu, Divider, Searchbar} from 'react-native-paper';
+import {View, Text, FlatList, Alert} from 'react-native';
+import {
+  List,
+  IconButton,
+  Menu,
+  Divider,
+  Searchbar,
+  Provider as PaperProvider,
+} from 'react-native-paper';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import LoadingIndicator from '../components/LoadingIndicator';
 import NoDataFound from '../components/NoDataFound';
-import {styles} from '../styles/userListStyle';
+import {styles} from '../styles/userListsStyle';
 import DownloadUsers from '../components/DownloadUsers';
 
 const UserLists = () => {
@@ -163,33 +172,35 @@ const UserLists = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>List of Users</Text>
-      <DownloadUsers users={users} />
+    <PaperProvider>
+      <View style={styles.container}>
+        <Text style={styles.title}>List of Users</Text>
+        <DownloadUsers users={users} />
 
-      <Searchbar
-        placeholder="Search"
-        onChangeText={handleSearch}
-        value={searchQuery}
-        style={styles.searchBar}
-        theme={{
-          colors: {
-            primary: 'black', // Change this to the desired color for the cursor
-          },
-        }}
-      />
-      {loading && <LoadingIndicator />}
-
-      {users !== [] ? (
-        <FlatList
-          data={users}
-          renderItem={renderUserItem}
-          keyExtractor={item => item.id.toString()}
+        <Searchbar
+          placeholder="Search"
+          onChangeText={handleSearch}
+          value={searchQuery}
+          style={styles.searchBar}
+          theme={{
+            colors: {
+              primary: 'black', // Change this to the desired color for the cursor
+            },
+          }}
         />
-      ) : (
-        <NoDataFound message={'User data not found'} />
-      )}
-    </View>
+        {loading && <LoadingIndicator />}
+
+        {users !== [] ? (
+          <FlatList
+            data={users}
+            renderItem={renderUserItem}
+            keyExtractor={item => item.id.toString()}
+          />
+        ) : (
+          <NoDataFound message={'User data not found'} />
+        )}
+      </View>
+    </PaperProvider>
   );
 };
 

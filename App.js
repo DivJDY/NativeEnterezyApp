@@ -1,20 +1,25 @@
-import React, {useState, useEffect} from 'react';
-import {Provider as PaperProvider} from 'react-native-paper';
-import theme from './AppTheme';
-// import MainNavigation from './MainNavigation';
-import AppNavigator from './MainNavigation';
+/* eslint-disable prettier/prettier */
+import {View, Text} from 'react-native';
+import React from 'react';
+import Navigation from './Navigation';
+import {AuthProvider} from './src/context/AuthContext';
 
 const App = () => {
+  // return (
+  //   <View>
+  //     <Text>App</Text>
+  //   </View>
+  // );
+
   return (
-    <>
-      <PaperProvider theme={theme}>
-        <AppNavigator />
-      </PaperProvider>
-    </>
+    <AuthProvider>
+      <Navigation />
+    </AuthProvider>
   );
 };
 
-export default App;
+// const hostName = 'http://127.0.0.1:5010';
+// export const hostName="https://6fe8-202-131-134-244.ngrok-free.app"
 
-export const hostName =
-  'https://8248-2409-4071-e01-d030-dc9b-1e30-e888-b824.ngrok-free.app';
+export const hostName = 'http://3.26.14.137:5000';
+export default App;

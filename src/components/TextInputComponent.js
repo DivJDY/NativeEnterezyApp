@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {TextInput} from 'react-native-paper';
@@ -15,10 +16,11 @@ function TextInputComponent({
   return (
     <TextInput
       placeholder={placeholder}
+      mode="Flat"
       onChangeText={onChangeText}
       onBlur={onBlur}
       value={value}
-      style={[style, {backgroundColor: 'transparent', borderWidth: 2}]}
+      style={[style, {backgroundColor: '#fff', borderWidth: 2}]}
       keyboardType={keyboardType}
       multiline={multiline}
       contentContainerStyle={{alignItems: 'flex-start'}}

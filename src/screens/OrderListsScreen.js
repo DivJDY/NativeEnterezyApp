@@ -27,6 +27,7 @@ const OrderListScreen = () => {
     })
       .then(response => response.json())
       .then(response => {
+        console.warn(response);
         setData(response);
         setLoading(false);
       })

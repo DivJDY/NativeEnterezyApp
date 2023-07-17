@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {View, Alert} from 'react-native';
@@ -79,7 +80,7 @@ const CardDetailsComponent = props => {
           text: 'OK',
           onPress: () => {
             // Action to perform when OK is pressed
-            navigation.navigate('Home');
+            navigation.navigate('HomeDrawer');
           },
         },
       ],

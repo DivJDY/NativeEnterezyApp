@@ -14,4 +14,3 @@ const ProductDetailsScreen = ({route}) => {
 };
 
 export default ProductDetailsScreen;
-

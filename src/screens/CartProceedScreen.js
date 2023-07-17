@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import {View, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -9,12 +10,13 @@ import {
   Dialog,
   Portal,
   Checkbox,
+  Provider,
 } from 'react-native-paper';
 import {styles} from '../styles/cardStyles';
 import {useNavigation} from '@react-navigation/native';
 import {hostName} from '../../App';
 
-const PaymentScreen = ({route}) => {
+const CartProceedScreen = ({route}) => {
   // eslint-disable-next-line no-unused-vars
   const [taxValue, setTaxValue] = useState(50);
   const [data, setData] = useState();
@@ -90,7 +92,7 @@ const PaymentScreen = ({route}) => {
         hideDialog();
         setChecked(false);
         removeCartItem();
-        navigation.navigate('HomeStack');
+        navigation.navigate('HomeDrawer');
       })
       .catch(error => {
         // Handle any errors
@@ -117,7 +119,7 @@ const PaymentScreen = ({route}) => {
     taxValue,
   ]);
   return (
-    <>
+    <Provider>
       <View style={{flex: 1, marginVertical: 20}}>
         <View
           style={{
@@ -244,8 +246,8 @@ const PaymentScreen = ({route}) => {
           </Dialog>
         </Portal>
       </View>
-    </>
+    </Provider>
   );
 };
 
-export default PaymentScreen;
+export default CartProceedScreen;

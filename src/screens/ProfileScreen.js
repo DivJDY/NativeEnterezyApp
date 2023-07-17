@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {Avatar, Title, Text, Button} from 'react-native-paper';
-import {styles} from '../styles/profileScreen';
+import {styles} from '../styles/ProfileScreenStyle';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {useNavigation} from '@react-navigation/native';
@@ -61,7 +61,7 @@ const ProfileScreen = () => {
   // console.warn(' ---- > ', data?.user_name.charAt(0).toUpperCase());
   return (
     <>
-      {loading ? (
+      {!loading ? (
         <View style={{marginTop: '10%'}}>
           <LoadingIndicator />
         </View>
@@ -108,9 +108,9 @@ const ProfileScreen = () => {
           </View>
         </View>
       ) : (
-        <NoDataFound message="Profile data not found please do login" />
+        <NoDataFound message="Profile data not found" />
       )}
-      <View style={[styles.titleContainer, {marginBottom: '10%'}]}>
+      {/* <View style={[styles.titleContainer, {marginBottom: '10%'}]}>
         <Button
           mode="contained"
           buttonColor="blue"
@@ -118,7 +118,7 @@ const ProfileScreen = () => {
           style={styles.btn}>
           <Text style={styles.btnText}>Login</Text>
         </Button>
-      </View>
+      </View> */}
     </>
   );
 };

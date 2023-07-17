@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {FlatList, View, Alert} from 'react-native';
@@ -187,7 +187,7 @@ const CartScreen = () => {
                 backgroundColor: 'black',
               }}
               onPress={() =>
-                navigation.navigate('Payment', {
+                navigation.navigate('CartProceed', {
                   cartData: Item,
                   totalPrice: totalPrice,
                 })
@@ -209,11 +209,10 @@ const CartScreen = () => {
           marginTop: 10,
         }}>
         <Button
-          mode="outlined"
+          mode="contained"
           style={{
+            backgroundColor: '#FECE00',
             alignItems: 'center',
-            borderColor: 'black',
-            borderWidth: 3,
           }}
           onPress={() => getCartItems()}>
           Update Cart
