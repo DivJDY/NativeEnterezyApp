@@ -78,7 +78,7 @@ const GMapScreen = ({navigation}) => {
   };
 
   const handleSubmit = async () => {
-   setUserLoggedIn();
+    setUserLoggedIn();
     Alert.alert('SignUp Completed');
     // Perform signup logic here
 
@@ -144,7 +144,11 @@ const GMapScreen = ({navigation}) => {
           </View>
 
           <View style={{marginTop: '-15%', marginBottom: 20}}>
-            <BtnComponent title={'SIGNUP'} handleSubmit={handleSubmit} />
+            <BtnComponent
+              color={'#FECE00'}
+              title={'SIGNUP'}
+              handleSubmit={handleSubmit}
+            />
           </View>
         </View>
       </ScrollView>

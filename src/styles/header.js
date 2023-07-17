@@ -4,7 +4,7 @@ import {StyleSheet} from 'react-native';
 export const header_styles = StyleSheet.create({
   tabBarLabel: {
     color: 'black',
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   headerLeft: {

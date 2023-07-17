@@ -9,13 +9,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Zocial from 'react-native-vector-icons/Zocial';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
 
 // Styles
 import {header_styles} from './src/styles/Header';
@@ -81,6 +81,23 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
+
+      <Tab.Screen
+        name="DisplayRental"
+        component={DisplayRental}
+        options={{
+          tabBarIcon: ({focused}) => (
+            <FontAwesome
+              name="rupee"
+              size={26}
+              color={focused ? '#FECE00' : 'black'}
+            />
+          ),
+          tabBarLabel: () => (
+            <Text style={header_styles.tabBarLabel}>Display Rentals</Text>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -122,7 +139,7 @@ const DrawerNavigation = () => (
       drawerLabelStyle: {
         marginLeft: -10,
         fontFamily: 'Roboto-Medium',
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
       },
       drawerActiveBackgroundColor: 'black',
@@ -136,35 +153,21 @@ const DrawerNavigation = () => (
         title: 'Home',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <Ionicons name="home" size={26} color={color} />
+          <Ionicons name="home" size={30} color={color} />
         ),
       }}
     />
-
-    <Drawer.Screen
-      name="DisplayRental"
-      component={DisplayRental}
-      options={{
-        title: 'Display Rental',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <Zocial name="myspace" size={26} color={color} />
-        ),
-      }}
-    />
-
     <Drawer.Screen
       name="ProductPost"
       component={ProductPostScreen}
       options={{
-        title: 'Post Product',
+        title: 'Create Product',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <FontAwesome name="product-hunt" size={22} color={color} />
+          <FontAwesome name="product-hunt" size={28} color={color} />
         ),
       }}
     />
-
     <Drawer.Screen
       name="ProductCategory"
       component={PostProductCategory}
@@ -172,11 +175,10 @@ const DrawerNavigation = () => (
         title: 'Post Category',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <MaterialIcons name="category" size={22} color={color} />
+          <Feather name="grid" size={30} color={color} />
         ),
       }}
     />
-
     <Drawer.Screen
       name="OrderList"
       component={OrderListScreen}
@@ -184,19 +186,11 @@ const DrawerNavigation = () => (
         title: 'My Order',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <MaterialIcons name="shopping-cart" size={22} color={color} />
-        ),
-      }}
-    />
-
-    <Drawer.Screen
-      name="UserList"
-      component={UserLists}
-      options={{
-        title: 'User Lists',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <Entypo name="users" size={22} color={color} />
+          <MaterialCommunityIcons
+            name="cart-arrow-down"
+            size={30}
+            color={color}
+          />
         ),
       }}
     />
@@ -208,25 +202,60 @@ const DrawerNavigation = () => (
         title: 'Profile',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <Ionicons name="person-outline" size={22} color={color} />
+          <MaterialIcons name="person" size={30} color={color} />
         ),
       }}
     />
 
     <Drawer.Screen
-      name="PrivacyPolicy"
-      component={PrivacyPolicyScreen}
+      name="DisplayRental"
+      component={DisplayRental}
       options={{
-        title: 'Privacy Policy',
+        title: 'Display Rental',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <MaterialIcons name="policy" size={22} color={color} />
+          <FontAwesome
+            name="rupee"
+            size={28}
+            style={{marginLeft: 9}}
+            color={color}
+          />
         ),
       }}
     />
-
+    <Drawer.Screen
+      name="UserList"
+      component={UserLists}
+      options={{
+        title: 'User Lists',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <Entypo
+            name="users"
+            size={30}
+            style={{marginLeft: 9}}
+            color={color}
+          />
+        ),
+      }}
+    />
+    <Drawer.Screen
+      name="PrivacyPolicy"
+      component={PrivacyPolicyScreen}
+      options={{
+        title: 'Privacy policy',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <MaterialIcons
+            name="policy"
+            style={{marginLeft: 9}}
+            size={30}
+            color={color}
+          />
+        ),
+      }}
+    />
     {/* Header locked */}
-
     <Drawer.Screen
       name="ProductDetails"
       component={ProductDetailsScreen}
@@ -237,7 +266,6 @@ const DrawerNavigation = () => (
         drawerItemStyle: {display: 'none'},
       }}
     />
-
     <Drawer.Screen
       name="CartProceed"
       component={CartProceedScreen}

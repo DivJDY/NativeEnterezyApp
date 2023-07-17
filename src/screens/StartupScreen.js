@@ -49,7 +49,11 @@ const StartupScreen = ({navigation}) => {
         </Card>
       </View>
 
-      <BtnComponent title={'START'} handleSubmit={handleStart} />
+      <BtnComponent
+        color={'#FECE00'}
+        title={'START'}
+        handleSubmit={handleStart}
+      />
     </View>
   );
 };

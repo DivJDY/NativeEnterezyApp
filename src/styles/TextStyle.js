@@ -13,7 +13,7 @@ export const text_style = StyleSheet.create({
     fontSize: 20,
   },
   link: {
-    color: '#FECE00',
+    color: '#4277b4',
     fontWeight: 'bold',
   },
 });

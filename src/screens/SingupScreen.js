@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 
 import {
@@ -11,13 +10,12 @@ import {
 import React, {useState} from 'react';
 import {startup_styles} from '../styles/StartupStyle';
 import HeadingImage from '../components/HeadingImage';
-
 import TextInputComponent from '../components/TextInput';
 import {textinput_style} from '../styles/TextInputStyle';
 import BtnComponent from '../components/BtnComponent';
 
 const SingupScreen = ({navigation}) => {
-  const [mobile, setMobile] = useState();
+  const [mobile, setMobile] = useState('');
 
   const handleSubmit = () => {
     // console.warn('pp');
@@ -37,7 +35,7 @@ const SingupScreen = ({navigation}) => {
             style={{
               alignItems: 'center',
               marginTop: '24%',
-              marginBottom: '10%',
+              marginBottom: 10,
             }}>
             <Text style={textinput_style.placholderStyle}>
               Enter Mobile Number
@@ -51,7 +49,16 @@ const SingupScreen = ({navigation}) => {
               keyboardType="numeric"
             />
 
-            <BtnComponent title={'Get OTP'} handleSubmit={handleSubmit} />
+            <BtnComponent
+              title={'Get OTP'}
+              color={
+                mobile.length === 0 || mobile.length !== 10 ? '#ccc' : '#FECE00'
+              }
+              handleSubmit={handleSubmit}
+              disabled={
+                mobile.length === 0 || mobile.length !== 10 ? true : false
+              }
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -1,7 +1,12 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 
-import {View, KeyboardAvoidingView, ScrollView, Platform} from 'react-native';
+import {
+  View,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  Alert,
+} from 'react-native';
 import React, {useState} from 'react';
 import {Text} from 'react-native-paper';
 import {startup_styles} from '../styles/StartupStyle';
@@ -12,10 +17,14 @@ import BtnComponent from '../components/BtnComponent';
 import TextInputComponent from '../components/TextInput';
 
 const CreateAccount = ({navigation}) => {
-  const [ownerName, setOwnerName] = useState();
-  const [storeName, setStoreName] = useState();
+  const [ownerName, setOwnerName] = useState('');
+  const [storeName, setStoreName] = useState('');
   const handleSubmit = () => {
-    navigation.navigate('GoogleMap');
+    if (ownerName.length === 0 || storeName.length === 0) {
+      Alert.alert('Please enter Owner name ans Shop name');
+    } else {
+      navigation.navigate('GoogleMap');
+    }
   };
 
   const handleLogin = () => {
@@ -53,28 +62,43 @@ const CreateAccount = ({navigation}) => {
                 onChange={text => setOwnerName(text)}
               />
             </View>
-            <View style={{alignItems: 'center'}}>
+            <View style={{alignItems: 'center', marginTop: 25}}>
               <Text
                 variant="bodyLarge"
                 style={[
                   textinput_style.inputTitle,
-                  {
-                    marginTop: 25,
-                    marginBottom: -5,
-                  },
+                  // {
+                  //   marginBottom: -5,
+                  // },
                 ]}>
-                Enter Store Name{' '}
+                Enter Store Name
               </Text>
+
               <TextInputComponent
+                label="Enter input"
                 width={'60%'}
                 value={storeName}
-                placeholder={'xxxxxxxxx'}
+                placeholder={'xxxxxx'}
                 onChange={text => setStoreName(text)}
               />
             </View>
 
-            <View style={{marginTop: '-15%'}}>
-              <BtnComponent title={'NEXT'} handleSubmit={handleSubmit} />
+            <View style={{marginTop: -30, marginBottom: 10}}>
+              <BtnComponent
+                color={'#FECE00'}
+                // color={
+                //   ownerName.length === 0 || storeName.length === 0
+                //     ? '#ccc'
+                //     : '#FECE00'
+                // }
+                // disabled={
+                //   ownerName.length === 0 || storeName.length === 0
+                //     ? true
+                //     : false
+                // }
+                title={'NEXT'}
+                handleSubmit={handleSubmit}
+              />
             </View>
           </View>
         </ScrollView>

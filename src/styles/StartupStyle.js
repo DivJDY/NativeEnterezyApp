@@ -59,7 +59,7 @@ export const startup_styles = StyleSheet.create({
   },
 
   btn: {
-    backgroundColor: '#FECE00',
+    // backgroundColor: '#FECE00',
     borderRadius: 25,
     paddingVertical: 4,
   },

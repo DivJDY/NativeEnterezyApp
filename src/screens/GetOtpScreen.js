@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import {
   View,
@@ -17,7 +16,7 @@ import TextInputComponent from '../components/TextInput';
 import BtnComponent from '../components/BtnComponent';
 
 const GetOtpScreen = ({navigation}) => {
-  const [otp, setOtp] = useState();
+  const [otp, setOtp] = useState('');
   const handleSubmit = () => {
     // console.warn('hhh');
     navigation.navigate('CreateAcc');
@@ -80,7 +79,12 @@ const GetOtpScreen = ({navigation}) => {
               keyboardType="numeric"
             />
 
-            <BtnComponent title={'NEXT'} handleSubmit={handleSubmit} />
+            <BtnComponent
+              title={'NEXT'}
+              color={otp.length === 0 || otp.length !== 4 ? '#ccc' : '#FECE00'}
+              disabled={otp.length === 0 || otp.length !== 4 ? true : false}
+              handleSubmit={handleSubmit}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -2,7 +2,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
-  Text,
   View,
   KeyboardAvoidingView,
   ScrollView,
@@ -10,10 +9,9 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
-import {Button, Provider as PaperProvider} from 'react-native-paper';
+import {Button, Provider as PaperProvider, Text} from 'react-native-paper';
 import {launchImageLibrary} from 'react-native-image-picker';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {useNavigation} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import RNFS from 'react-native-fs';
 import TextInputComponent from '../components/TextInputComponent';
 import {styles} from '../styles/formStyles';
@@ -23,14 +21,14 @@ import LoadingIndicator from '../components/LoadingIndicator';
 import DropDownSelection from '../components/DropDownSelection';
 import {dropdownstyle} from '../styles/dropdownStyles';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 function DisplayRental() {
-  const [selectShelf, setSelectShelf] = useState([]);
   const [productCost, setProductCost] = useState();
   const [address, setAddress] = useState('');
   const [avgStore, setAvgStore] = useState('');
   const [shelfImage, setShelfImage] = useState('');
-  const [height, setHeight] = useState();
+  const [width, setWidth] = useState();
   const [length, setLength] = useState();
   const [loading, setLoading] = useState(false);
   //  Shelf visibility list
@@ -57,10 +55,6 @@ function DisplayRental() {
   };
 
   const requestHeader = FetchUtilityOptions();
-  // close the selection dropdown
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-
-  const navigation = useNavigation();
 
   const handleImageSelection = () => {
     const options = {
@@ -115,7 +109,7 @@ function DisplayRental() {
 
   const clearFormData = () => {
     setLength('');
-    setHeight('');
+    setWidth('');
     setAddress('');
     setAvgStore('');
     setShelfvisibility([]);
@@ -147,14 +141,14 @@ function DisplayRental() {
 
     if (
       length !== '' &&
-      height !== '' &&
+      width !== '' &&
       shelfvisibility !== [] &&
       category !== [] &&
       shelfImage !== ''
     ) {
       formData = {
         product_length: length,
-        product_height: height,
+        product_height: width,
         product_cost: productCost,
         shelf_location: address,
         avg_shelf_foot_falls: avgStore,
@@ -228,16 +222,20 @@ function DisplayRental() {
 
   return (
     <PaperProvider>
-      <View style={{alignItems: 'center', marginTop: 15}}>
-        <Text
+      <View style={{marginTop: 10, marginHorizontal: 8}}>
+        <Button
+          mode="contained"
           style={{
-            fontSize: 30,
-            marginBottom: 8,
-            fontWeight: 'bold',
-            color: 'black',
-          }}>
-          Display Rentals
-        </Text>
+            marginBottom: 10,
+            marginTop: 10,
+            paddingTop: 4,
+            height: 45,
+            marginHorizontal: 10,
+            backgroundColor: '#4277b4',
+          }}
+          disabled={true}>
+          <Text style={style.rentStoreTxt}>Rent a Store Asset</Text>
+        </Button>
       </View>
 
       {loading ? (
@@ -250,91 +248,159 @@ function DisplayRental() {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{marginBottom: 15}} />
 
+            <Text
+              variant="titleMedium"
+              style={{marginLeft: 10, fontSize: 20, marginBottom: -5}}>
+              Choose Store Assest to rent{' '}
+            </Text>
+
             {shelfvisibilityList && (
               <DropDownSelection
                 data={shelfvisibilityList}
                 selectedValue={shelfvisibility}
                 onChange={handleChangeRental}
                 renderItem={renderRentalItem}
-                labelField={'shelf_name'}
+                // labelField={'shelf_name'}
                 valueField={'id'}
-                placeholder={'Type of Rental *'}
+                placeholder={''}
                 searchPlaceholder={'Search rental....'}
               />
             )}
 
+            <Text
+              variant="titleMedium"
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                marginBottom: -5,
+                marginTop: 8,
+              }}>
+              Choose Categories available in store
+            </Text>
             {categoryList && (
               <DropDownSelection
                 data={categoryList}
                 selectedValue={category}
                 onChange={handleChangeItem}
                 renderItem={renderCategoryItem}
-                labelField={'category_name'}
                 valueField={'id'}
-                placeholder={'Type of category * *'}
+                placeholder={''}
                 searchPlaceholder={'Search category....'}
               />
             )}
 
-            <View style={{marginBottom: 15}} />
-            <TextInputComponent
-              placeholder={'Please Enter Product Length'}
-              onChangeText={text => setLength(text)}
-              keyboardType={'numeric'}
-              value={length}
-              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
-            />
+            <View style={{marginBottom: 10}} />
+            <Text
+              variant="titleMedium"
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                marginTop: 8,
+              }}>
+              Dimensions of the Store Asset
+            </Text>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{flexDirection: 'column', flex: 1}}>
+                <Text
+                  variant="titleMedium"
+                  style={{
+                    marginLeft: 10,
+                    fontSize: 20,
+                    marginTop: 8,
+                  }}>
+                  Length
+                </Text>
+                <TextInputComponent
+                  placeholder={''}
+                  onChangeText={text => setLength(text)}
+                  keyboardType={'numeric'}
+                  value={length}
+                  style={[
+                    styles.input,
+                    {marginLeft: 10, marginTop: 5, height: 50, width: '50%'},
+                  ]}
+                />
+              </View>
+              <View style={{flexDirection: 'column', flex: 1}}>
+                <Text
+                  variant="titleMedium"
+                  style={{
+                    fontSize: 20,
+                    marginTop: 8,
+                    marginLeft: -15,
+                  }}>
+                  Width
+                </Text>
+                <TextInputComponent
+                  placeholder={''}
+                  onChangeText={text => setWidth(text)}
+                  keyboardType={'numeric'}
+                  value={width}
+                  style={[
+                    styles.input,
+                    {marginTop: 5, height: 50, width: '50%', marginLeft: -15},
+                  ]}
+                />
+              </View>
+            </View>
 
-            <View style={{marginBottom: 15}} />
+            <View style={{marginBottom: 10}} />
+            <Text
+              variant="titleMedium"
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                marginTop: 8,
+              }}>
+              Location of the Asset in the store
+            </Text>
             <TextInputComponent
-              placeholder={'Please Enter Product Height'}
-              onChangeText={text => setHeight(text)}
-              keyboardType={'numeric'}
-              value={height}
-              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
-            />
-
-            <View style={{marginBottom: 15}} />
-            <TextInputComponent
-              placeholder={'Please Enter Product Cost *'}
-              onChangeText={text => setProductCost(text)}
-              keyboardType={'numeric'}
-              value={productCost}
-              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
-            />
-
-            <View style={{marginBottom: 15}} />
-            <TextInputComponent
-              placeholder={'Location of Shelf in Store'}
+              placeholder={''}
               onChangeText={text => setAddress(text)}
               multiline={true}
               value={address}
-              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
+              style={[styles.input, style.inputTxt]}
             />
 
-            <View style={{marginBottom: 15}} />
+            <Text
+              variant="titleMedium"
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                marginTop: 8,
+                marginBottom: 5,
+              }}>
+              Weekly Footfalls in the store
+            </Text>
+
             <TextInputComponent
-              placeholder={'Avg Store Foot Falls (Approx)'}
+              placeholder={''}
               onChangeText={text => setAvgStore(text)}
-              keyboardType={'numeric'}
               value={avgStore}
-              style={[styles.input, {width: '85%', flex: 1, marginLeft: 18}]}
+              style={[
+                styles.input,
+                {width: '65%', flex: 1, marginLeft: 12, height: 50},
+              ]}
             />
 
-            <View style={{marginBottom: 15}} />
+            <View style={{marginBottom: 10}} />
             <Button
               mode="contained"
               icon={
                 shelfImage
-                  ? ({size, color}) => (
+                  ? ({color}) => (
                       <FontAwesome5
                         name="check-double"
-                        size={size}
+                        size={28}
                         color={color}
                       />
                     )
-                  : ({size, color}) => (
-                      <FontAwesome5 name="upload" size={size} color={color} />
+                  : ({size}) => (
+                      <Ionicons
+                        name="cloud-upload-outline"
+                        size={28}
+                        color={'#000'}
+                      />
                     )
               }
               onPress={handleImageSelection}
@@ -343,26 +409,20 @@ function DisplayRental() {
                 {
                   marginBottom: 15,
                   width: '85%',
-                  marginLeft: 18,
+                  marginLeft: 15,
                   borderRadius: 10,
                 },
               ]}>
-              {' '}
-              <Text style={{fontWeight: 'bold'}}>
+              <Text
+                style={[
+                  {fontWeight: 'bold', fontSize: 16, paddingTop: 12},
+                  shelfImage ? {color: '#fff'} : {color: '#000'},
+                ]}>
                 {shelfImage ? 'Shelf Pic uploaded' : 'Upload a Shelf Pic *'}
               </Text>
             </Button>
 
-            <View
-              style={{
-                flexWrap: 'wrap',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 10,
-                marginTop: 15,
-                marginLeft: '-4%',
-              }}>
+            <View style={style.submitView}>
               <Button
                 mode="contained"
                 style={{
@@ -392,12 +452,47 @@ function DisplayRental() {
   );
 }
 
+// Display rental screen styles
 const style = StyleSheet.create({
   btnSuccess: {
-    backgroundColor: 'black',
+    backgroundColor: '#000',
   },
   btn: {
-    backgroundColor: '#FECE00',
+    backgroundColor: '#fff',
+    borderColor: '#000',
+    borderWidth: 2,
+  },
+  submitView: {
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+    marginTop: 15,
+    marginLeft: '-4%',
+  },
+
+  inputTxt: {
+    width: '65%',
+    flex: 1,
+    marginLeft: 12,
+    marginTop: 5,
+    height: 50,
+  },
+  rentStoreBtn: {
+    marginBottom: 10,
+    marginTop: 10,
+    paddingTop: 4,
+    height: 45,
+    marginHorizontal: 10,
+    backgroundColor: '#4277b4',
+  },
+
+  rentStoreTxt: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    padding: 15,
   },
 });
 

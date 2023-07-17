@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
@@ -153,22 +152,16 @@ const HomeScreen = ({route}) => {
 
   return (
     <>
-      <Text
-        variant="titleLarge"
-        style={{marginLeft: 10, marginTop: 10, fontWeight: 'bold'}}>
-        Click here
-      </Text>
       <Button
         mode="contained"
         style={{
           marginBottom: 10,
-          marginTop: 5,
+          marginTop: 15,
           marginHorizontal: 10,
-          width: '40%',
-          backgroundColor: 'black',
+          backgroundColor: '#4277b4',
         }}
         onPress={() => navigation.navigate('DisplayRental')}>
-        <Text style={styles.btnStyle}>Display Rentals</Text>
+        <Text style={styles.btnStyle}>Click Here For Display Rentals</Text>
       </Button>
       <BannerLists />
       <View style={styles.container}>

@@ -1,15 +1,14 @@
-/* eslint-disable prettier/prettier */
 import {StyleSheet} from 'react-native';
 
 export const dropdownstyle = StyleSheet.create({
   dropdown: {
-    margin: 16,
+    margin: 14,
     height: 55,
-    width: '86%',
+    width: '50%',
     backgroundColor: 'white',
     borderColor: 'black',
     borderWidth: 2,
-    borderRadius: 4,
+    borderRadius: 10,
     padding: 12,
     shadowColor: '#000',
 

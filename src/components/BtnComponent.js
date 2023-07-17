@@ -1,15 +1,16 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 import {View, Text} from 'react-native';
 import React from 'react';
 import {Button} from 'react-native-paper';
 import {startup_styles} from '../styles/StartupStyle';
 
-const BtnComponent = ({title, handleSubmit}) => {
+const BtnComponent = ({title, handleSubmit, color, disabled}) => {
   return (
     <View style={startup_styles.btn_view}>
       <Button
         mode="contained"
-        style={startup_styles.btn}
+        disabled={disabled}
+        style={[startup_styles.btn, {backgroundColor: color}]}
         blurOnSubmit={'true'}
         onPress={handleSubmit}>
         <Text style={startup_styles.btnTitle}>{title}</Text>

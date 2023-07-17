@@ -1,69 +1,29 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {
   View,
-  Text,
+  Image,
   ImageBackground,
   TouchableOpacity,
   Alert,
-  AppState,
+  StyleSheet,
 } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Card, Text} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {AuthContext} from '../context/AuthContext';
+import {title, subTitle} from './SinupTitle';
 
 const CustomDrawer = props => {
-  const [appState, setAppState] = useState(AppState.currentState);
-  const [isLoggedOut, setIsLoggedOut] = useState(false);
-
   const {logout} = useContext(AuthContext);
-
-  const navigation = useNavigation();
-
-  //useEffect(() => {
-  //const handleAppStateChange = nextAppState => {
-  //if (appState.match(/inactive|background/) && nextAppState === 'active') {
-  // App has come back to the foreground
-  // Check if the user is logged out and perform any necessary actions
-  // if (isLoggedOut) {
-  // Reload the app
-  //reloadApp();
-  //  }
-  //}
-  //setAppState(nextAppState);
-  //};
-
-  //AppState.addEventListener('change', handleAppStateChange);
-
-  // return () => {
-  // AppState.removeEventListener('change', handleAppStateChange);
-  // };
-  // }, [appState, isLoggedOut]);
-
-  
 
   const handleLogout = async () => {
     try {
-      // await AsyncStorage.clear();
-      // await AsyncStorage.removeItem('isSignedUp');
-      //setIsLoggedOut(true);
-      // handleCloseDrawer();
-      // console.warn('AsyncStorage cleared successfully');
-      // Clear the signup status from AsyncStorage
-      // await AsyncStorage.removeItem('isSignedUp');
-
-      // Navigate to the signup screen
-      // navigation.navigate('Login');
-      //RNRestart.Restart();
-      // navigation.replace('Login');
       logout();
-      
     } catch (error) {
       console.log(error);
     }
@@ -74,18 +34,20 @@ const CustomDrawer = props => {
       <DrawerContentScrollView
         {...props}
         contentContainerStyle={{backgroundColor: 'gray'}}>
-        <ImageBackground
-          source={require('../../assets/logo.jpg')}
-          style={{padding: 20, height: 130}}
-          resizeMode="stretch"
-        />
+        <DrawerHeading />
 
-        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 30}}>
+        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 20}}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
 
-      <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
+      <View
+        style={{
+          paddingTop: 5,
+          paddingHorizontal: 10,
+          borderTopWidth: 2,
+          borderTopColor: '#ccc',
+        }}>
         <TouchableOpacity
           onPress={() => {
             Alert.alert(
@@ -108,33 +70,88 @@ const CustomDrawer = props => {
             );
           }}
           style={{marginTop: 5, marginBottom: 18}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <MaterialIcons name="logout" size={22} />
-            <Text
-              style={{
-                fontSize: 15,
-                fontFamily: 'Roboto-Medium',
-                marginLeft: 10,
-                fontWeight: 'bold',
-              }}>
-              LogOut
-            </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginLeft: 14,
+              alignItems: 'center',
+            }}>
+            <MaterialIcons name="logout" size={28} />
+            <Text style={style.logout}>LogOut</Text>
           </View>
         </TouchableOpacity>
 
-        <Text
-          style={{
-            fontSize: 15,
-            fontFamily: 'Roboto-Medium',
-            marginLeft: 10,
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}>
-          App Version 1.1
-        </Text>
+        <Text style={style.txtVersion}>App Version 1.1</Text>
       </View>
     </View>
   );
 };
 
 export default CustomDrawer;
+
+// Drawer Heading image and Custome drawer styles
+const style = StyleSheet.create({
+  bg: {
+    height: 220,
+    width: '100%',
+    backgroundColor: '#FECE00',
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 0, // Set other border radii to 0
+    overflow: 'hidden', // Make sure content is clipped to the rounded border
+    marginBottom: -20,
+  },
+  image: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    marginLeft: '30%',
+    marginTop: -20,
+    width: 90,
+    height: 110,
+  },
+  title: {
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: '800',
+  },
+  subTitle: {
+    textAlign: 'center',
+    fontWeight: '700',
+  },
+  logout: {
+    fontSize: 18,
+    // fontFamily: 'Roboto-Medium',
+    marginLeft: 14,
+    fontWeight: 'bold',
+  },
+  txtVersion: {
+    fontSize: 16,
+    // fontFamily: 'Roboto-Medium',]
+    marginLeft: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+});
+
+const DrawerHeading = () => {
+  return (
+    <View>
+      <Card style={style.bg}>
+        <Card.Content>
+          <Image
+            resizeMode="contain"
+            source={require('../../assets/logo.jpg')}
+            style={style.image}
+          />
+          <Text style={style.title} variant="displaySmall">
+            {title}
+          </Text>
+          <Text style={style.subTitle} variant="titleLarge">
+            {subTitle}
+          </Text>
+        </Card.Content>
+      </Card>
+    </View>
+  );
+};
