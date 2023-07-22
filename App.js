@@ -1,15 +1,18 @@
 /* eslint-disable prettier/prettier */
-import {View, Text} from 'react-native';
 import React from 'react';
+import AWS from 'aws-sdk';
 import Navigation from './Navigation';
 import {AuthProvider} from './src/context/AuthContext';
 
 const App = () => {
-  // return (
-  //   <View>
-  //     <Text>App</Text>
-  //   </View>
-  // );
+  // Configure the AWS SDK (Add this at the top of your entry point file)
+  AWS.config.update({
+    region: 'Asia Pacific (Sydney) ap-southeast-2', // Replace with your desired AWS region
+    credentials: new AWS.Credentials({
+      accessKeyId: 'AKIA3VWN5ISEQFPNWGOQ',
+      secretAccessKey: 'fj3qLkXpJBSS/yZpBQG1uXJ+RRiul1G37YAS78hJ',
+    }),
+  });
 
   return (
     <AuthProvider>

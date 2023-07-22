@@ -73,6 +73,8 @@ const HomeScreen = ({route}) => {
       );
 
       if (!response.ok) {
+        setLoading(false);
+
         throw new Error('Failed to fetch data');
       }
 

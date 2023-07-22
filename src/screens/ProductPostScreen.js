@@ -15,10 +15,15 @@ import {Provider as PaperProvider, Button, Text} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {launchImageLibrary} from 'react-native-image-picker';
+// import {RNS3} from 'react-native-aws3';
+import RNFetchBlob from 'rn-fetch-blob';
+import AWS from 'react-native-aws3';
+import {AWSAccessKeyId, AWSSecretKeyId} from '../../keys';
 import DocumentPicker from 'react-native-document-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+// import AWS from 'aws-sdk';
 import {dropdownstyle} from '../styles/dropdownStyles';
 import DropDownSelection from '../components/DropDownSelection';
 import RNFS from 'react-native-fs';
@@ -97,23 +102,13 @@ const ProductPostScreen = () => {
         product_mrp: values.product_mrp,
         product_desc: values.product_desc,
         minimum_product_order_quantity: values.minimum_product_order_quantity,
-        // product_image: uploadImage,
+        product_image: uploadImage,
       };
-
-      const formData = new FormData();
-      formData.append('image', {
-        uri: uploadImage,
-        type: 'image/jpeg', // Change this based on your image type
-        name: imageName,
-      });
-      formData.append(data);
-
-      console.warn('Product post data ==> ', formData);
 
       fetch(hostName + '/products', {
         method: 'POST',
         headers: requestHeader,
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       })
         .then(response => response.json())
         .then(response => {
@@ -172,21 +167,175 @@ const ProductPostScreen = () => {
     }
   };
 
-  const saveImageToPermanentLocation = async (imageUri, fileName) => {
-    // const fileName = 'uploaded_image.jpg'; // You can change this to your desired file name
-
+  // Function to save the image to a permanent location
+  const saveImageToPermanentLocation = async imageData => {
+    console.log('image in permenent ==> ', imageData);
     try {
-      const pictureDir = RNFS.DocumentDirectoryPath + '/Pictures';
-      const destinationPath = `${pictureDir}/${fileName}`;
+      // Get the file path of the temporary image
+      const temporaryImagePath = imageData.assets[0].uri;
+      // Create a folder in the document directory to store the images (you can choose a different directory)
+      const permanentFolderPath = `${RNFS.DocumentDirectoryPath}/images`;
+      await RNFS.mkdir(permanentFolderPath);
 
-      await RNFS.mkdir(pictureDir);
-      await RNFS.moveFile(imageUri.replace('file://', ''), destinationPath);
-      setUploadImage(destinationPath);
+      // Generate a unique name for the image (you can use a UUID generator or some other method)
+      const uniqueFileName = `${Date.now()}.jpg`;
 
-      console.log('Image saved to permanent location:', destinationPath);
+      // Prepare the permanent path where the image will be moved
+      const permanentImagePath = `${permanentFolderPath}/${uniqueFileName}`;
+
+      // Move the image to the permanent location
+      await RNFS.moveFile(temporaryImagePath, permanentImagePath);
+
+      console.log('Image saved to:', permanentImagePath);
+      setUploadImage(permanentImagePath);
+
+      // Now you can access the image using the permanent path (e.g., to display it in an <Image> component)
+      // ... (Your code here)
     } catch (error) {
-      console.error('Error saving image to permanent location:', error);
+      console.log('Error saving image:', error);
     }
+  };
+
+  // AWS deatils
+  // const awsConfig = {
+  //   accessKeyId: 'AKIA3VWN5ISEQFPNWGOQ',
+  //   secretAccessKey: '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',
+  //   region: 'Asia Pacific (Sydney) ap-southeast-2',
+  //   bucketName: 'enterezy-images',
+  // };
+
+  // const s3 = new AWS.S3({
+  //   accessKeyId: awsConfig.accessKeyId,
+  //   secretAccessKey: awsConfig.secretAccessKey,
+  //   region: awsConfig.region,
+  // });
+
+  // Upload an image to AWS bucket
+  // const uploadImageToS3 = async image => {
+  //   const fileName = `image_${Date.now()}.jpg`; // You can use a unique name for the image
+
+  //   const file = {
+  //     // uri: image.uri,
+  //     uri: image.assets[0].uri,
+  //     // type: image.type,
+  //     type: image.assets[0].type,
+  //     name: fileName,
+  //   };
+
+  //   const options = {
+  //     bucket: awsConfig.bucketName,
+  //     key: fileName,
+  //     contentType: file.type,
+  //     region: awsConfig.region,
+  //     accessLevel: 'public-read', // Allow public access to the uploaded image
+  //   };
+
+  //   try {
+  //     const response = await s3.upload(options, file);
+
+  //     // Get the public URL of the uploaded image
+  //     const publicURL = response.location;
+
+  //     // Store the public URL in state
+  //     setUploadImage(publicURL);
+
+  //     console.log('Image uploaded successfully:', publicURL);
+  //   } catch (error) {
+  //     console.log('Error uploading image:', error);
+  //   }
+  // };
+
+  // AWS configuration
+  // AWS.config.update({
+  //   region: 'Asia Pacific (Sydney) ap-southeast-2',
+  //   accessKeyId: 'AKIA3VWN5ISEQFPNWGOQ',
+  //   secretAccessKey: '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',
+  // });
+
+  // Create an S3 service object
+  // const s3 = new AWS.S3();
+
+  // Function to upload the image to S3
+  const uploadImageToS3 = async image => {
+    const file = {
+      // `uri` can also be a file system path (i.e. file://)
+      uri: image.assets[0].uri,
+      name: image.assets[0].fileName,
+      type: 'image/jpeg/png/webp',
+    };
+
+    const s3Options = {
+      keyPrefix: 'enterezyuploads/',
+      bucket: 'enterezy-images',
+      region: 'Asia Pacific (Sydney) ap-southeast-2',
+      accessKey: AWSAccessKeyId,
+      secretKey: AWSSecretKeyId,
+      successActionStatus: 201,
+      // contentType: 'image/jpeg/png/webp',
+    };
+
+    const options = {
+      keyPrefix: s3Options.keyPrefix,
+      bucket: s3Options.bucket,
+      region: s3Options.region,
+      accessKey: s3Options.AWSAccessKeyId,
+      secretKey: s3Options.AWSSecretKeyId,
+      successActionStatus: s3Options.successActionStatus,
+      contentType: 'image/jpeg/png/webp',
+      // Set the content-type header for the binary data
+    };
+
+    RNFetchBlob.fetch(
+      'POST',
+      AWS.getSignedUrl(options),
+      {
+        'Content-Type': 'application/octet-stream',
+      },
+      RNFetchBlob.wrap(file.uri),
+    )
+      .then(res => {
+        console.log('Image uploaded successfully:', res.text());
+      })
+      .catch(error => {
+        console.error('Error uploading image:', error);
+      });
+
+    // RNS3.put(file, options).then(res => console.log('result ==> ', res));
+
+    // RNS3.put(file, options).then(response => {
+    //   if (response.status !== 201)
+    //     throw new Error('Failed to upload image to S3');
+    //   console.log(response.body);
+    /**
+     * {
+     *   postResponse: {
+     *     bucket: "your-bucket",
+     *     etag : "9f620878e06d28774406017480a59fd4",
+     *     key: "uploads/image.png",
+     *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+     *   }
+     * } cv
+     */
+    // });
+
+    // const bucketName = 'enterezy-images'; // Replace with your S3 bucket name
+    // const fileName = `image_${Date.now()}.jpg`; // Replace with a desired file name
+    // const params = {
+    //   Bucket: bucketName,
+    //   Key: fileName,
+    //   Body: image.assets[0].uri, // Make sure the image data is provided as the Body parameter
+    //   ACL: 'public-read', // Allow public read access to the uploaded file if needed
+    //   ContentType: 'image/jpeg', // Set the appropriate content type for the image
+    // };
+    // try {
+    //   const response = await s3.upload(params).promise();
+    //   console.warn('Image uploaded successfully:', response.Location);
+    //   setUploadImage(response.Location);
+    //   // return response.Location; // The public URL of the uploaded image
+    // } catch (error) {
+    //   console.error('Error uploading image:', error);
+    //   throw error;
+    // }
   };
 
   const handleImageSelection = () => {
@@ -205,11 +354,13 @@ const ProductPostScreen = () => {
         console.log('Image selection error: ', response.error);
       } else {
         const sourcePath = response.assets[0].uri;
-        // console.warn(' ----- source path ==> ', sourcePath);
+        console.warn(' ----- source path ==> ', response);
         const fileName = response.assets[0].fileName;
-        setUploadImage(sourcePath);
-        setImageName(fileName);
-        // saveImageToPermanentLocation(sourcePath, fileName);
+
+        uploadImageToS3(response);
+        // setUploadImage(sourcePath);
+        // setImageName(fileName);
+        // saveImageToPermanentLocation(response);
       }
     });
   };
