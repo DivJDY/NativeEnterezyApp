@@ -9,11 +9,13 @@ import {
   ScrollView,
   Platform,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import {Provider as PaperProvider, Button, Text} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {launchImageLibrary} from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -22,7 +24,6 @@ import DropDownSelection from '../components/DropDownSelection';
 import RNFS from 'react-native-fs';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
-import ButtonComponent from '../components/ButtonComponent';
 import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
@@ -45,7 +46,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const ProductPostScreen = () => {
-  const [uploadImage, setUploadImage] = useState('');
+  const [uploadImage, setUploadImage] = useState(null);
+  const [imageName, setImageName] = useState(null);
   const [category, setCategory] = useState('');
   const [categoryList, setCategoryList] = useState([]);
   const [loadcategory, setLoadCategory] = useState(false);
@@ -86,7 +88,7 @@ const ProductPostScreen = () => {
     // Handle form submission logic here
     if (uploadImage !== '') {
       // const product_image = uploadImage?.assets[0].uri;
-      values.product_image = uploadImage;
+      // values.product_image = uploadImage;
 
       const data = {
         category_id: category,
@@ -95,15 +97,23 @@ const ProductPostScreen = () => {
         product_mrp: values.product_mrp,
         product_desc: values.product_desc,
         minimum_product_order_quantity: values.minimum_product_order_quantity,
-        product_image: values.product_image,
+        // product_image: uploadImage,
       };
 
-      console.warn('Product post data ==> ', data);
+      const formData = new FormData();
+      formData.append('image', {
+        uri: uploadImage,
+        type: 'image/jpeg', // Change this based on your image type
+        name: imageName,
+      });
+      formData.append(data);
+
+      console.warn('Product post data ==> ', formData);
 
       fetch(hostName + '/products', {
         method: 'POST',
         headers: requestHeader,
-        body: JSON.stringify(data),
+        body: JSON.stringify(formData),
       })
         .then(response => response.json())
         .then(response => {
@@ -111,7 +121,7 @@ const ProductPostScreen = () => {
           // console.log('data response ', response);
           setLoading(false);
           Alert.alert(response.message);
-          navigation.navigate('Home', {loading: loading});
+          navigation.navigate('HomeDrawer', {loading: loading});
         })
         .catch(error => {
           // Handle any errors
@@ -133,12 +143,58 @@ const ProductPostScreen = () => {
     product_mrp: '',
   };
 
+  useEffect(() => {
+    requestExternalStoragePermission();
+  }, []);
+
+  const requestExternalStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Permission',
+            message: 'App needs access to external storage to save images.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('External storage permission granted.');
+        } else {
+          console.log('External storage permission denied.');
+        }
+      } catch (error) {
+        console.error('Error requesting external storage permission:', error);
+      }
+    }
+  };
+
+  const saveImageToPermanentLocation = async (imageUri, fileName) => {
+    // const fileName = 'uploaded_image.jpg'; // You can change this to your desired file name
+
+    try {
+      const pictureDir = RNFS.DocumentDirectoryPath + '/Pictures';
+      const destinationPath = `${pictureDir}/${fileName}`;
+
+      await RNFS.mkdir(pictureDir);
+      await RNFS.moveFile(imageUri.replace('file://', ''), destinationPath);
+      setUploadImage(destinationPath);
+
+      console.log('Image saved to permanent location:', destinationPath);
+    } catch (error) {
+      console.error('Error saving image to permanent location:', error);
+    }
+  };
+
   const handleImageSelection = () => {
     const options = {
       mediaType: 'photo',
       storageOptions: {
         skipBackup: true,
-        path: 'images', // Desired permanent location in the device's storage
+        path: 'Pictures/ImageUploadApp', // Desired permanent location in the device's storage
       },
     };
 
@@ -149,17 +205,11 @@ const ProductPostScreen = () => {
         console.log('Image selection error: ', response.error);
       } else {
         const sourcePath = response.assets[0].uri;
-        const targetPath =
-          RNFS.DocumentDirectoryPath + `/${response.assets[0].fileName}`;
-
-        RNFS.copyFile(sourcePath, targetPath)
-          .then(() => {
-            console.warn(' Image uploaded ', sourcePath, targetPath);
-            setUploadImage(targetPath); // Set the permanent image URI to display it
-          })
-          .catch(error => {
-            console.log('Image copy error: ', error);
-          });
+        // console.warn(' ----- source path ==> ', sourcePath);
+        const fileName = response.assets[0].fileName;
+        setUploadImage(sourcePath);
+        setImageName(fileName);
+        // saveImageToPermanentLocation(sourcePath, fileName);
       }
     });
   };
@@ -231,6 +281,7 @@ const ProductPostScreen = () => {
                   <View marginBottom={10} marginLeft={-15}>
                     {categoryList && (
                       <DropDownSelection
+                        width={'87%'}
                         data={categoryList}
                         selectedValue={category}
                         onChange={handleChangeItem}

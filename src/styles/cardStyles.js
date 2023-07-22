@@ -38,13 +38,13 @@ export const styles = StyleSheet.create({
 
   line: {
     marginTop: 8,
-    borderBottomColor: 'black',
+    borderBottomColor: '#000',
     borderBottomWidth: 1.5,
     width: '100%',
   },
   submitbtn: {
     // marginHorizontal: '10%',
-    borderColor: 'black',
+    borderColor: '#000',
   },
   dialog: {
     position: 'absolute',

@@ -8,6 +8,7 @@ import {
   Platform,
   Alert,
   StyleSheet,
+  PermissionsAndroid,
 } from 'react-native';
 import {Button, Provider as PaperProvider, Text} from 'react-native-paper';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -30,6 +31,8 @@ function DisplayRental() {
   const [shelfImage, setShelfImage] = useState('');
   const [width, setWidth] = useState();
   const [length, setLength] = useState();
+
+  const [price, setPrice] = useState('');
   const [loading, setLoading] = useState(false);
   //  Shelf visibility list
   const [shelfvisibility, setShelfvisibility] = useState([]);
@@ -39,6 +42,39 @@ function DisplayRental() {
   const [categoryList, setCategoryList] = useState([]);
 
   const requestOption = FetchUtilityOptions();
+
+  const saveImageToExternalStorage = async (fileName, sourcePath) => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'External Storage Permission',
+          message: 'App needs access to external storage',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        const pictureDir = RNFS.ExternalDirectoryPath + '/Pictures';
+        const destinationPath = `${pictureDir}/${fileName}`;
+
+        await RNFS.mkdir(pictureDir);
+        await RNFS.downloadFile({
+          fromUrl: sourcePath,
+          toFile: destinationPath,
+        }).promise;
+
+        console.log('Image saved to external storage:', destinationPath);
+        setShelfImage(destinationPath);
+      } else {
+        console.log('External storage permission denied');
+      }
+    } catch (error) {
+      console.error('Error saving image:', error);
+    }
+  };
 
   const fetchShelfVisibility = async () => {
     setLoading(true);
@@ -74,6 +110,9 @@ function DisplayRental() {
         const sourcePath = response.assets[0].uri;
         const targetPath =
           RNFS.DocumentDirectoryPath + `/${response.assets[0].fileName}`;
+        const fileName = response.assets[0].fileName;
+
+        // saveImageToExternalStorage(fileName, sourcePath);
 
         RNFS.copyFile(sourcePath, targetPath)
           .then(() => {
@@ -114,6 +153,7 @@ function DisplayRental() {
     setAvgStore('');
     setShelfvisibility([]);
     setCategory([]);
+    setPrice('');
     setShelfImage('');
   };
 
@@ -144,6 +184,7 @@ function DisplayRental() {
       width !== '' &&
       shelfvisibility !== [] &&
       category !== [] &&
+      price !== '' &&
       shelfImage !== ''
     ) {
       formData = {
@@ -231,7 +272,7 @@ function DisplayRental() {
             paddingTop: 4,
             height: 45,
             marginHorizontal: 10,
-            backgroundColor: '#4277b4',
+            backgroundColor: '#000',
           }}
           disabled={true}>
           <Text style={style.rentStoreTxt}>Rent a Store Asset</Text>
@@ -256,6 +297,7 @@ function DisplayRental() {
 
             {shelfvisibilityList && (
               <DropDownSelection
+                width={'50%'}
                 data={shelfvisibilityList}
                 selectedValue={shelfvisibility}
                 onChange={handleChangeRental}
@@ -279,6 +321,7 @@ function DisplayRental() {
             </Text>
             {categoryList && (
               <DropDownSelection
+                width={'50%'}
                 data={categoryList}
                 selectedValue={category}
                 onChange={handleChangeItem}
@@ -381,6 +424,24 @@ function DisplayRental() {
                 styles.input,
                 {width: '65%', flex: 1, marginLeft: 12, height: 50},
               ]}
+            />
+
+            <View style={{marginBottom: 10}} />
+            <Text
+              variant="titleMedium"
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                marginTop: 8,
+              }}>
+              Enter the Rental Price
+            </Text>
+            <TextInputComponent
+              placeholder={''}
+              onChangeText={text => setPrice(text)}
+              keyboardType={'numeric'}
+              value={price}
+              style={[styles.input, style.inputTxt]}
             />
 
             <View style={{marginBottom: 10}} />

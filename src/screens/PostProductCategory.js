@@ -22,7 +22,7 @@ const PostProductCategory = () => {
 
   const requestHeader = FetchUtilityOptions();
   const handleSubmit = async () => {
-    if (category !== '' && discount !== '') {
+    if (category !== '') {
       const data = {
         category_name: category,
         discount: discount,
@@ -43,6 +43,9 @@ const PostProductCategory = () => {
         .catch(error => {
           // Handle any errors
           console.error('post error ', error);
+          setLoading(false);
+          setCategory('');
+          setDiscount('');
         });
     } else {
       Alert.alert('Please enter the mentioned mandatory data');
@@ -77,7 +80,7 @@ const PostProductCategory = () => {
             />
             <View style={{marginBottom: 20}} />
             <TextInputComponent
-              placeholder={'Please Enter Category Discount *'}
+              placeholder={'Please Enter Category Discount '}
               onChangeText={text => setDiscount(text)}
               keyboardType={'numeric'}
               value={discount}

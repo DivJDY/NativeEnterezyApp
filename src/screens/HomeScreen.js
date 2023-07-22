@@ -6,8 +6,10 @@ import {
   FlatList,
   TouchableOpacity,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import {Button, Searchbar, Text} from 'react-native-paper';
+import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CardComponent from '../components/CardComponent';
 import BannerLists from '../components/BannerLists';
@@ -50,6 +52,16 @@ const HomeScreen = ({route}) => {
     }
   };
 
+  const requestLegacyStoragePermission = async () => {
+    try {
+      await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles()],
+      });
+    } catch (error) {
+      console.error('Error requesting access to external storage:', error);
+    }
+  };
+
   const navigation = useNavigation();
 
   const fetchProduct = async () => {
@@ -83,7 +95,33 @@ const HomeScreen = ({route}) => {
   useEffect(() => {
     fetchProduct();
     requestCameraPermission();
+    // requestExternalStoragePermission();
   }, []);
+
+  // const requestExternalStoragePermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //         {
+  //           title: 'External Storage Permission',
+  //           message: 'App needs access to external storage to save images.',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
+
+  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //         console.log('External storage permission granted.');
+  //       } else {
+  //         console.log('External storage permission denied.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error requesting external storage permission:', error);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     fetchProduct();

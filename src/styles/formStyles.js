@@ -35,12 +35,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  error: {
-    paddingLeft: 12,
-    marginBottom: 20,
-    color: '#FECE00',
-    fontWeight: 'bold',
-  },
+
   btnStyle: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -64,5 +59,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FECE00',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+
+  // HelperText error
+  error: {
+    fontSize: 18,
+    marginTop: 4,
+    fontWeight: 'bold',
   },
 });

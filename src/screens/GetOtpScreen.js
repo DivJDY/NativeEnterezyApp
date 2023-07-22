@@ -9,16 +9,17 @@ import {
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Geolocation from 'react-native-geolocation-service';
+import {HelperText} from 'react-native-paper';
 import {startup_styles} from '../styles/StartupStyle';
 import {textinput_style} from '../styles/TextInputStyle';
 import HeadingImage from '../components/HeadingImage';
 import TextInputComponent from '../components/TextInput';
 import BtnComponent from '../components/BtnComponent';
+import {styles} from '../styles/formStyles';
 
-const GetOtpScreen = ({navigation}) => {
-  const [otp, setOtp] = useState('');
+const GetOtpScreen = ({navigation, route}) => {
+  const [otp, setOtp] = useState(route ? route.params.otp : '');
   const handleSubmit = () => {
-    // console.warn('hhh');
     navigation.navigate('CreateAcc');
   };
 
@@ -54,6 +55,10 @@ const GetOtpScreen = ({navigation}) => {
     };
     requestLocationPermission();
   }, []);
+
+  const isValidCode = text => {
+    return /^\d{4}$/.test(text);
+  };
   return (
     <View style={startup_styles.container}>
       <KeyboardAvoidingView
@@ -76,12 +81,20 @@ const GetOtpScreen = ({navigation}) => {
               value={otp}
               placeholder={'XXXX'}
               onChange={number => setOtp(number)}
-              keyboardType="numeric"
+              keyboardType="number-pad"
             />
+            {otp && (
+              <HelperText
+                style={styles.error}
+                type="error"
+                visible={!isValidCode(otp)}>
+                Invalid verification code. Enter 4 digits.
+              </HelperText>
+            )}
 
             <BtnComponent
               title={'NEXT'}
-              color={otp.length === 0 || otp.length !== 4 ? '#ccc' : '#FECE00'}
+              color={otp === null ? '#ccc' : '#FECE00'}
               disabled={otp.length === 0 || otp.length !== 4 ? true : false}
               handleSubmit={handleSubmit}
             />

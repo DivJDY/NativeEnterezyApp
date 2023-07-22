@@ -5,7 +5,7 @@ export const textinput_style = StyleSheet.create({
   inputStyle: {
     backgroundColor: '#8f8e8e',
     height: 40,
-    borderRadius: 6,
+    borderRadius: 10,
     marginTop: 18,
     borderWidth: 0,
     borderBottomWidth: 0, // Remove the bottom line

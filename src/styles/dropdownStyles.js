@@ -4,9 +4,8 @@ export const dropdownstyle = StyleSheet.create({
   dropdown: {
     margin: 14,
     height: 55,
-    width: '50%',
-    backgroundColor: 'white',
-    borderColor: 'black',
+    backgroundColor: '#fff',
+    borderColor: '#000',
     borderWidth: 2,
     borderRadius: 10,
     padding: 12,
@@ -25,23 +24,23 @@ export const dropdownstyle = StyleSheet.create({
     marginRight: 5,
   },
   item: {
-    color: 'black',
+    color: '#000',
     padding: 17,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   textItem: {
-    color: 'black',
+    color: '#000',
     flex: 1,
     fontSize: 16,
   },
   placeholderStyle: {
-    color: 'black',
+    color: '#000',
     fontSize: 16,
   },
   selectedTextStyle: {
-    color: 'black',
+    color: '#000',
     fontSize: 16,
   },
   iconStyle: {
@@ -49,10 +48,10 @@ export const dropdownstyle = StyleSheet.create({
     height: 20,
   },
   inputSearchStyle: {
-    color: 'black',
+    color: '#000',
     height: 40,
     fontSize: 16,
-    borderColor: 'black',
+    borderColor: '#000',
   },
 
   //   User role update screen title
@@ -60,7 +59,7 @@ export const dropdownstyle = StyleSheet.create({
     marginLeft: 20,
     marginTop: 20,
     marginBottom: 10,
-    color: 'black',
+    color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',

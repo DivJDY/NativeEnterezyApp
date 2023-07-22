@@ -12,12 +12,13 @@ const DropDownSelection = ({
   placeholder,
   searchPlaceholder,
   renderItem,
+  width,
 }) => {
   return (
     <View style={{borderRadius: 50, overflow: 'visible'}}>
       <Dropdown
         dropdownOffset={{top: 10}}
-        style={dropdownstyle.dropdown}
+        style={[dropdownstyle.dropdown, {width: width}]}
         placeholderStyle={dropdownstyle.placeholderStyle}
         selectedTextStyle={dropdownstyle.selectedTextStyle}
         inputSearchStyle={dropdownstyle.inputSearchStyle}

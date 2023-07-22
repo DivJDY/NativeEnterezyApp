@@ -11,16 +11,20 @@ const TextInputComponent = ({
   onChange,
   keyboardType,
   multiline,
+  editable,
+  onSubmitEditing,
 }) => {
   return (
     <TextInput
       multiline={multiline}
+      // editable={false}
       placeholder={placeholder}
       value={value}
       textColor="white"
       placeholderTextColor={'white'}
       style={[textinput_style.inputStyle, {width: width, height: height}]}
       onChangeText={onChange}
+      onSubmitEditing={onSubmitEditing}
       mode="Flat"
       keyboardType={keyboardType}
       theme={{

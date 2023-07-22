@@ -6,8 +6,9 @@ import {
   ScrollView,
   Platform,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native-paper';
 import {startup_styles} from '../styles/StartupStyle';
 import {text_style} from '../styles/TextStyle';
@@ -29,6 +30,35 @@ const CreateAccount = ({navigation}) => {
 
   const handleLogin = () => {
     navigation.navigate('Login');
+  };
+
+  useEffect(() => {
+    // requestExternalStoragePermission();
+  }, []);
+
+  const requestExternalStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Permission',
+            message: 'App needs access to external storage to save images.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('External storage permission granted.');
+        } else {
+          console.log('External storage permission denied.');
+        }
+      } catch (error) {
+        console.error('Error requesting external storage permission:', error);
+      }
+    }
   };
   return (
     <View style={startup_styles.container}>
@@ -67,9 +97,9 @@ const CreateAccount = ({navigation}) => {
                 variant="bodyLarge"
                 style={[
                   textinput_style.inputTitle,
-                  // {
-                  //   marginBottom: -5,
-                  // },
+                  {
+                    marginBottom: -5,
+                  },
                 ]}>
                 Enter Store Name
               </Text>

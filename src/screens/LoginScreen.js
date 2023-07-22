@@ -8,11 +8,13 @@ import {
   Alert,
 } from 'react-native';
 import React, {useState, useContext} from 'react';
-import {Text, Button} from 'react-native-paper';
+import {Text, Button, HelperText} from 'react-native-paper';
+import {styles} from '../styles/formStyles';
 import TextInputComponent from '../components/TextInput';
 import {AuthContext} from '../context/AuthContext';
 import HeadingImage from '../components/HeadingImage';
 import {login_style} from '../styles/loginStyles';
+import {number} from 'yup';
 
 const LoginScreen = ({navigation}) => {
   const [mobile, setMobile] = useState('');
@@ -30,6 +32,26 @@ const LoginScreen = ({navigation}) => {
   const handleSingUp = () => {
     navigation.navigate('Startup');
   };
+
+  const validateMobileNumber = text => {
+    return /^(\+\d{1,3}[- ]?)?\d{10}$/.test(text);
+  };
+
+  const isValidCode = text => {
+    return /^\d{4}$/.test(text);
+  };
+  const onChangeMobile = phone => {
+    setMobile(phone);
+  };
+
+  const onMobileNumberSubmit = () => {
+    if (validateMobileNumber(mobile)) {
+      const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+      console.warn(' ===> submit ==> ', randomCode);
+      setOtp(randomCode);
+    }
+  };
+
   return (
     <View>
       <KeyboardAvoidingView
@@ -59,9 +81,18 @@ const LoginScreen = ({navigation}) => {
               width={'65%'}
               value={mobile}
               placeholder={'+91-xxxxxxx'}
-              onChange={number => setMobile(number)}
-              keyboardType="numeric"
+              keyboardType="number-pad"
+              onChange={onChangeMobile}
+              onMobileNumberSubmit={onMobileNumberSubmit}
             />
+            {mobile && (
+              <HelperText
+                style={styles.error}
+                type="error"
+                visible={!validateMobileNumber(mobile)}>
+                Invalid mobile number
+              </HelperText>
+            )}
 
             <Text
               variant="bodyLarge"
@@ -74,8 +105,17 @@ const LoginScreen = ({navigation}) => {
               value={otp}
               placeholder={'xxxx'}
               onChange={Otp => setOtp(Otp)}
-              keyboardType="numeric"
+              keyboardType="number-pad"
+              // editable={false}
             />
+            {otp && (
+              <HelperText
+                style={styles.error}
+                type="error"
+                visible={!isValidCode(otp)}>
+                Invalid verification code. Enter 4 digits.
+              </HelperText>
+            )}
 
             {/* <BtnComponent title={'Login'} handleSubmit={handleSubmit} /> */}
             <Button
