@@ -76,6 +76,8 @@ const CardComponent = ({name, item, fetchProduct}) => {
   };
 
   // console.warn(' image error ==> ', imageError);
+  const imageURL =
+    'https://enterezy-images.s3.ap-southeast-2.amazonaws.com/eneterzyimages/w2.jpg'; // Replace this with the actual URL of the uploaded image
 
   return (
     <Card
@@ -84,9 +86,11 @@ const CardComponent = ({name, item, fetchProduct}) => {
       onPress={handleButtonPress}>
       <Card.Cover
         style={{marginBottom: 10}}
-        source={{uri: 'file://' + item?.product_image}}
+        // source={{uri: 'file://' + item?.product_image}}
+        source={{uri: imageURL}}
+        // source={require('../../assets/banner1.jpeg')}
         resizeMode="contain"
-        onError={handleImageError}
+        // onError={handleImageError}
       />
       {imageError && (
         <Text style={styles.imageLoadError}>Error while loading an image</Text>

@@ -15,24 +15,21 @@ import {Provider as PaperProvider, Button, Text} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {launchImageLibrary} from 'react-native-image-picker';
-// import {RNS3} from 'react-native-aws3';
-import RNFetchBlob from 'rn-fetch-blob';
-import AWS from 'react-native-aws3';
+import {RNS3} from 'react-native-aws3';
 import {AWSAccessKeyId, AWSSecretKeyId} from '../../keys';
 import DocumentPicker from 'react-native-document-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-// import AWS from 'aws-sdk';
 import {dropdownstyle} from '../styles/dropdownStyles';
 import DropDownSelection from '../components/DropDownSelection';
-import RNFS from 'react-native-fs';
 import TextInputComponent from '../components/TextInputComponent';
 import TextComponent from '../components/TextComponent';
 import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import LoadingIndicator from '../components/LoadingIndicator';
+import AwsUpload from '../components/AwsUpload';
 
 // validation schema
 const validationSchema = Yup.object().shape({
@@ -49,6 +46,15 @@ const validationSchema = Yup.object().shape({
     .min(0, 'Product MRP cannot be negative')
     .required('Product MRP is required'),
 });
+
+// Set AWS credentials
+// AWS.config.update({
+//   region: 'Asia Pacific (Sydney) ap-southeast-2',
+//   accessKeyId: 'AWSAccessKeyId',
+//   secretAccessKey: 'AWSSecretKeyId',
+// });
+
+// const s3 = new AWS.S3();
 
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState(null);
@@ -167,175 +173,71 @@ const ProductPostScreen = () => {
     }
   };
 
-  // Function to save the image to a permanent location
-  const saveImageToPermanentLocation = async imageData => {
-    console.log('image in permenent ==> ', imageData);
-    try {
-      // Get the file path of the temporary image
-      const temporaryImagePath = imageData.assets[0].uri;
-      // Create a folder in the document directory to store the images (you can choose a different directory)
-      const permanentFolderPath = `${RNFS.DocumentDirectoryPath}/images`;
-      await RNFS.mkdir(permanentFolderPath);
+  const [filePath, setFilePath] = useState({});
 
-      // Generate a unique name for the image (you can use a UUID generator or some other method)
-      const uniqueFileName = `${Date.now()}.jpg`;
-
-      // Prepare the permanent path where the image will be moved
-      const permanentImagePath = `${permanentFolderPath}/${uniqueFileName}`;
-
-      // Move the image to the permanent location
-      await RNFS.moveFile(temporaryImagePath, permanentImagePath);
-
-      console.log('Image saved to:', permanentImagePath);
-      setUploadImage(permanentImagePath);
-
-      // Now you can access the image using the permanent path (e.g., to display it in an <Image> component)
-      // ... (Your code here)
-    } catch (error) {
-      console.log('Error saving image:', error);
+  const uploadFile = () => {
+    console.log(' 88888 ');
+    if (Object.keys(filePath).length === 0) {
+      alert('Please select image first');
+      return;
     }
-  };
-
-  // AWS deatils
-  // const awsConfig = {
-  //   accessKeyId: 'AKIA3VWN5ISEQFPNWGOQ',
-  //   secretAccessKey: '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',
-  //   region: 'Asia Pacific (Sydney) ap-southeast-2',
-  //   bucketName: 'enterezy-images',
-  // };
-
-  // const s3 = new AWS.S3({
-  //   accessKeyId: awsConfig.accessKeyId,
-  //   secretAccessKey: awsConfig.secretAccessKey,
-  //   region: awsConfig.region,
-  // });
-
-  // Upload an image to AWS bucket
-  // const uploadImageToS3 = async image => {
-  //   const fileName = `image_${Date.now()}.jpg`; // You can use a unique name for the image
-
-  //   const file = {
-  //     // uri: image.uri,
-  //     uri: image.assets[0].uri,
-  //     // type: image.type,
-  //     type: image.assets[0].type,
-  //     name: fileName,
-  //   };
-
-  //   const options = {
-  //     bucket: awsConfig.bucketName,
-  //     key: fileName,
-  //     contentType: file.type,
-  //     region: awsConfig.region,
-  //     accessLevel: 'public-read', // Allow public access to the uploaded image
-  //   };
-
-  //   try {
-  //     const response = await s3.upload(options, file);
-
-  //     // Get the public URL of the uploaded image
-  //     const publicURL = response.location;
-
-  //     // Store the public URL in state
-  //     setUploadImage(publicURL);
-
-  //     console.log('Image uploaded successfully:', publicURL);
-  //   } catch (error) {
-  //     console.log('Error uploading image:', error);
-  //   }
-  // };
-
-  // AWS configuration
-  // AWS.config.update({
-  //   region: 'Asia Pacific (Sydney) ap-southeast-2',
-  //   accessKeyId: 'AKIA3VWN5ISEQFPNWGOQ',
-  //   secretAccessKey: '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',
-  // });
-
-  // Create an S3 service object
-  // const s3 = new AWS.S3();
-
-  // Function to upload the image to S3
-  const uploadImageToS3 = async image => {
-    const file = {
-      // `uri` can also be a file system path (i.e. file://)
-      uri: image.assets[0].uri,
-      name: image.assets[0].fileName,
-      type: 'image/jpeg/png/webp',
-    };
-
-    const s3Options = {
-      keyPrefix: 'enterezyuploads/',
-      bucket: 'enterezy-images',
-      region: 'Asia Pacific (Sydney) ap-southeast-2',
-      accessKey: AWSAccessKeyId,
-      secretKey: AWSSecretKeyId,
-      successActionStatus: 201,
-      // contentType: 'image/jpeg/png/webp',
-    };
-
-    const options = {
-      keyPrefix: s3Options.keyPrefix,
-      bucket: s3Options.bucket,
-      region: s3Options.region,
-      accessKey: s3Options.AWSAccessKeyId,
-      secretKey: s3Options.AWSSecretKeyId,
-      successActionStatus: s3Options.successActionStatus,
-      contentType: 'image/jpeg/png/webp',
-      // Set the content-type header for the binary data
-    };
-
-    RNFetchBlob.fetch(
-      'POST',
-      AWS.getSignedUrl(options),
+    RNS3.put(
       {
-        'Content-Type': 'application/octet-stream',
+        // `uri` can also be a file system path (i.e. file://)
+        uri: filePath.assets[0].uri,
+        name: filePath.assets[0].fileName,
+        type: filePath.assets[0].type,
       },
-      RNFetchBlob.wrap(file.uri),
+      {
+        keyPrefix: 'enterezyImages/', // Ex. myuploads/
+        bucket: 'enterezy-images', // Ex. aboutreact
+        region: 'Asia Pacific (Sydney) ap-southeast-2', // Ex. ap-south-1
+        accessKey: AWSAccessKeyId,
+        // Ex. AKIH73GS7S7C53M46OQ
+        secretKey: AWSSecretKeyId,
+        // Ex. Pt/2hdyro977ejd/h2u8n939nh89nfdnf8hd8f8fd
+        successActionStatus: 201,
+      },
     )
-      .then(res => {
-        console.log('Image uploaded successfully:', res.text());
-      })
-      .catch(error => {
-        console.error('Error uploading image:', error);
+      .progress(progress =>
+        // setUploadSuccessMessage(
+        //   `Uploading: ${progress.loaded / progress.total} (${
+        //     progress.percent
+        //   }%)`,
+        // ),
+        console.warn(' progresss ====> ', progress),
+      )
+      .then(response => {
+        if (response.status !== 201) alert('Failed to upload image to S3');
+        console.log(response.body);
+        let {bucket, etag, key, location} = response.body.postResponse;
+        // setUploadSuccessMessage(
+        //   `Uploaded Successfully:
+        //   \n1. bucket => ${bucket}
+        //   \n2. etag => ${etag}
+        //   \n3. key => ${key}
+        //   \n4. location => ${location}`,
+        // );
+
+        console.warn(
+          ' 88888888 ==> ',
+          `Uploaded Successfully: 
+        \n1. bucket => ${bucket}
+        \n2. etag => ${etag}
+        \n3. key => ${key}
+        \n4. location => ${location}`,
+        );
+        /**
+         * {
+         *   postResponse: {
+         *     bucket: "your-bucket",
+         *     etag : "9f620878e06d28774406017480a59fd4",
+         *     key: "uploads/image.png",
+         *     location: "https://bucket.s3.amazonaws.com/**.png"
+         *   }
+         * }
+         */
       });
-
-    // RNS3.put(file, options).then(res => console.log('result ==> ', res));
-
-    // RNS3.put(file, options).then(response => {
-    //   if (response.status !== 201)
-    //     throw new Error('Failed to upload image to S3');
-    //   console.log(response.body);
-    /**
-     * {
-     *   postResponse: {
-     *     bucket: "your-bucket",
-     *     etag : "9f620878e06d28774406017480a59fd4",
-     *     key: "uploads/image.png",
-     *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-     *   }
-     * } cv
-     */
-    // });
-
-    // const bucketName = 'enterezy-images'; // Replace with your S3 bucket name
-    // const fileName = `image_${Date.now()}.jpg`; // Replace with a desired file name
-    // const params = {
-    //   Bucket: bucketName,
-    //   Key: fileName,
-    //   Body: image.assets[0].uri, // Make sure the image data is provided as the Body parameter
-    //   ACL: 'public-read', // Allow public read access to the uploaded file if needed
-    //   ContentType: 'image/jpeg', // Set the appropriate content type for the image
-    // };
-    // try {
-    //   const response = await s3.upload(params).promise();
-    //   console.warn('Image uploaded successfully:', response.Location);
-    //   setUploadImage(response.Location);
-    //   // return response.Location; // The public URL of the uploaded image
-    // } catch (error) {
-    //   console.error('Error uploading image:', error);
-    //   throw error;
-    // }
   };
 
   const handleImageSelection = () => {
@@ -357,7 +259,10 @@ const ProductPostScreen = () => {
         console.warn(' ----- source path ==> ', response);
         const fileName = response.assets[0].fileName;
 
-        uploadImageToS3(response);
+        setFilePath(response);
+        uploadFile();
+
+        // uploadImageToS3(response);
         // setUploadImage(sourcePath);
         // setImageName(fileName);
         // saveImageToPermanentLocation(response);
@@ -564,6 +469,7 @@ const ProductPostScreen = () => {
                       Submit
                     </Text>
                   </Button>
+                  <AwsUpload />
                 </View>
               )}
             </Formik>
