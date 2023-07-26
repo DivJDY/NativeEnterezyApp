@@ -28,7 +28,7 @@ const HomeScreen = ({route}) => {
 
   // eslint-disable-next-line no-unused-vars
   const [hasNoData, setHasNoData] = useState(false);
-  const [page_limit, setPageLimit] = useState(2);
+  const [page_limit, setPageLimit] = useState(8);
 
   const requestCameraPermission = async () => {
     try {
@@ -49,16 +49,6 @@ const HomeScreen = ({route}) => {
       }
     } catch (err) {
       console.warn(err);
-    }
-  };
-
-  const requestLegacyStoragePermission = async () => {
-    try {
-      await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles()],
-      });
-    } catch (error) {
-      console.error('Error requesting access to external storage:', error);
     }
   };
 

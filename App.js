@@ -1,28 +1,58 @@
-/* eslint-disable prettier/prettier */
-import React from 'react';
-import AWS from 'aws-sdk';
+import React, {useEffect} from 'react';
+import {Font} from 'react-native';
+import {Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
 import Navigation from './Navigation';
 import {AuthProvider} from './src/context/AuthContext';
 
-const App = () => {
-  // Configure the AWS SDK (Add this at the top of your entry point file)
-  AWS.config.update({
-    region: 'Asia Pacific (Sydney) ap-southeast-2', // Replace with your desired AWS region
-    credentials: new AWS.Credentials({
-      accessKeyId: 'AKIA3VWN5ISEQFPNWGOQ',
-      secretAccessKey: 'fj3qLkXpJBSS/yZpBQG1uXJ+RRiul1G37YAS78hJ',
-    }),
-  });
+const theme = {
+  ...DefaultTheme,
+  // fonts: {
 
-  return (
-    <AuthProvider>
-      <Navigation />
-    </AuthProvider>
-  );
+  // regular: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'normal',
+  // },
+  // titleLarge: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'bold',
+  // },
+  // titleMedium: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'bold',
+  // },
+  // bodyLarge: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'bold',
+  // },
+  // bodyMedium: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'bold',
+  // },
+  // labelLarge: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'bold',
+  // },
+  // displaySmall: {
+  //   fontFamily: 'Times New Roman', // Replace with your desired font family
+  //   fontWeight: 'normal',
+  // },
+  // },
 };
 
-// const hostName = 'http://127.0.0.1:5010';
-// export const hostName="https://6fe8-202-131-134-244.ngrok-free.app"
+const App = () => {
+  // useEffect(() => {
+  //   Font.loadAsync({
+  //     'times-new-roman': require('./assets/fonts/timesnewroman.ttf'),
+  //   });
+  // });
+  return (
+    <PaperProvider theme={theme}>
+      <AuthProvider>
+        <Navigation />
+      </AuthProvider>
+    </PaperProvider>
+  );
+};
 
 export const hostName = 'http://3.26.14.137:5000';
 export default App;

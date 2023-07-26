@@ -16,8 +16,7 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {RNS3} from 'react-native-aws3';
-import {AWSAccessKeyId, AWSSecretKeyId} from '../../keys';
-import DocumentPicker from 'react-native-document-picker';
+import {AWSAccessKeyId, AWSSecretKeyId} from '../AWSkeys';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -29,7 +28,6 @@ import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import LoadingIndicator from '../components/LoadingIndicator';
-import AwsUpload from '../components/AwsUpload';
 
 // validation schema
 const validationSchema = Yup.object().shape({
@@ -47,22 +45,13 @@ const validationSchema = Yup.object().shape({
     .required('Product MRP is required'),
 });
 
-// Set AWS credentials
-// AWS.config.update({
-//   region: 'Asia Pacific (Sydney) ap-southeast-2',
-//   accessKeyId: 'AWSAccessKeyId',
-//   secretAccessKey: 'AWSSecretKeyId',
-// });
-
-// const s3 = new AWS.S3();
-
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState(null);
-  const [imageName, setImageName] = useState(null);
   const [category, setCategory] = useState('');
   const [categoryList, setCategoryList] = useState([]);
   const [loadcategory, setLoadCategory] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imgLoad, setImgLoad] = useState(false);
 
   const requestHeader = FetchUtilityOptions();
 
@@ -145,102 +134,47 @@ const ProductPostScreen = () => {
   };
 
   useEffect(() => {
-    requestExternalStoragePermission();
+    clearFormData();
   }, []);
 
-  const requestExternalStoragePermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'External Storage Permission',
-            message: 'App needs access to external storage to save images.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
+  // Image upload to AWS s3 bucket
+  const handleImageUpload = image => {
+    setImgLoad(true);
+    const imageFile = {
+      uri: image.uri,
+      name: image.fileName, // Replace this with a suitable name for your image file
+      type: image.type, // Replace this with the appropriate file type (e.g., 'image/png' for PNG images)
+    };
 
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('External storage permission granted.');
-        } else {
-          console.log('External storage permission denied.');
-        }
-      } catch (error) {
-        console.error('Error requesting external storage permission:', error);
-      }
-    }
-  };
+    const options = {
+      keyPrefix: 'enterezy-product-images/', // The folder name where you want to store the image in the S3 bucket
+      bucket: 'enterezy-images', // Replace this with the actual name of your S3 bucket
+      region: 'ap-southeast-2', // Replace this with the AWS region where your S3 bucket is located (e.g., 'us-east-1')
+      accessKey: AWSAccessKeyId, // Replace this with your AWS access key
+      secretKey: AWSSecretKeyId, // Replace this with your AWS secret key
+      successActionStatus: 201,
+    };
 
-  const [filePath, setFilePath] = useState({});
-
-  const uploadFile = () => {
-    console.log(' 88888 ');
-    if (Object.keys(filePath).length === 0) {
-      alert('Please select image first');
-      return;
-    }
-    RNS3.put(
-      {
-        // `uri` can also be a file system path (i.e. file://)
-        uri: filePath.assets[0].uri,
-        name: filePath.assets[0].fileName,
-        type: filePath.assets[0].type,
-      },
-      {
-        keyPrefix: 'enterezyImages/', // Ex. myuploads/
-        bucket: 'enterezy-images', // Ex. aboutreact
-        region: 'Asia Pacific (Sydney) ap-southeast-2', // Ex. ap-south-1
-        accessKey: AWSAccessKeyId,
-        // Ex. AKIH73GS7S7C53M46OQ
-        secretKey: AWSSecretKeyId,
-        // Ex. Pt/2hdyro977ejd/h2u8n939nh89nfdnf8hd8f8fd
-        successActionStatus: 201,
-      },
-    )
-      .progress(progress =>
-        // setUploadSuccessMessage(
-        //   `Uploading: ${progress.loaded / progress.total} (${
-        //     progress.percent
-        //   }%)`,
-        // ),
-        console.warn(' progresss ====> ', progress),
-      )
+    RNS3.put(imageFile, options)
       .then(response => {
-        if (response.status !== 201) alert('Failed to upload image to S3');
-        console.log(response.body);
-        let {bucket, etag, key, location} = response.body.postResponse;
-        // setUploadSuccessMessage(
-        //   `Uploaded Successfully:
-        //   \n1. bucket => ${bucket}
-        //   \n2. etag => ${etag}
-        //   \n3. key => ${key}
-        //   \n4. location => ${location}`,
-        // );
-
-        console.warn(
-          ' 88888888 ==> ',
-          `Uploaded Successfully: 
-        \n1. bucket => ${bucket}
-        \n2. etag => ${etag}
-        \n3. key => ${key}
-        \n4. location => ${location}`,
-        );
-        /**
-         * {
-         *   postResponse: {
-         *     bucket: "your-bucket",
-         *     etag : "9f620878e06d28774406017480a59fd4",
-         *     key: "uploads/image.png",
-         *     location: "https://bucket.s3.amazonaws.com/**.png"
-         *   }
-         * }
-         */
+        if (response.status !== 201) {
+          setImgLoad(false);
+          console.error('Failed to upload image to S3:', response);
+        } else {
+          setImgLoad(false);
+          console.log('Image successfully uploaded to S3:', response.body);
+          setUploadImage(response.body.postResponse.location);
+        }
+      })
+      .catch(error => {
+        setImgLoad(false);
+        console.error('Error uploading image to S3:', error);
       });
   };
 
+  // Image selection
   const handleImageSelection = () => {
+    setImgLoad(true);
     const options = {
       mediaType: 'photo',
       storageOptions: {
@@ -255,17 +189,11 @@ const ProductPostScreen = () => {
       } else if (response.error) {
         console.log('Image selection error: ', response.error);
       } else {
-        const sourcePath = response.assets[0].uri;
+        // const sourcePath = response.assets[0].uri;
         console.warn(' ----- source path ==> ', response);
-        const fileName = response.assets[0].fileName;
+        // const fileName = response.assets[0].fileName;
 
-        setFilePath(response);
-        uploadFile();
-
-        // uploadImageToS3(response);
-        // setUploadImage(sourcePath);
-        // setImageName(fileName);
-        // saveImageToPermanentLocation(response);
+        handleImageUpload(response.assets[0]);
       }
     });
   };
@@ -330,7 +258,7 @@ const ProductPostScreen = () => {
                   {errors.product_name && touched.product_name && (
                     <TextComponent
                       text={errors.product_name}
-                      style={styles.error}
+                      style={[styles.error, {color: 'red'}]}
                     />
                   )}
 
@@ -363,7 +291,7 @@ const ProductPostScreen = () => {
                     {errors.product_desc && touched.product_desc && (
                       <TextComponent
                         text={errors.product_desc}
-                        style={styles.error}
+                        style={[styles.error, {color: 'red'}]}
                       />
                     )}
                   </View>
@@ -384,7 +312,7 @@ const ProductPostScreen = () => {
                       touched.minimum_product_order_quantity && (
                         <TextComponent
                           text={errors.minimum_product_order_quantity}
-                          style={styles.error}
+                          style={[styles.error, {color: 'red'}]}
                         />
                       )}
                   </View>
@@ -402,7 +330,7 @@ const ProductPostScreen = () => {
                     {errors.product_price && touched.product_price && (
                       <TextComponent
                         text={errors.product_price}
-                        style={styles.error}
+                        style={[styles.error, {color: 'red'}]}
                       />
                     )}
                   </View>
@@ -420,22 +348,30 @@ const ProductPostScreen = () => {
                     {errors.product_mrp && touched.product_mrp && (
                       <TextComponent
                         text={errors.product_mrp}
-                        style={styles.error}
+                        style={[styles.error, {color: 'red'}]}
                       />
                     )}
                   </View>
 
                   <Button
                     mode="contained"
+                    disabled={imgLoad ? true : false}
                     icon={
                       uploadImage
-                        ? ({size, color}) => (
-                            <FontAwesome5
-                              name="check-double"
-                              size={size}
-                              color={color}
-                            />
-                          )
+                        ? ({size, color}) =>
+                            imgLoad ? (
+                              <AntDesign
+                                name="loading1"
+                                size={size}
+                                color={color}
+                              />
+                            ) : (
+                              <FontAwesome5
+                                name="check-double"
+                                size={size}
+                                color={color}
+                              />
+                            )
                         : ({size, color}) => (
                             <FontAwesome5
                               name="upload"
@@ -469,7 +405,6 @@ const ProductPostScreen = () => {
                       Submit
                     </Text>
                   </Button>
-                  <AwsUpload />
                 </View>
               )}
             </Formik>

@@ -92,7 +92,7 @@ const CardDetailsComponent = props => {
     <View>
       <Card style={{margin: 15}} mode="elevated" key={value?.id}>
         <Card.Cover
-          source={{uri: 'file://' + value?.product_image}}
+          source={{uri: value?.product_image}}
           style={styles.cardCover}
           resizeMode="contain"
         />

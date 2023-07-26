@@ -65,8 +65,6 @@ const CardComponent = ({name, item, fetchProduct}) => {
   };
 
   const handleImageError = error => {
-    // Handle image loading error
-    // console.log('Image Error:', error.nativeEvent.error);
     setImageError(true);
     if (error.nativeEvent.error.indexOf('ENOENT') !== -1) {
       console.log('The image file does not exist.');
@@ -75,10 +73,6 @@ const CardComponent = ({name, item, fetchProduct}) => {
     }
   };
 
-  // console.warn(' image error ==> ', imageError);
-  const imageURL =
-    'https://enterezy-images.s3.ap-southeast-2.amazonaws.com/eneterzyimages/w2.jpg'; // Replace this with the actual URL of the uploaded image
-
   return (
     <Card
       mode="elevated"
@@ -86,11 +80,9 @@ const CardComponent = ({name, item, fetchProduct}) => {
       onPress={handleButtonPress}>
       <Card.Cover
         style={{marginBottom: 10}}
-        // source={{uri: 'file://' + item?.product_image}}
-        source={{uri: imageURL}}
-        // source={require('../../assets/banner1.jpeg')}
+        source={{uri: item?.product_image}}
         resizeMode="contain"
-        // onError={handleImageError}
+        onError={handleImageError}
       />
       {imageError && (
         <Text style={styles.imageLoadError}>Error while loading an image</Text>
@@ -101,13 +93,13 @@ const CardComponent = ({name, item, fetchProduct}) => {
         </Text>
         <Text style={styles.cardSubtitle} variant="bodyMedium">
           Price: <Text>{'\u20B9'}</Text>
-          {''} {item?.product_price}
+          {item?.product_price}
         </Text>
         <Text
           style={[styles.cardSubtitle, {color: 'gray'}]}
           variant="bodyMedium">
           MRP: <Text style={{marginLeft: 5, color: 'gray'}}>{'\u20B9'}</Text>
-          {''} {item?.product_mrp}
+          {item?.product_mrp}
         </Text>
 
         <Text style={[styles.cardPara, {marginBottom: 8}]} variant="bodyMedium">

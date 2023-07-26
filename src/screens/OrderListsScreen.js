@@ -18,7 +18,7 @@ const OrderListScreen = () => {
 
   const fetchOderList = async () => {
     setLoading(true);
-    await fetch(hostName + '/invoice', {
+    await fetch(hostName + '/invoice?order_by=id desc', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -45,12 +45,12 @@ const OrderListScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {data.length === 0 ? (
+      {loading ? (
+        <LoadingIndicator />
+      ) : data.length === 0 ? (
         <View style={{flex: 1, alignItems: 'center', marginTop: '10%'}}>
           <Text style={{fontSize: 20, fontWeight: '700'}}>No order data</Text>
         </View>
-      ) : loading ? (
-        <LoadingIndicator />
       ) : (
         <KeyboardAvoidingView
           enabled

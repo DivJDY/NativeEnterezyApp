@@ -22,14 +22,17 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   cardTitle: {
+    fontFamily: 'Times New Roman',
     fontSize: 18,
     fontWeight: 'bold',
   },
   cardSubtitle: {
+    fontFamily: 'Times New Roman',
     fontSize: 14,
     fontWeight: 'bold',
   },
   cardPara: {
+    fontFamily: 'Times New Roman',
     marginTop: 5,
     fontSize: 14,
     textAlign: 'justify',
@@ -57,12 +60,14 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   imageLoadError: {
+    fontFamily: 'Times New Roman',
     textAlign: 'center',
     color: '#FECE00',
     fontWeight: 'bold',
     fontSize: 12,
   },
   btnStyle: {
+    fontFamily: 'Times New Roman',
     fontWeight: 'bold',
     fontSize: 16,
     lineHeight: 20,

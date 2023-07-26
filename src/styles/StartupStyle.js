@@ -31,6 +31,7 @@ export const startup_styles = StyleSheet.create({
     paddingBottom: 5,
     color: 'black',
     fontSize: 40,
+    fontFamily: 'Times New Roman',
     fontWeight: 'bold',
   },
   subTitle: {

@@ -8,16 +8,17 @@ import {
   Platform,
   Alert,
   StyleSheet,
-  PermissionsAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import {Button, Provider as PaperProvider, Text} from 'react-native-paper';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import RNFS from 'react-native-fs';
+import {RNS3} from 'react-native-aws3';
 import TextInputComponent from '../components/TextInputComponent';
 import {styles} from '../styles/formStyles';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {hostName} from '../../App';
+import {AWSAccessKeyId, AWSSecretKeyId} from '../AWSkeys';
 import LoadingIndicator from '../components/LoadingIndicator';
 import DropDownSelection from '../components/DropDownSelection';
 import {dropdownstyle} from '../styles/dropdownStyles';
@@ -40,41 +41,9 @@ function DisplayRental() {
   // Category list
   const [category, setCategory] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
+  const [imgLoad, setImgLoad] = useState(false);
 
   const requestOption = FetchUtilityOptions();
-
-  const saveImageToExternalStorage = async (fileName, sourcePath) => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'External Storage Permission',
-          message: 'App needs access to external storage',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        const pictureDir = RNFS.ExternalDirectoryPath + '/Pictures';
-        const destinationPath = `${pictureDir}/${fileName}`;
-
-        await RNFS.mkdir(pictureDir);
-        await RNFS.downloadFile({
-          fromUrl: sourcePath,
-          toFile: destinationPath,
-        }).promise;
-
-        console.log('Image saved to external storage:', destinationPath);
-        setShelfImage(destinationPath);
-      } else {
-        console.log('External storage permission denied');
-      }
-    } catch (error) {
-      console.error('Error saving image:', error);
-    }
-  };
 
   const fetchShelfVisibility = async () => {
     setLoading(true);
@@ -92,6 +61,40 @@ function DisplayRental() {
 
   const requestHeader = FetchUtilityOptions();
 
+  const handleImageUpload = image => {
+    setImgLoad(true);
+    const imageFile = {
+      uri: image.uri,
+      name: image.fileName, // Replace this with a suitable name for your image file
+      type: image.type, // Replace this with the appropriate file type (e.g., 'image/png' for PNG images)
+    };
+
+    const options = {
+      keyPrefix: 'enterezy-rental-images/', // The folder name where you want to store the image in the S3 bucket
+      bucket: 'enterezy-images', // Replace this with the actual name of your S3 bucket
+      region: 'ap-southeast-2', // Replace this with the AWS region where your S3 bucket is located (e.g., 'us-east-1')
+      accessKey: AWSAccessKeyId, // Replace this with your AWS access key
+      secretKey: AWSSecretKeyId, // Replace this with your AWS secret key
+      successActionStatus: 201,
+    };
+
+    RNS3.put(imageFile, options)
+      .then(response => {
+        if (response.status !== 201) {
+          setImgLoad(false);
+          console.error('Failed to upload image to S3:', response);
+        } else {
+          setImgLoad(false);
+          console.log('Image successfully uploaded to S3:', response.body);
+          setShelfImage(response.body.postResponse.location);
+        }
+      })
+      .catch(error => {
+        setImgLoad(false);
+        console.error('Error uploading image to S3:', error);
+      });
+  };
+
   const handleImageSelection = () => {
     const options = {
       mediaType: 'photo',
@@ -107,20 +110,8 @@ function DisplayRental() {
       } else if (response.error) {
         console.log('Image selection error: ', response.error);
       } else {
-        const sourcePath = response.assets[0].uri;
-        const targetPath =
-          RNFS.DocumentDirectoryPath + `/${response.assets[0].fileName}`;
-        const fileName = response.assets[0].fileName;
-
-        // saveImageToExternalStorage(fileName, sourcePath);
-
-        RNFS.copyFile(sourcePath, targetPath)
-          .then(() => {
-            setShelfImage(targetPath); // Set the permanent image URI to display it
-          })
-          .catch(error => {
-            console.log('Image copy error: ', error);
-          });
+        setImgLoad(true);
+        handleImageUpload(response.assets[0]);
       }
     });
   };
@@ -135,6 +126,7 @@ function DisplayRental() {
         setLoading(false);
       })
       .catch(error => {
+        setLoading(false);
         console.error(error);
       });
   };
@@ -158,6 +150,7 @@ function DisplayRental() {
   };
 
   const fetchRental = formData => {
+    setLoading(true);
     console.warn('Form Data =====> ', formData);
     fetch(hostName + '/rental', {
       method: 'POST',
@@ -171,6 +164,7 @@ function DisplayRental() {
         clearFormData();
       })
       .catch(error => {
+        setLoading(false);
         // Handle any errors
         console.error('post error ', error);
       });
@@ -447,6 +441,7 @@ function DisplayRental() {
             <View style={{marginBottom: 10}} />
             <Button
               mode="contained"
+              disabled={imgLoad}
               icon={
                 shelfImage
                   ? ({color}) => (
@@ -479,7 +474,13 @@ function DisplayRental() {
                   {fontWeight: 'bold', fontSize: 16, paddingTop: 12},
                   shelfImage ? {color: '#fff'} : {color: '#000'},
                 ]}>
-                {shelfImage ? 'Shelf Pic uploaded' : 'Upload a Shelf Pic *'}
+                {imgLoad ? (
+                  <ActivityIndicator size={22} color="black" />
+                ) : shelfImage ? (
+                  'Shelf Pic uploaded'
+                ) : (
+                  'Upload a Shelf Pic *'
+                )}
               </Text>
             </Button>
 
