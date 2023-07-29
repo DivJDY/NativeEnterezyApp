@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import {View, TouchableOpacity, Image} from 'react-native';
 import {Text} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
@@ -41,6 +41,7 @@ import PostProductCategory from './src/screens/PostProductCategory';
 import OrderListScreen from './src/screens/OrderListsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import UserLists from './src/screens/UserLists';
+import ListsOfDisplayRentals from './src/screens/ListsOfDisplayRentals';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -217,7 +218,7 @@ const DrawerNavigation = () => (
           <FontAwesome
             name="rupee"
             size={28}
-            style={{marginLeft: 9}}
+            style={{marginLeft: 6}}
             color={color}
           />
         ),
@@ -233,7 +234,24 @@ const DrawerNavigation = () => (
           <Entypo
             name="users"
             size={30}
-            style={{marginLeft: 9}}
+            style={{marginLeft: 4}}
+            color={color}
+          />
+        ),
+      }}
+    />
+
+    <Drawer.Screen
+      name="ShowRentals"
+      component={ListsOfDisplayRentals}
+      options={{
+        title: 'Show Rentals',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <FontAwesome
+            name="rupee"
+            size={28}
+            style={{marginLeft: 6}}
             color={color}
           />
         ),
@@ -248,7 +266,7 @@ const DrawerNavigation = () => (
         drawerIcon: ({color}) => (
           <MaterialIcons
             name="policy"
-            style={{marginLeft: 9}}
+            style={{marginLeft: 6}}
             size={30}
             color={color}
           />

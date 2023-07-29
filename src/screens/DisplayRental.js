@@ -15,6 +15,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RNS3} from 'react-native-aws3';
 import TextInputComponent from '../components/TextInputComponent';
+import DateRangePicker from '../components/DateComponent';
 import {styles} from '../styles/formStyles';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import {hostName} from '../../App';
@@ -409,7 +410,6 @@ function DisplayRental() {
               }}>
               Weekly Footfalls in the store
             </Text>
-
             <TextInputComponent
               placeholder={''}
               onChangeText={text => setAvgStore(text)}
@@ -419,6 +419,8 @@ function DisplayRental() {
                 {width: '65%', flex: 1, marginLeft: 12, height: 50},
               ]}
             />
+
+            <DateRangePicker />
 
             <View style={{marginBottom: 10}} />
             <Text

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
@@ -165,13 +166,7 @@ const ProfileScreen = ({navigation}) => {
               justifyContent: 'space-between',
               alignItems: 'center',
               flexDirection: 'row',
-              marginTop: -5,
             }}>
-            {/* <IconButton
-              icon="arrow-back"
-              style={{color: '#4277b4'}}
-              size={28}
-            /> */}
             <IconButton
               icon={() => (
                 <Icon style={{color: '#4277b4'}} name="arrow-back" size={28} />
@@ -208,13 +203,17 @@ const ProfileScreen = ({navigation}) => {
           </View>
           <KeyboardAvoidingView
             enabled
-            style={{marginBottom: 100, marginLeft: 12}}
+            style={{marginBottom: 100, marginLeft: 12, marginTop: 10}}
             behavior={Platform.OS === 'ios' ? 'padding' : null}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              {shopImage ? (
-                <Image source={require('../../assets/banner2.jpeg')} />
+              {!editMode ? (
+                <Image
+                  resizeMode="stretch"
+                  style={{width: '100%'}}
+                  source={require('../../assets/banner2.jpeg')}
+                />
               ) : (
-                <TouchableOpacity onPress={handleShopImageSelection()}>
+                <TouchableOpacity onPress={handleShopImageSelection}>
                   <View
                     style={{
                       borderWidth: 1,
@@ -276,6 +275,16 @@ const ProfileScreen = ({navigation}) => {
                 />
 
                 <Text style={{marginBottom: 5}} variant="titleLarge">
+                  Email
+                </Text>
+                <TextInput
+                  style={{marginBottom: 15, backgroundColor: '#fff'}}
+                  value={formData.email}
+                  onChangeText={value => handleInputChange('email', value)}
+                  editable={editMode}
+                />
+
+                <Text style={{marginBottom: 5}} variant="titleLarge">
                   Address
                 </Text>
                 <TextInput
@@ -284,9 +293,17 @@ const ProfileScreen = ({navigation}) => {
                   onChangeText={value => handleInputChange('address', value)}
                   editable={editMode}
                 />
-              </View>
 
-              {/* <Button textColor="#4277b4" onPress={uploadDocument}> */}
+                <Text style={{marginBottom: 5}} variant="titleLarge">
+                  GSTIN
+                </Text>
+                <TextInput
+                  style={{marginBottom: 15, backgroundColor: '#fff'}}
+                  value={formData.gstin}
+                  onChangeText={value => handleInputChange('gstin', value)}
+                  editable={editMode}
+                />
+              </View>
 
               <Text
                 onPress={uploadDocument}
@@ -296,24 +313,14 @@ const ProfileScreen = ({navigation}) => {
                 style={{fontSize: 18, textAlign: 'center'}}>
                 {document === null
                   ? 'Click to add documents'
-                  : 'Documents uploaded successufully'}
+                  : 'Document uploaded successufully'}
               </Text>
-              {/* </Button> */}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
       ) : (
         <NoDataFound message="Profile data not found" />
       )}
-      {/* <View style={[styles.titleContainer, {marginBottom: '10%'}]}>
-        <Button
-          mode="contained"
-          buttonColor="blue"
-          onPress={() => navigation.navigate('ProfileLogIn')}
-          style={styles.btn}>
-          <Text style={styles.btnText}>Login</Text>
-        </Button>
-      </View> */}
     </>
   );
 };
