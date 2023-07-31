@@ -41,7 +41,7 @@ export const startup_styles = StyleSheet.create({
     marginBottom: 10,
   },
   card_body: {
-    backgroundColor: '#000000',
+    backgroundColor: '#000',
     marginTop: 25,
     margin: 10,
     borderRadius: 20,

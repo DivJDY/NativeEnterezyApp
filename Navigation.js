@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 
@@ -41,7 +40,7 @@ import PostProductCategory from './src/screens/PostProductCategory';
 import OrderListScreen from './src/screens/OrderListsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import UserLists from './src/screens/UserLists';
-import ListsOfDisplayRentals from './src/screens/ListsOfDisplayRentals';
+import ShowRentals from './src/screens/ShowRentals';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -170,10 +169,10 @@ const DrawerNavigation = () => (
       }}
     />
     <Drawer.Screen
-      name="ProductCategory"
+      name="adminInputs"
       component={PostProductCategory}
       options={{
-        title: 'Post Category',
+        title: 'Admin Inputs',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
           <Feather name="grid" size={30} color={color} />
@@ -209,6 +208,18 @@ const DrawerNavigation = () => (
     />
 
     <Drawer.Screen
+      name="UserList"
+      component={UserLists}
+      options={{
+        title: 'User Lists',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <Entypo name="users" size={30} color={color} />
+        ),
+      }}
+    />
+
+    <Drawer.Screen
       name="DisplayRental"
       component={DisplayRental}
       options={{
@@ -217,25 +228,9 @@ const DrawerNavigation = () => (
         drawerIcon: ({color}) => (
           <FontAwesome
             name="rupee"
-            size={28}
-            style={{marginLeft: 6}}
-            color={color}
-          />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="UserList"
-      component={UserLists}
-      options={{
-        title: 'User Lists',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <Entypo
-            name="users"
             size={30}
-            style={{marginLeft: 4}}
             color={color}
+            style={{marginLeft: 8}}
           />
         ),
       }}
@@ -243,20 +238,21 @@ const DrawerNavigation = () => (
 
     <Drawer.Screen
       name="ShowRentals"
-      component={ListsOfDisplayRentals}
+      component={ShowRentals}
       options={{
         title: 'Show Rentals',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
           <FontAwesome
             name="rupee"
-            size={28}
-            style={{marginLeft: 6}}
+            size={30}
             color={color}
+            style={{marginLeft: 8}}
           />
         ),
       }}
     />
+
     <Drawer.Screen
       name="PrivacyPolicy"
       component={PrivacyPolicyScreen}
@@ -264,12 +260,7 @@ const DrawerNavigation = () => (
         title: 'Privacy policy',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <MaterialIcons
-            name="policy"
-            style={{marginLeft: 6}}
-            size={30}
-            color={color}
-          />
+          <MaterialIcons name="policy" size={30} color={color} />
         ),
       }}
     />

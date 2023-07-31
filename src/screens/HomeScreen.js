@@ -182,17 +182,6 @@ const HomeScreen = ({route}) => {
 
   return (
     <>
-      <Button
-        mode="contained"
-        style={{
-          marginBottom: 10,
-          marginTop: 15,
-          marginHorizontal: 10,
-          backgroundColor: '#4277b4',
-        }}
-        onPress={() => navigation.navigate('DisplayRental')}>
-        <Text style={styles.btnStyle}>Click Here For Display Rentals</Text>
-      </Button>
       <BannerLists />
       <View style={styles.container}>
         <Searchbar

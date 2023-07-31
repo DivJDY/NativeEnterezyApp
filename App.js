@@ -1,43 +1,43 @@
 import React, {useEffect} from 'react';
-import {Font} from 'react-native';
 import {Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
 import Navigation from './Navigation';
+import {theme} from './AppTheme';
 import {AuthProvider} from './src/context/AuthContext';
 
-const theme = {
-  ...DefaultTheme,
-  // fonts: {
+// const theme = {
+//   ...DefaultTheme,
+//   // fonts: {
 
-  // regular: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'normal',
-  // },
-  // titleLarge: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'bold',
-  // },
-  // titleMedium: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'bold',
-  // },
-  // bodyLarge: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'bold',
-  // },
-  // bodyMedium: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'bold',
-  // },
-  // labelLarge: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'bold',
-  // },
-  // displaySmall: {
-  //   fontFamily: 'Times New Roman', // Replace with your desired font family
-  //   fontWeight: 'normal',
-  // },
-  // },
-};
+//   // regular: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'normal',
+//   // },
+//   // titleLarge: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'bold',
+//   // },
+//   // titleMedium: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'bold',
+//   // },
+//   // bodyLarge: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'bold',
+//   // },
+//   // bodyMedium: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'bold',
+//   // },
+//   // labelLarge: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'bold',
+//   // },
+//   // displaySmall: {
+//   //   fontFamily: 'Times New Roman', // Replace with your desired font family
+//   //   fontWeight: 'normal',
+//   // },
+//   // },
+// };
 
 const App = () => {
   // useEffect(() => {

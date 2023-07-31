@@ -31,11 +31,10 @@ const CustomDrawer = props => {
 
   return (
     <View style={{flex: 1}}>
+      <DrawerHeading />
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{backgroundColor: 'gray'}}>
-        <DrawerHeading />
-
+        contentContainerStyle={{backgroundColor: '#fff'}}>
         <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 20}}>
           <DrawerItemList {...props} />
         </View>

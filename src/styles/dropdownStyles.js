@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const dropdownstyle = StyleSheet.create({
   dropdown: {
-    margin: 14,
+    margin: 5,
     height: 55,
     backgroundColor: '#fff',
     borderColor: '#000',
@@ -36,8 +36,8 @@ export const dropdownstyle = StyleSheet.create({
     fontSize: 16,
   },
   placeholderStyle: {
-    color: '#000',
     fontSize: 16,
+    color: '#000',
   },
   selectedTextStyle: {
     color: '#000',

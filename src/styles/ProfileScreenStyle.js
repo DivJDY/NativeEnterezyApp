@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     marginBottom: 25,
     alignItems: 'center',
   },
+
   listContainer: {
     marginBottom: 10,
     marginHorizontal: 15,
@@ -51,5 +52,17 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  // Save and edit button
+  button: {
+    backgroundColor: '#000',
+    height: 40,
+    borderRadius: 12,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 10,
   },
 });

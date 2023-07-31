@@ -44,6 +44,35 @@ function DisplayRental() {
   const [categoryList, setCategoryList] = useState([]);
   const [imgLoad, setImgLoad] = useState(false);
 
+  // duration
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
+  // Date select
+  const handleStartDateChange = (event, selectedDate) => {
+    setShowStartDatePicker(false);
+    if (selectedDate) {
+      setStartDate(selectedDate);
+    }
+  };
+
+  const handleEndDateChange = (event, selectedDate) => {
+    setShowEndDatePicker(false);
+    if (selectedDate) {
+      setEndDate(selectedDate);
+    }
+  };
+
+  const showStartDatePickerModal = () => {
+    setShowStartDatePicker(true);
+  };
+
+  const showEndDatePickerModal = () => {
+    setShowEndDatePicker(true);
+  };
+
   const requestOption = FetchUtilityOptions();
 
   const fetchShelfVisibility = async () => {
@@ -136,6 +165,7 @@ function DisplayRental() {
     setLoading(true);
     fetchProductCategory();
     fetchShelfVisibility();
+    clearFormData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -148,6 +178,8 @@ function DisplayRental() {
     setCategory([]);
     setPrice('');
     setShelfImage('');
+    setStartDate(null);
+    setEndDate(null);
   };
 
   const fetchRental = formData => {
@@ -259,19 +291,7 @@ function DisplayRental() {
   return (
     <PaperProvider>
       <View style={{marginTop: 10, marginHorizontal: 8}}>
-        <Button
-          mode="contained"
-          style={{
-            marginBottom: 10,
-            marginTop: 10,
-            paddingTop: 4,
-            height: 45,
-            marginHorizontal: 10,
-            backgroundColor: '#000',
-          }}
-          disabled={true}>
-          <Text style={style.rentStoreTxt}>Rent a Store Asset</Text>
-        </Button>
+        <Text style={rentalStyle.rentStoreTxt}>Rent a Store Asset</Text>
       </View>
 
       {loading ? (
@@ -282,80 +302,116 @@ function DisplayRental() {
           style={{marginBottom: 100, marginLeft: 12}}
           behavior={Platform.OS === 'ios' ? 'padding' : null}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{marginBottom: 15}} />
+            <View style={rentalStyle.selectContainer}>
+              <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
+                Choose Store Assest to rent :
+              </Text>
 
-            <Text
-              variant="titleMedium"
-              style={{marginLeft: 10, fontSize: 20, marginBottom: -5}}>
-              Choose Store Assest to rent{' '}
-            </Text>
+              {shelfvisibilityList && (
+                <DropDownSelection
+                  width={'50%'}
+                  marginLeft={10}
+                  data={shelfvisibilityList}
+                  selectedValue={shelfvisibility}
+                  onChange={handleChangeRental}
+                  renderItem={renderRentalItem}
+                  placeholder={'Asset Type '}
+                  valueField={'id'}
+                  searchPlaceholder={'Search ]Store Asset Type....'}
+                />
+              )}
+            </View>
 
-            {shelfvisibilityList && (
-              <DropDownSelection
-                width={'50%'}
-                data={shelfvisibilityList}
-                selectedValue={shelfvisibility}
-                onChange={handleChangeRental}
-                renderItem={renderRentalItem}
-                // labelField={'shelf_name'}
-                valueField={'id'}
-                placeholder={''}
-                searchPlaceholder={'Search rental....'}
+            <View style={rentalStyle.selectContainer}>
+              <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
+                Choose Categories available in store :
+              </Text>
+
+              {categoryList && (
+                <DropDownSelection
+                  width={'50%'}
+                  marginLeft={10}
+                  data={categoryList}
+                  selectedValue={category}
+                  onChange={handleChangeItem}
+                  renderItem={renderCategoryItem}
+                  labelField={'category_name'}
+                  valueField={'id'}
+                  placeholder={'Category *'}
+                  searchPlaceholder={'Search category....'}
+                />
+              )}
+            </View>
+
+            <View style={rentalStyle.selectContainer}>
+              <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
+                Location of the Asset in the store :
+              </Text>
+              <TextInputComponent
+                placeholder={'Enter address'}
+                onChangeText={text => setAddress(text)}
+                multiline={true}
+                value={address}
+                style={[styles.input, rentalStyle.inputTxt]}
               />
-            )}
+            </View>
 
+            <View style={rentalStyle.selectContainer}>
+              <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
+                Weekly Footfalls in the store :
+              </Text>
+              <TextInputComponent
+                placeholder={'Weekly football'}
+                onChangeText={text => setAvgStore(text)}
+                value={avgStore}
+                keyboardType={'numeric'}
+                style={[styles.input, rentalStyle.inputTxt]}
+              />
+            </View>
+
+            <View style={rentalStyle.selectContainer}>
+              <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
+                Enter the Rental Price :
+              </Text>
+              <TextInputComponent
+                placeholder={'Rental price'}
+                onChangeText={text => setPrice(text)}
+                keyboardType={'numeric'}
+                value={price}
+                style={[styles.input, rentalStyle.inputTxt]}
+              />
+            </View>
+
+            <View style={{marginBottom: 10, marginLeft: 10}} />
             <Text
               variant="titleMedium"
               style={{
-                marginLeft: 10,
-                fontSize: 20,
-                marginBottom: -5,
-                marginTop: 8,
+                marginHorizontal: 10,
+                fontSize: 18,
+                color: '#000',
               }}>
-              Choose Categories available in store
+              Dimensions of the Store Asset :
             </Text>
-            {categoryList && (
-              <DropDownSelection
-                width={'50%'}
-                data={categoryList}
-                selectedValue={category}
-                onChange={handleChangeItem}
-                renderItem={renderCategoryItem}
-                valueField={'id'}
-                placeholder={''}
-                searchPlaceholder={'Search category....'}
-              />
-            )}
 
-            <View style={{marginBottom: 10}} />
-            <Text
-              variant="titleMedium"
-              style={{
-                marginLeft: 10,
-                fontSize: 20,
-                marginTop: 8,
-              }}>
-              Dimensions of the Store Asset
-            </Text>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', marginHorizontal: 12}}>
               <View style={{flexDirection: 'column', flex: 1}}>
                 <Text
                   variant="titleMedium"
                   style={{
-                    marginLeft: 10,
-                    fontSize: 20,
+                    fontSize: 18,
                     marginTop: 8,
+                    color: '#000',
                   }}>
                   Length
                 </Text>
                 <TextInputComponent
-                  placeholder={''}
+                  placeholder={'Enter length'}
                   onChangeText={text => setLength(text)}
                   keyboardType={'numeric'}
                   value={length}
                   style={[
                     styles.input,
-                    {marginLeft: 10, marginTop: 5, height: 50, width: '50%'},
+                    {marginTop: 5, width: '85%', height: 50, marginRight: 4},
                   ]}
                 />
               </View>
@@ -363,81 +419,51 @@ function DisplayRental() {
                 <Text
                   variant="titleMedium"
                   style={{
-                    fontSize: 20,
+                    fontSize: 18,
                     marginTop: 8,
-                    marginLeft: -15,
+                    marginLeft: 15,
+                    color: '#000',
                   }}>
                   Width
                 </Text>
                 <TextInputComponent
-                  placeholder={''}
+                  placeholder={'Enter width'}
                   onChangeText={text => setWidth(text)}
                   keyboardType={'numeric'}
                   value={width}
                   style={[
                     styles.input,
-                    {marginTop: 5, height: 50, width: '50%', marginLeft: -15},
+                    {
+                      marginTop: 5,
+                      color: '#000',
+                      width: '85%',
+                      height: 50,
+                      marginLeft: 15,
+                    },
                   ]}
                 />
               </View>
             </View>
 
-            <View style={{marginBottom: 10}} />
+            <View style={{marginBottom: 10, marginLeft: 10}} />
             <Text
               variant="titleMedium"
               style={{
-                marginLeft: 10,
-                fontSize: 20,
-                marginTop: 8,
+                marginHorizontal: 10,
+                fontSize: 18,
+                color: '#000',
               }}>
-              Location of the Asset in the store
+              Select Duration :
             </Text>
-            <TextInputComponent
-              placeholder={''}
-              onChangeText={text => setAddress(text)}
-              multiline={true}
-              value={address}
-              style={[styles.input, style.inputTxt]}
-            />
-
-            <Text
-              variant="titleMedium"
-              style={{
-                marginLeft: 10,
-                fontSize: 20,
-                marginTop: 8,
-                marginBottom: 5,
-              }}>
-              Weekly Footfalls in the store
-            </Text>
-            <TextInputComponent
-              placeholder={''}
-              onChangeText={text => setAvgStore(text)}
-              value={avgStore}
-              style={[
-                styles.input,
-                {width: '65%', flex: 1, marginLeft: 12, height: 50},
-              ]}
-            />
-
-            <DateRangePicker />
-
-            <View style={{marginBottom: 10}} />
-            <Text
-              variant="titleMedium"
-              style={{
-                marginLeft: 10,
-                fontSize: 20,
-                marginTop: 8,
-              }}>
-              Enter the Rental Price
-            </Text>
-            <TextInputComponent
-              placeholder={''}
-              onChangeText={text => setPrice(text)}
-              keyboardType={'numeric'}
-              value={price}
-              style={[styles.input, style.inputTxt]}
+            <DateRangePicker
+              startDate={startDate}
+              endDate={endDate}
+              handleStartDateChange={handleStartDateChange}
+              handleEndDateChange={handleEndDateChange}
+              showStartDatePicker={showStartDatePicker}
+              showEndDatePicker={showEndDatePicker}
+              showStartDatePickerModal={showStartDatePickerModal}
+              showEndDatePickerModal={showEndDatePickerModal}
             />
 
             <View style={{marginBottom: 10}} />
@@ -463,17 +489,16 @@ function DisplayRental() {
               }
               onPress={handleImageSelection}
               style={[
-                shelfImage ? style.btnSuccess : style.btn,
+                shelfImage ? rentalStyle.btnSuccess : rentalStyle.btn,
                 {
                   marginBottom: 15,
-                  width: '85%',
-                  marginLeft: 15,
-                  borderRadius: 10,
+                  marginHorizontal: 10,
+                  borderRadius: 12,
                 },
               ]}>
               <Text
                 style={[
-                  {fontWeight: 'bold', fontSize: 16, paddingTop: 12},
+                  {fontSize: 18, paddingTop: 12},
                   shelfImage ? {color: '#fff'} : {color: '#000'},
                 ]}>
                 {imgLoad ? (
@@ -486,7 +511,7 @@ function DisplayRental() {
               </Text>
             </Button>
 
-            <View style={style.submitView}>
+            <View style={rentalStyle.submitView}>
               <Button
                 mode="contained"
                 style={{
@@ -517,7 +542,7 @@ function DisplayRental() {
 }
 
 // Display rental screen styles
-const style = StyleSheet.create({
+export const rentalStyle = StyleSheet.create({
   btnSuccess: {
     backgroundColor: '#000',
   },
@@ -531,9 +556,8 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
     marginTop: 15,
-    marginLeft: '-4%',
   },
 
   inputTxt: {
@@ -553,10 +577,30 @@ const style = StyleSheet.create({
   },
 
   rentStoreTxt: {
-    color: '#fff',
-    fontSize: 20,
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: 'center',
+    marginHorizontal: 10,
+    fontStyle: 'italic',
+    color: '#000',
+    fontSize: 26,
     fontWeight: 'bold',
-    padding: 15,
+    textDecorationLine: 'underline',
+  },
+
+  selectContainer: {
+    marginBottom: 15,
+    marginHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'space-between',
+  },
+  selectPlaceholder: {
+    color: '#000',
+    width: '48%',
+    fontSize: 16,
+    lineHeight: 25,
   },
 });
 

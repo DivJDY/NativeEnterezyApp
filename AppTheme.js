@@ -14,7 +14,7 @@ const fontConfig = {
   },
 };
 
-const theme = {
+export const theme = {
   ...DefaultTheme,
   // fonts: configureFonts(fontConfig),
   roundness: 2, // Customize the button border radius
@@ -27,5 +27,3 @@ const theme = {
     // accent: 'black', // Customize the accent button color
   },
 };
-
-export default theme;

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 0.5,
-    marginTop: 5,
+    marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },

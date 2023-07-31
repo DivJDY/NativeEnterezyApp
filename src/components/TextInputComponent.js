@@ -16,6 +16,7 @@ function TextInputComponent({
   return (
     <TextInput
       placeholder={placeholder}
+      placeholderTextColor={'#000'}
       mode="Flat"
       onChangeText={onChangeText}
       onBlur={onBlur}
@@ -27,7 +28,7 @@ function TextInputComponent({
       disabled={disabled}
       theme={{
         colors: {
-          primary: 'black', // Change this to the desired color for the cursor
+          primary: '#000', // Change this to the desired color for the cursor
         },
       }}
     />

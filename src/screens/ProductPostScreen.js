@@ -28,6 +28,7 @@ import {styles} from '../styles/formStyles';
 import {hostName} from '../../App';
 import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import LoadingIndicator from '../components/LoadingIndicator';
+import {rentalStyle} from './DisplayRental';
 
 // validation schema
 const validationSchema = Yup.object().shape({
@@ -221,9 +222,7 @@ const ProductPostScreen = () => {
   return (
     <PaperProvider>
       <View style={{alignItems: 'center', marginTop: 12}}>
-        <Text style={{fontSize: 28, marginBottom: 8, fontWeight: 'bold'}}>
-          Create Product
-        </Text>
+        <Text style={rentalStyle.rentStoreTxt}>Create Product</Text>
       </View>
 
       {loadcategory && loading ? (
@@ -262,10 +261,10 @@ const ProductPostScreen = () => {
                     />
                   )}
 
-                  <View marginBottom={10} marginLeft={-15}>
+                  <View marginBottom={10} marginLeft={-5}>
                     {categoryList && (
                       <DropDownSelection
-                        width={'87%'}
+                        width={'89%'}
                         data={categoryList}
                         selectedValue={category}
                         onChange={handleChangeItem}
@@ -363,13 +362,13 @@ const ProductPostScreen = () => {
                               <AntDesign
                                 name="loading1"
                                 size={size}
-                                color={color}
+                                color={'#000'}
                               />
                             ) : (
                               <FontAwesome5
                                 name="check-double"
                                 size={size}
-                                color={color}
+                                color={'#fff'}
                               />
                             )
                         : ({size, color}) => (

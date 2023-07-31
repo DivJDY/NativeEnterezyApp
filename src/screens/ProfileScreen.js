@@ -9,14 +9,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import {
-  Avatar,
-  Title,
-  Text,
-  Button,
-  IconButton,
-  TextInput,
-} from 'react-native-paper';
+import {Text, Button, IconButton, TextInput} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
@@ -167,37 +160,25 @@ const ProfileScreen = ({navigation}) => {
               alignItems: 'center',
               flexDirection: 'row',
             }}>
-            <IconButton
-              icon={() => (
-                <Icon style={{color: '#4277b4'}} name="arrow-back" size={28} />
-              )}
+            <Button
+              style={[styles.button, {marginLeft: 5}]}
               onPress={handleBackNavigation}
-            />
+              mode="contained">
+              <Text style={styles.buttonText}>Go Back</Text>
+            </Button>
             {editMode ? (
               <Button
-                style={{
-                  backgroundColor: '#4277b4',
-                  height: 40,
-                  borderRadius: 12,
-                }}
+                style={styles.button}
                 onPress={handleSavePress}
                 mode="contained">
-                <Text style={{fontSize: 20, color: '#fff', paddingBottom: 10}}>
-                  Save
-                </Text>
+                <Text style={styles.buttonText}>Save</Text>
               </Button>
             ) : (
               <Button
-                style={{
-                  backgroundColor: '#4277b4',
-                  height: 40,
-                  borderRadius: 12,
-                }}
+                style={styles.button}
                 onPress={handleEditPress}
                 mode="contained">
-                <Text style={{fontSize: 20, color: '#fff', marginTop: 10}}>
-                  Edit
-                </Text>
+                <Text style={styles.buttonText}>Edit</Text>
               </Button>
             )}
           </View>
@@ -305,16 +286,19 @@ const ProfileScreen = ({navigation}) => {
                 />
               </View>
 
-              <Text
-                onPress={uploadDocument}
-                color={
-                  document === null ? {color: '#4277b4'} : {color: '#FECE00'}
-                }
-                style={{fontSize: 18, textAlign: 'center'}}>
-                {document === null
-                  ? 'Click to add documents'
-                  : 'Document uploaded successufully'}
-              </Text>
+              <Button mode="contained">
+                <Text
+                  onPress={uploadDocument}
+                  style={{
+                    fontSize: 18,
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                  }}>
+                  {document === null
+                    ? 'Click to add documents'
+                    : 'Document uploaded successufully'}
+                </Text>
+              </Button>
             </ScrollView>
           </KeyboardAvoidingView>
         </View>

@@ -4,17 +4,16 @@ export const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     marginBottom: 10,
-    // paddingTop: 20,
-    // paddingHorizontal: 16,
   },
   title: {
     marginTop: 10,
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',
-    color: 'black',
+    color: '#000',
   },
   item: {
+    color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'justify',
@@ -25,10 +24,10 @@ export const styles = StyleSheet.create({
     marginBottom: 14,
     height: 50,
     borderRadius: 10,
-    backgroundColor: '#b9bdba',
+    backgroundColor: '#BBB6B5',
   },
   description: {
     fontSize: 14,
-    color: 'gray',
+    color: '#000',
   },
 });

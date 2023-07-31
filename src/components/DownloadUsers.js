@@ -102,16 +102,16 @@ const DownloadUsers = ({users}) => {
   };
 
   return (
-    <View>
+    <>
       {/* Render the button or trigger action */}
       <Entypo
-        style={{position: 'absolute', right: 18, marginTop: -22}}
+        style={{position: 'absolute', right: 18}}
         name="download"
-        size={22}
+        size={30}
         color={'black'}
         onPress={() => downloadFile(users)}
       />
-    </View>
+    </>
   );
 };
 

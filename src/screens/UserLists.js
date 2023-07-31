@@ -16,6 +16,7 @@ import LoadingIndicator from '../components/LoadingIndicator';
 import NoDataFound from '../components/NoDataFound';
 import {styles} from '../styles/userListsStyle';
 import DownloadUsers from '../components/DownloadUsers';
+import {rentalStyle} from './DisplayRental';
 
 const UserLists = () => {
   const [visible, setVisible] = useState(null);
@@ -121,24 +122,6 @@ const UserLists = () => {
         descriptionStyle={styles.description}
         title={`Name: ${item.user_name}`}
         description={`Contact: +${item.user_verified_mobile_number}`}
-        //   right={() => (
-        //     <Menu
-        //       visible={visible === item.id}
-        //       onDismiss={handleMenuClose}
-        //       anchor={
-        //         <IconButton icon="edit" onPress={() => handleMenuOpen(item.id)} />
-        //       }>
-        //       <Menu.Item
-        //         onPress={() => handleRoleUpdate(item.id, 'Admin')}
-        //         title="Admin"
-        //       />
-        //       <Menu.Item
-        //         onPress={() => handleRoleUpdate(item.id, 'User')}
-        //         title="User"
-        //       />
-        //     </Menu>
-        //   )}
-
         right={() => (
           <>
             <Text marginTop={20}> {item.role}</Text>
@@ -148,6 +131,9 @@ const UserLists = () => {
               anchor={
                 <IconButton
                   icon="pencil"
+                  // color="#000"
+                  size={30}
+                  style={{color: '#000'}}
                   onPress={() => handleMenuOpen(item.id)}
                 />
               }>
@@ -174,17 +160,27 @@ const UserLists = () => {
   return (
     <PaperProvider>
       <View style={styles.container}>
-        <Text style={styles.title}>List of Users</Text>
-        <DownloadUsers users={users} />
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            marginLeft: 10,
+            marginRight: 5,
+          }}>
+          <Text style={rentalStyle.rentStoreTxt}>List of Users</Text>
+          <DownloadUsers users={users} />
+        </View>
 
         <Searchbar
           placeholder="Search"
+          iconColor="#000"
+          placeholderTextColor={'#000'}
           onChangeText={handleSearch}
           value={searchQuery}
           style={styles.searchBar}
           theme={{
             colors: {
-              primary: 'black', // Change this to the desired color for the cursor
+              primary: '#000', // Change this to the desired color for the cursor
             },
           }}
         />

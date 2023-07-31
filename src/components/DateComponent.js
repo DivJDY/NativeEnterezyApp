@@ -2,32 +2,31 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const DateRangePicker = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+const DateRangePicker = ({
+  startDate,
+  endDate,
+  handleStartDateChange,
+  handleEndDateChange,
+  showStartDatePicker,
+  showEndDatePicker,
+  showStartDatePickerModal,
+  showEndDatePickerModal,
+}) => {
+  //   const [startDate, setStartDate] = useState(null);
+  //   const [endDate, setEndDate] = useState(null);
+  //   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  //   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
-  const showStartDatePickerModal = () => {
-    setShowStartDatePicker(true);
+  const handleStartDate = (event, selectedDate) => {
+    handleStartDateChange(event, selectedDate);
   };
 
-  const showEndDatePickerModal = () => {
-    setShowEndDatePicker(true);
+  const handleEndDate = (event, selectedDate) => {
+    handleEndDateChange(event, selectedDate);
   };
 
-  const handleStartDateChange = (event, selectedDate) => {
-    setShowStartDatePicker(false);
-    if (selectedDate) {
-      setStartDate(selectedDate);
-    }
-  };
-
-  const handleEndDateChange = (event, selectedDate) => {
-    setShowEndDatePicker(false);
-    if (selectedDate) {
-      setEndDate(selectedDate);
-    }
+  const formatDate = date => {
+    return date ? date.toLocaleDateString('en-GB') : ''; // Format date as "dd/mm/yyyy"
   };
 
   return (
@@ -35,34 +34,32 @@ const DateRangePicker = () => {
       <TouchableOpacity
         onPress={showStartDatePickerModal}
         style={styles.button}>
-        <Text style={styles.label}>Select Start Date</Text>
+        <Text style={styles.label}>
+          {startDate ? `${formatDate(startDate)}` : 'Select Start Date'}
+        </Text>
       </TouchableOpacity>
-      {/* <Text style={styles.label}>
-        Selected Start Date: {startDate.toDateString()}
-      </Text> */}
 
       {showStartDatePicker && (
         <DateTimePicker
-          value={startDate}
+          value={startDate || new Date()}
           mode="date"
           display="default"
-          onChange={handleStartDateChange}
+          onChange={handleStartDate}
         />
       )}
 
       <TouchableOpacity onPress={showEndDatePickerModal} style={styles.button}>
-        <Text style={styles.label}>Select End Date</Text>
+        <Text style={styles.label}>
+          {endDate ? `${formatDate(endDate)}` : 'Select End Date'}
+        </Text>
       </TouchableOpacity>
-      {/* <Text style={styles.label}>
-        Selected End Date: {endDate.toDateString()}
-      </Text> */}
 
       {showEndDatePicker && (
         <DateTimePicker
-          value={endDate}
+          value={endDate || new Date()}
           mode="date"
           display="default"
-          onChange={handleEndDateChange}
+          onChange={handleEndDate}
         />
       )}
     </View>
@@ -73,21 +70,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     marginTop: 10,
-    marginLeft: -20,
+    marginLeft: -10,
   },
   button: {
     backgroundColor: '#fff',
+    width: '40%',
     borderColor: '#000',
     borderWidth: 2,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    height: 50,
   },
   label: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
     color: '#000',
   },
 });
