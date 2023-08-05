@@ -39,6 +39,7 @@ function DisplayRental() {
   //  Shelf visibility list
   const [shelfvisibility, setShelfvisibility] = useState([]);
   const [shelfvisibilityList, setShelfvisibilityList] = useState([]);
+
   // Category list
   const [category, setCategory] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
@@ -77,7 +78,7 @@ function DisplayRental() {
 
   const fetchShelfVisibility = async () => {
     setLoading(true);
-    await fetch(hostName + '/type_of_shelf_vibility', requestOption)
+    await fetch(hostName + '/typeofasset', requestOption)
       .then(response => response.json())
       .then(responseData => {
         console.warn('fetch data type_of_shelf_vibility ==> ', responseData);
@@ -101,7 +102,7 @@ function DisplayRental() {
 
     const options = {
       keyPrefix: 'enterezy-rental-images/', // The folder name where you want to store the image in the S3 bucket
-      bucket: 'enterezy-images', // Replace this with the actual name of your S3 bucket
+      bucket: 'enterezy-app-images', // Replace this with the actual name of your S3 bucket
       region: 'ap-southeast-2', // Replace this with the AWS region where your S3 bucket is located (e.g., 'us-east-1')
       accessKey: AWSAccessKeyId, // Replace this with your AWS access key
       secretKey: AWSSecretKeyId, // Replace this with your AWS secret key
@@ -249,10 +250,12 @@ function DisplayRental() {
   };
 
   const renderRentalItem = item => {
+    console.warn(' ===>  shelfffff ', shelfvisibility);
+
     return (
       <View style={dropdownstyle.item}>
-        <Text style={dropdownstyle.textItem}>{item.shelf_name}</Text>
-        {item.id === shelfvisibility && (
+        <Text style={dropdownstyle.textItem}>{item.store_asset_name}</Text>
+        {item.store_asset_code === shelfvisibility && (
           <AntDesign
             style={dropdownstyle.icon}
             color="black"
@@ -285,7 +288,7 @@ function DisplayRental() {
   };
 
   const handleChangeRental = item => {
-    setShelfvisibility(item.id);
+    setShelfvisibility(item.store_asset_code);
   };
 
   return (
@@ -316,8 +319,8 @@ function DisplayRental() {
                   onChange={handleChangeRental}
                   renderItem={renderRentalItem}
                   placeholder={'Asset Type '}
-                  valueField={'id'}
-                  searchPlaceholder={'Search ]Store Asset Type....'}
+                  valueField={'store_asset_code'}
+                  searchPlaceholder={'Search Store Asset Type....'}
                 />
               )}
             </View>

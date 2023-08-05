@@ -6,18 +6,14 @@ import {
   FlatList,
   TouchableOpacity,
   PermissionsAndroid,
-  Platform,
 } from 'react-native';
-import {Button, Searchbar, Text} from 'react-native-paper';
-import DocumentPicker from 'react-native-document-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Searchbar, Text} from 'react-native-paper';
 import CardComponent from '../components/CardComponent';
 import BannerLists from '../components/BannerLists';
-import {useNavigation} from '@react-navigation/native';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {styles} from '../styles/homeScreen';
 import {hostName} from '../../App';
-const keyExtractor = item => item.id;
+const keyExtractor = item => item.product_code;
 
 const HomeScreen = ({route}) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,7 +48,7 @@ const HomeScreen = ({route}) => {
     }
   };
 
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   const fetchProduct = async () => {
     // console.warn(' 00000 ', hasNoData);
@@ -82,38 +78,13 @@ const HomeScreen = ({route}) => {
       setLoading(false);
       console.error('Error fetching data:', error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchProduct();
     requestCameraPermission();
-    // requestExternalStoragePermission();
   }, []);
-
-  // const requestExternalStoragePermission = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  //         {
-  //           title: 'External Storage Permission',
-  //           message: 'App needs access to external storage to save images.',
-  //           buttonNeutral: 'Ask Me Later',
-  //           buttonNegative: 'Cancel',
-  //           buttonPositive: 'OK',
-  //         },
-  //       );
-
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         console.log('External storage permission granted.');
-  //       } else {
-  //         console.log('External storage permission denied.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error requesting external storage permission:', error);
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     fetchProduct();
@@ -133,7 +104,6 @@ const HomeScreen = ({route}) => {
   };
 
   const renderItem = ({item}) => {
-    AsyncStorage.setItem('imageAddress', item?.product_image);
     return (
       <CardComponent
         name="ProductDetails"

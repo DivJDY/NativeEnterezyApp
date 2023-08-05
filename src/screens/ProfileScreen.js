@@ -28,6 +28,7 @@ const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [document, setDocument] = useState(null);
   const [shopImage, setShopImage] = useState('');
+  const [gstin, setGstIn] = useState('');
 
   const handleBackNavigation = () => {
     navigation.navigate('HomeDrawer');
@@ -39,7 +40,6 @@ const ProfileScreen = ({navigation}) => {
     mobile: '7089123402',
     address: 'Bangalore',
     email: 'johndoe@example.com',
-    gstin: '',
   });
   const [editMode, setEditMode] = useState(false);
 
@@ -97,7 +97,24 @@ const ProfileScreen = ({navigation}) => {
       });
 
       // Handle the selected document
-      console.log('Selected Document:', res);
+      console.log('Selected Document:', res[0].uri);
+
+      // Read the content of the selected file
+      const fileContent = await RNFS.readFile(res[0].uri, 'utf8');
+      console.log('Selected Document: fileContent ************', fileContent);
+
+      const regexPattern =
+        /GSTIN\s*:\s*([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1})/;
+      const match = fileContent.match(regexPattern);
+
+      if (match) {
+        const gstinValue = match[1];
+        // Set the GSTIN value to the state
+        setGstIn(gstinValue);
+      } else {
+        // Handle case when GSTIN pattern is not found in the file content
+        console.log('GSTIN pattern not found in the file');
+      }
       setDocument(res);
     } catch (error) {
       console.log('Document picking error:', error);
@@ -116,28 +133,33 @@ const ProfileScreen = ({navigation}) => {
         setData(response);
         setLoading(false);
       })
-      .catch(error => console.warn('Error while fetch user ', error));
+      .catch(error => {
+        console.warn('Error while fetch user ', error);
+        setLoading(false);
+      });
   };
 
   // console.warn(' User Id ', userId);
 
   const getUserId = async () => {
-    await AsyncStorage.getItem('userId')
-      .then(id => {
-        if (id !== null) {
-          // Value found in AsyncStorage
-          console.log(id);
-          setUserId(id);
-          fetchUser(id);
-        } else {
-          // Value not found in AsyncStorage
-          console.log('No value found for key "userId"');
-        }
-      })
-      .catch(error => {
-        // Handle any errors that occur during AsyncStorage retrieval
-        console.log('Error retrieving value:', error);
-      });
+    await fetchUser(1);
+
+    // await AsyncStorage.getItem('userId')
+    //   .then(id => {
+    //     if (id !== null) {
+    //       // Value found in AsyncStorage
+    //       console.log(id);
+    //       setUserId(id);
+    //       fetchUser(1);
+    //     } else {
+    //       // Value not found in AsyncStorage
+    //       console.log('No value found for key "userId"');
+    //     }
+    //   })
+    //   .catch(error => {
+    //     // Handle any errors that occur during AsyncStorage retrieval
+    //     console.log('Error retrieving value:', error);
+    //   });
   };
 
   useEffect(() => {
@@ -148,11 +170,11 @@ const ProfileScreen = ({navigation}) => {
 
   return (
     <>
-      {!loading ? (
+      {loading ? (
         <View style={{marginTop: '10%'}}>
           <LoadingIndicator />
         </View>
-      ) : Object.keys(data).length === 0 ? (
+      ) : Object.keys(data).length !== 0 ? (
         <View style={styles.container}>
           <View
             style={{
@@ -191,7 +213,9 @@ const ProfileScreen = ({navigation}) => {
                 <Image
                   resizeMode="stretch"
                   style={{width: '100%'}}
-                  source={require('../../assets/banner2.jpeg')}
+                  // source={require('../../assets/banner2.jpeg')}
+                  // source={{uri: data?.shop_image}}
+                  source={{uri: data.shop_image}}
                 />
               ) : (
                 <TouchableOpacity onPress={handleShopImageSelection}>
@@ -230,7 +254,7 @@ const ProfileScreen = ({navigation}) => {
                 </Text>
                 <TextInput
                   style={{marginBottom: 15, backgroundColor: '#fff'}}
-                  value={formData.name}
+                  value={data.user_name}
                   onChangeText={value => handleInputChange('name', value)}
                   editable={editMode}
                 />
@@ -250,7 +274,7 @@ const ProfileScreen = ({navigation}) => {
                 </Text>
                 <TextInput
                   style={{marginBottom: 15, backgroundColor: '#fff'}}
-                  value={formData.mobile}
+                  value={data?.mobile_number}
                   onChangeText={value => handleInputChange('mobile', value)}
                   editable={editMode}
                 />
@@ -260,7 +284,7 @@ const ProfileScreen = ({navigation}) => {
                 </Text>
                 <TextInput
                   style={{marginBottom: 15, backgroundColor: '#fff'}}
-                  value={formData.email}
+                  value={data.email}
                   onChangeText={value => handleInputChange('email', value)}
                   editable={editMode}
                 />
@@ -270,7 +294,7 @@ const ProfileScreen = ({navigation}) => {
                 </Text>
                 <TextInput
                   style={{marginBottom: 15, backgroundColor: '#fff'}}
-                  value={formData.address}
+                  value={data.address}
                   onChangeText={value => handleInputChange('address', value)}
                   editable={editMode}
                 />
@@ -280,15 +304,17 @@ const ProfileScreen = ({navigation}) => {
                 </Text>
                 <TextInput
                   style={{marginBottom: 15, backgroundColor: '#fff'}}
-                  value={formData.gstin}
+                  value={gstin}
                   onChangeText={value => handleInputChange('gstin', value)}
-                  editable={editMode}
+                  editable={false}
                 />
               </View>
 
-              <Button mode="contained">
+              <Button
+                mode="contained"
+                onPress={uploadDocument}
+                disabled={editMode}>
                 <Text
-                  onPress={uploadDocument}
                   style={{
                     fontSize: 18,
                     textAlign: 'center',

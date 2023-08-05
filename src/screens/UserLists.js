@@ -33,7 +33,7 @@ const UserLists = () => {
   const handleSubmit = async (userId, userRole) => {
     const updateData = {role: userRole};
 
-    await fetch(hostName + '/user/' + userId, {
+    await fetch(hostName + '/user/role' + userId, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ const UserLists = () => {
         titleStyle={styles.item}
         descriptionStyle={styles.description}
         title={`Name: ${item.user_name}`}
-        description={`Contact: +${item.user_verified_mobile_number}`}
+        description={`Contact: +${item.mobile_number}`}
         right={() => (
           <>
             <Text marginTop={20}> {item.role}</Text>
@@ -134,19 +134,19 @@ const UserLists = () => {
                   // color="#000"
                   size={30}
                   style={{color: '#000'}}
-                  onPress={() => handleMenuOpen(item.id)}
+                  onPress={() => handleMenuOpen(item.user_id)}
                 />
               }>
               <Menu.Item
-                onPress={() => handleRoleUpdate(item.id, 'super_admin')}
+                onPress={() => handleRoleUpdate(item.user_id, 'super_admin')}
                 title="super_admin"
               />
               <Menu.Item
-                onPress={() => handleRoleUpdate(item.id, 'admin')}
+                onPress={() => handleRoleUpdate(item.user_id, 'admin')}
                 title="admin"
               />
               <Menu.Item
-                onPress={() => handleRoleUpdate(item.id, 'rental')}
+                onPress={() => handleRoleUpdate(item.user_id, 'rental')}
                 title="rental"
               />
             </Menu>
@@ -190,7 +190,7 @@ const UserLists = () => {
           <FlatList
             data={users}
             renderItem={renderUserItem}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.user_id.toString()}
           />
         ) : (
           <NoDataFound message={'User data not found'} />

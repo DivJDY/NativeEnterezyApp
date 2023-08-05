@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const {StyleSheet} = require('react-native');
 
 export const styles = StyleSheet.create({
@@ -71,5 +70,26 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     lineHeight: 20,
+  },
+
+  // brand name style
+  productBrandContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    padding: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    width: 120,
+    height: 'auto',
+    transform: [{rotate: '-35deg'}],
+  },
+  productBrandTxt: {
+    color: '#fff',
+    fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)', // Semi-transparent shadow color
+    textShadowOffset: {width: 1, height: 1}, // Shadow offset (adjust as needed)
+    // textShadowRadius: 3,
+    fontWeight: 'bold',
   },
 });

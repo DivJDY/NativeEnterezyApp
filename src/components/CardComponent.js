@@ -1,19 +1,15 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
-import {TouchableOpacity, Alert, View, Image} from 'react-native';
+import React, {useState} from 'react';
+import {TouchableOpacity, Alert, View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from '../styles/cardStyles';
 import {hostName} from '../../App';
 
 const CardComponent = ({name, item, fetchProduct}) => {
   const navigation = useNavigation();
   const [imageError, setImageError] = useState(false);
-
-  // console.warn('image aaaaa ', imageAddress);
 
   const handleButtonPress = () => {
     navigation.navigate(name, {data: item});
@@ -47,15 +43,6 @@ const CardComponent = ({name, item, fetchProduct}) => {
           text: 'OK',
           onPress: async () => {
             await deleteProductById(id);
-            // await deleteProduct(id)
-            //   .then(async () => {
-            //     console.log('Order deleted successfully');
-            //     await getAllProducts();
-            //   })
-            //   .catch(error => {
-            //     console.error('Error deleting order: ', error);
-            //   });
-
             navigation.navigate('Home');
           },
         },
@@ -67,7 +54,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
   const handleImageError = error => {
     setImageError(true);
     if (error.nativeEvent.error.indexOf('ENOENT') !== -1) {
-      console.log('The image file does not exist.');
+      // console.log('The image file does not exist.');
       console.log(' img add ', item?.product_image);
       // Perform any additional error handling or actions
     }
@@ -78,12 +65,18 @@ const CardComponent = ({name, item, fetchProduct}) => {
       mode="elevated"
       style={styles.cardContainer}
       onPress={handleButtonPress}>
-      <Card.Cover
-        style={{marginBottom: 10}}
-        source={{uri: item?.product_image}}
-        resizeMode="contain"
-        onError={handleImageError}
-      />
+      <View>
+        <Card.Cover
+          style={{marginBottom: 10}}
+          source={{uri: item?.product_image}}
+          resizeMode="contain"
+          onError={handleImageError}
+        />
+
+        <View style={styles.productBrandContainer}>
+          <Text style={styles.productBrandTxt}>{item?.product_brand}</Text>
+        </View>
+      </View>
       {imageError && (
         <Text style={styles.imageLoadError}>Error while loading an image</Text>
       )}
@@ -93,13 +86,13 @@ const CardComponent = ({name, item, fetchProduct}) => {
         </Text>
         <Text style={styles.cardSubtitle} variant="bodyMedium">
           Price: <Text>{'\u20B9'}</Text>
-          {item?.product_price}
+          {item?.selling_price}
         </Text>
         <Text
           style={[styles.cardSubtitle, {color: 'gray'}]}
           variant="bodyMedium">
           MRP: <Text style={{marginLeft: 5, color: 'gray'}}>{'\u20B9'}</Text>
-          {item?.product_mrp}
+          {item?.maximum_retail_price}
         </Text>
 
         <Text style={[styles.cardPara, {marginBottom: 8}]} variant="bodyMedium">

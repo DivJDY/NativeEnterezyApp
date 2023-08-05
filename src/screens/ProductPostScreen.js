@@ -9,10 +9,9 @@ import {
   ScrollView,
   Platform,
   Alert,
-  PermissionsAndroid,
 } from 'react-native';
 import {Provider as PaperProvider, Button, Text} from 'react-native-paper';
-import {Formik} from 'formik';
+import {Formik, useFormikContext} from 'formik';
 import * as Yup from 'yup';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {RNS3} from 'react-native-aws3';
@@ -32,74 +31,81 @@ import {rentalStyle} from './DisplayRental';
 
 // validation schema
 const validationSchema = Yup.object().shape({
+  product_code: Yup.string()
+    .length(3)
+    .required('Enter 3 characters of product Code'),
   product_name: Yup.string().required('Product name is required'),
   product_desc: Yup.string().required('Product Description is required'),
   minimum_product_order_quantity: Yup.number()
     .min(1, 'Minimum product order quantity should be at least 1')
     .required('Product order quantity required'),
   //   product_quantity: Yup.number().min(0, 'Product quantity cannot be negative'),
-  product_price: Yup.number()
+  selling_price: Yup.number()
     .min(0, 'Product price cannot be negative')
     .required('Product price is required'),
-  product_mrp: Yup.number()
+  maximum_retail_price: Yup.number()
     .min(0, 'Product MRP cannot be negative')
     .required('Product MRP is required'),
 });
 
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState(null);
-  const [category, setCategory] = useState('');
-  const [categoryList, setCategoryList] = useState([]);
-  const [loadcategory, setLoadCategory] = useState(false);
+  const [brand, setBrand] = useState('');
+  const [brandList, setBrandList] = useState([]);
+  const [loadbrand, setLoadBrand] = useState(false);
   const [loading, setLoading] = useState(true);
   const [imgLoad, setImgLoad] = useState(false);
+
+  const formik = useFormikContext();
 
   const requestHeader = FetchUtilityOptions();
 
   const clearFormData = () => {
-    setCategory('');
+    setBrand('');
     setUploadImage('');
+    // formik.resetForm();
   };
 
   const navigation = useNavigation();
 
-  const fetchProductCategory = async () => {
-    setLoadCategory(true);
-    await fetch(hostName + '/category', {method: 'GET', headers: requestHeader})
+  const fetchProductBrand = async () => {
+    setLoadBrand(true);
+    await fetch(hostName + '/brand', {method: 'GET', headers: requestHeader})
       .then(response => response.json())
       .then(responseData => {
         // console.warn('fetch data ==> ', responseData);
-        setCategoryList(responseData);
-        setLoadCategory(false);
+        setBrandList(responseData);
+        setLoadBrand(false);
       })
       .catch(error => {
+        setLoadBrand(false);
         console.error(error);
       });
+    setLoadBrand(false);
   };
 
   useEffect(() => {
-    setLoadCategory(true);
+    setLoadBrand(true);
     setLoading(true);
-    fetchProductCategory();
-    clearFormData();
+    fetchProductBrand();
   }, []);
 
   const handleFormSubmit = (values, {resetForm}) => {
     setLoading(true);
     // Handle form submission logic here
     if (uploadImage !== '') {
-      // const product_image = uploadImage?.assets[0].uri;
-      // values.product_image = uploadImage;
-
       const data = {
-        category_id: category,
+        product_code: values.product_code.toUpperCase(),
         product_name: values.product_name,
-        product_price: values.product_price,
-        product_mrp: values.product_mrp,
+        brand_code: brand,
+        selling_price: values.selling_price,
+        maximum_retail_price: values.maximum_retail_price,
         product_desc: values.product_desc,
         minimum_product_order_quantity: values.minimum_product_order_quantity,
         product_image: uploadImage,
       };
+
+      // console.warn(' post data => ', data);
 
       fetch(hostName + '/products', {
         method: 'POST',
@@ -116,22 +122,26 @@ const ProductPostScreen = () => {
         })
         .catch(error => {
           // Handle any errors
+          setLoading(false);
           console.error('post error ', error);
         });
       resetForm();
+      values.maximum_retail_price = '';
       setUploadImage('');
-      setCategory('');
+      setBrand('');
+      setLoading(false);
     } else {
       Alert.alert('Please upload product image');
     }
   };
 
   const initialValues = {
+    product_code: '',
     product_name: '',
     product_desc: '',
     minimum_product_order_quantity: '',
-    product_price: '',
-    product_mrp: '',
+    selling_price: '',
+    maximum_retail_price: '',
   };
 
   useEffect(() => {
@@ -149,12 +159,21 @@ const ProductPostScreen = () => {
 
     const options = {
       keyPrefix: 'enterezy-product-images/', // The folder name where you want to store the image in the S3 bucket
-      bucket: 'enterezy-images', // Replace this with the actual name of your S3 bucket
+      bucket: 'enterezy-app-images', // Replace this with the actual name of your S3 bucket
       region: 'ap-southeast-2', // Replace this with the AWS region where your S3 bucket is located (e.g., 'us-east-1')
       accessKey: AWSAccessKeyId, // Replace this with your AWS access key
       secretKey: AWSSecretKeyId, // Replace this with your AWS secret key
       successActionStatus: 201,
     };
+
+    // const options = {
+    //   keyPrefix: 'enterezy-product-images/', // The folder name where you want to store the image in the S3 bucket
+    //   bucket: 'enterezy-images', // Replace this with the actual name of your S3 bucket
+    //   region: 'ap-southeast-2', // Replace this with the AWS region where your S3 bucket is located (e.g., 'us-east-1')
+    //   accessKey: AWSAccessKeyId, // Replace this with your AWS access key
+    //   secretKey: AWSSecretKeyId, // Replace this with your AWS secret key
+    //   successActionStatus: 201,
+    // };
 
     RNS3.put(imageFile, options)
       .then(response => {
@@ -191,7 +210,7 @@ const ProductPostScreen = () => {
         console.log('Image selection error: ', response.error);
       } else {
         // const sourcePath = response.assets[0].uri;
-        console.warn(' ----- source path ==> ', response);
+        // console.warn(' ----- source path ==> ', response);
         // const fileName = response.assets[0].fileName;
 
         handleImageUpload(response.assets[0]);
@@ -200,14 +219,14 @@ const ProductPostScreen = () => {
   };
 
   const handleChangeItem = item => {
-    setCategory(item.id);
+    setBrand(item.brand_code);
   };
 
-  const renderCategoryItem = item => {
+  const renderBrandItem = item => {
     return (
       <View style={dropdownstyle.item}>
-        <Text style={dropdownstyle.textItem}>{item.category_name}</Text>
-        {item.id === category && (
+        <Text style={dropdownstyle.textItem}>{item.brand_name}</Text>
+        {item.brand_code === brand && (
           <AntDesign
             style={dropdownstyle.icon}
             color="black"
@@ -225,7 +244,7 @@ const ProductPostScreen = () => {
         <Text style={rentalStyle.rentStoreTxt}>Create Product</Text>
       </View>
 
-      {loadcategory && loading ? (
+      {loadbrand && loading ? (
         <LoadingIndicator />
       ) : (
         <KeyboardAvoidingView
@@ -246,37 +265,60 @@ const ProductPostScreen = () => {
                 touched,
               }) => (
                 <View style={styles.formContainer}>
-                  <TextInputComponent
-                    label="Product Name"
-                    placeholder={'Enter Product Name *'}
-                    onChangeText={handleChange('product_name')}
-                    onBlur={handleBlur('product_name')}
-                    value={values.product_name}
-                    style={styles.input}
-                  />
-                  {errors.product_name && touched.product_name && (
-                    <TextComponent
-                      text={errors.product_name}
-                      style={[styles.error, {color: 'red'}]}
+                  <View marginBottom={10}>
+                    <TextInputComponent
+                      label="Product Code"
+                      placeholder={'Enter Product Code *'}
+                      onChangeText={handleChange('product_code')}
+                      onBlur={handleBlur('product_code')}
+                      value={values.product_code}
+                      style={styles.input}
                     />
-                  )}
-
-                  <View marginBottom={10} marginLeft={-5}>
-                    {categoryList && (
-                      <DropDownSelection
-                        width={'89%'}
-                        data={categoryList}
-                        selectedValue={category}
-                        onChange={handleChangeItem}
-                        renderItem={renderCategoryItem}
-                        labelField={'category_name'}
-                        valueField={'id'}
-                        placeholder={'Select product category *'}
-                        searchPlaceholder={'Search category....'}
+                    {errors.product_desc && touched.product_desc && (
+                      <TextComponent
+                        text={errors.product_code}
+                        style={[
+                          styles.error,
+                          {color: 'red', marginTop: -6, marginBottom: 8},
+                        ]}
+                      />
+                    )}
+                  </View>
+                  <View marginBottom={8}>
+                    <TextInputComponent
+                      label="Product Name"
+                      placeholder={'Enter Product Name *'}
+                      onChangeText={handleChange('product_name')}
+                      onBlur={handleBlur('product_name')}
+                      value={values.product_name}
+                      style={styles.input}
+                    />
+                    {errors.product_name && touched.product_name && (
+                      <TextComponent
+                        text={errors.product_name}
+                        style={[
+                          styles.error,
+                          {color: 'red', marginTop: -6, marginBottom: 8},
+                        ]}
                       />
                     )}
                   </View>
 
+                  <View marginBottom={14} marginLeft={-5}>
+                    {brandList && (
+                      <DropDownSelection
+                        width={'89%'}
+                        data={brandList}
+                        selectedValue={brand}
+                        onChange={handleChangeItem}
+                        renderItem={renderBrandItem}
+                        labelField={'brand_name'}
+                        valueField={'brand_code'}
+                        placeholder={'Select the Product Brand *'}
+                        searchPlaceholder={'Search brand....'}
+                      />
+                    )}
+                  </View>
                   <View marginBottom={10}>
                     <TextInputComponent
                       label="Product Description"
@@ -290,7 +332,10 @@ const ProductPostScreen = () => {
                     {errors.product_desc && touched.product_desc && (
                       <TextComponent
                         text={errors.product_desc}
-                        style={[styles.error, {color: 'red'}]}
+                        style={[
+                          styles.error,
+                          {color: 'red', marginTop: -6, marginBottom: 8},
+                        ]}
                       />
                     )}
                   </View>
@@ -311,7 +356,10 @@ const ProductPostScreen = () => {
                       touched.minimum_product_order_quantity && (
                         <TextComponent
                           text={errors.minimum_product_order_quantity}
-                          style={[styles.error, {color: 'red'}]}
+                          style={[
+                            styles.error,
+                            {color: 'red', marginTop: -6, marginBottom: 8},
+                          ]}
                         />
                       )}
                   </View>
@@ -319,17 +367,20 @@ const ProductPostScreen = () => {
                   <View marginBottom={10}>
                     <TextInputComponent
                       label="Product Price"
-                      placeholder={'Enter Product Price *'}
-                      onChangeText={handleChange('product_price')}
-                      onBlur={handleBlur('product_price')}
-                      value={values.product_price}
+                      placeholder={'Enter Product Selling Price *'}
+                      onChangeText={handleChange('selling_price')}
+                      onBlur={handleBlur('selling_price')}
+                      value={values.selling_price}
                       keyboardType="numeric"
                       style={styles.input}
                     />
-                    {errors.product_price && touched.product_price && (
+                    {errors.selling_price && touched.selling_price && (
                       <TextComponent
-                        text={errors.product_price}
-                        style={[styles.error, {color: 'red'}]}
+                        text={errors.selling_price}
+                        style={[
+                          styles.error,
+                          {color: 'red', marginTop: -6, marginBottom: 8},
+                        ]}
                       />
                     )}
                   </View>
@@ -338,18 +389,22 @@ const ProductPostScreen = () => {
                     <TextInputComponent
                       label="Product MRP"
                       placeholder={'Enter Product MRP *'}
-                      onChangeText={handleChange('product_mrp')}
-                      onBlur={handleBlur('product_mrp')}
+                      onChangeText={handleChange('maximum_retail_price')}
+                      on44Blur={handleBlur('maximum_retail_price')}
                       value={values.product_mrp}
                       keyboardType="numeric"
                       style={styles.input}
                     />
-                    {errors.product_mrp && touched.product_mrp && (
-                      <TextComponent
-                        text={errors.product_mrp}
-                        style={[styles.error, {color: 'red'}]}
-                      />
-                    )}
+                    {errors.maximum_retail_price &&
+                      touched.maximum_retail_price && (
+                        <TextComponent
+                          text={errors.maximum_retail_price}
+                          style={[
+                            styles.error,
+                            {color: 'red', marginTop: -6, marginBottom: 8},
+                          ]}
+                        />
+                      )}
                   </View>
 
                   <Button

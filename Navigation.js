@@ -36,7 +36,7 @@ import DisplayRental from './src/screens/DisplayRental';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import CartProceedScreen from './src/screens/CartProceedScreen';
 import ProductPostScreen from './src/screens/ProductPostScreen';
-import PostProductCategory from './src/screens/PostProductCategory';
+import AdminInputs from './src/screens/AdminInputs';
 import OrderListScreen from './src/screens/OrderListsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import UserLists from './src/screens/UserLists';
@@ -170,7 +170,7 @@ const DrawerNavigation = () => (
     />
     <Drawer.Screen
       name="adminInputs"
-      component={PostProductCategory}
+      component={AdminInputs}
       options={{
         title: 'Admin Inputs',
         headerTitle: () => <HeaderImage />,
