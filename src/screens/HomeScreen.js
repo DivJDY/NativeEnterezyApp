@@ -117,7 +117,7 @@ const HomeScreen = ({route}) => {
     setSearchQuery('');
     console.warn(' Search query ', searchQuery);
     if (!loading) {
-      setPageLimit(page_limit + 2);
+      setPageLimit(page_limit + 5);
       fetchProduct();
     }
   };

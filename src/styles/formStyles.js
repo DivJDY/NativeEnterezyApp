@@ -1,9 +1,8 @@
-/* eslint-disable prettier/prettier */
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   mapCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
     margin: 10,

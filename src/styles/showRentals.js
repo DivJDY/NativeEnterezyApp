@@ -4,10 +4,11 @@ export const show_rental = StyleSheet.create({
   btn: {
     backgroundColor: '#000',
     borderRadius: 10,
+    paddingHorizontal: 5,
   },
   btnTxt: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   card: {
@@ -17,6 +18,16 @@ export const show_rental = StyleSheet.create({
     marginHorizontal: 10,
     paddingLeft: 10,
     paddingRight: 8,
+  },
+  cardBg: {
+    borderWidth: 3,
+    marginBottom: '6%',
+  },
+  cardActBg: {
+    backgroundColor: '#BBB6B5',
+  },
+  cardClsBg: {
+    backgroundColor: '#fff',
   },
   cardContent: {
     fontSize: 16,
@@ -36,5 +47,12 @@ export const show_rental = StyleSheet.create({
     borderColor: '#000',
     marginVertical: 10,
     marginHorizontal: 2,
+  },
+  loadMoreTxt: {
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 15,
+    color: '#000',
   },
 });

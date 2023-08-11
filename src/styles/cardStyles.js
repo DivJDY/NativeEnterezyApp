@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
   },
   submitbtn: {
     // marginHorizontal: '10%',
-    borderColor: '#000',
+    borderColor: '#FECE00',
   },
   dialog: {
     position: 'absolute',

@@ -9,7 +9,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import {Text, Button, IconButton, TextInput} from 'react-native-paper';
+import {Text, Button, IconButton, TextInput, Card} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
@@ -35,11 +35,11 @@ const ProfileScreen = ({navigation}) => {
   };
 
   const [formData, setFormData] = useState({
-    name: 'Ramesh',
+    name: '',
     shopName: 'Food Kadai',
-    mobile: '7089123402',
-    address: 'Bangalore',
-    email: 'johndoe@example.com',
+    mobile_number: '',
+    address: '',
+    email: '',
   });
   const [editMode, setEditMode] = useState(false);
 
@@ -139,6 +139,8 @@ const ProfileScreen = ({navigation}) => {
       });
   };
 
+  const imageUrl = `${data.shop_image}?timestamp=${Date.now()}`;
+
   // console.warn(' User Id ', userId);
 
   const getUserId = async () => {
@@ -167,6 +169,8 @@ const ProfileScreen = ({navigation}) => {
     getUserId();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.warn(' Images address ==> ', data.shop_image);
 
   return (
     <>
@@ -210,12 +214,10 @@ const ProfileScreen = ({navigation}) => {
             behavior={Platform.OS === 'ios' ? 'padding' : null}>
             <ScrollView showsVerticalScrollIndicator={false}>
               {!editMode ? (
-                <Image
+                <Card.Cover
+                  source={{uri: data?.shop_image}}
+                  style={styles.cardCover}
                   resizeMode="stretch"
-                  style={{width: '100%'}}
-                  // source={require('../../assets/banner2.jpeg')}
-                  // source={{uri: data?.shop_image}}
-                  source={{uri: data.shop_image}}
                 />
               ) : (
                 <TouchableOpacity onPress={handleShopImageSelection}>

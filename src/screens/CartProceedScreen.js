@@ -19,14 +19,19 @@ import {hostName} from '../../App';
 const CartProceedScreen = ({route}) => {
   // eslint-disable-next-line no-unused-vars
   const [taxValue, setTaxValue] = useState(50);
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [toalAmount, setTotalAmount] = useState();
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState(false);
-  const discount = 15.12;
   const navigation = useNavigation();
 
-  console.log(' route data ', route?.params?.cartData);
+  const discount = route?.params?.cartData.reduce(
+    (total, item) => total + item.brand_discount,
+    0,
+  );
+  const total_discount = discount * 100;
+  const finalValue = toalAmount - total_discount;
+  // console.log(' route data ', route?.params?.cartData);
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
@@ -43,7 +48,7 @@ const CartProceedScreen = ({route}) => {
     })
       .then(response => response.json())
       .then(response => {
-        console.warn(' *** ', response);
+        // console.warn(' *** ', response);
       })
       .catch(error => {
         // Handle any errors
@@ -52,31 +57,32 @@ const CartProceedScreen = ({route}) => {
   };
 
   const placeOrder = () => {
-    const customer_name = 'Unknown';
-    const date = new Date(); // Example delivery_date as a Date object
-
-    const delivery_date = date.toLocaleDateString('en-GB'); // Adjust the locale as needed
-    const delivery_status = 'assigned';
+    // Adjust the locale as needed
     const postOrderData = [];
+
     // Push array1 into array2
     route?.params?.cartData.forEach(item => {
       postOrderData.push({
-        cart_id: item.id,
+        cart_code: item.cart_code,
+        product_code: item.product_code,
         product_name: item.product_name,
+        product_desc: item.product_desc,
+        maximum_retail_price: item.maximum_retail_price,
+        selling_price: item.selling_price,
+        product_brand: item.product_brand,
+        quantity_purchased: item.quantity_purchased,
         product_image: item.product_image,
-        quantity: item.quantity,
-        delivery_date: delivery_date,
-        customer_name: customer_name,
-        category_name: item.category_name,
-        discount: item.discount,
-        order_amount: item.total_product_price,
-        delivery_status: delivery_status,
+        brand_discount: item.brand_discount,
+        total_price: finalValue,
+        status: 'assigned',
+        user_id: 1,
+        user_name: 'Xyz',
       });
     });
 
-    // console.warn(' place order data ', ' ** ', postOrderData);
+    console.warn(' place order data ', ' ** ', postOrderData);
 
-    fetch(hostName + '/invoice', {
+    fetch(hostName + '/order', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,11 +94,12 @@ const CartProceedScreen = ({route}) => {
       .then(response => {
         // Handle the response data
         // console.log('data response ', response);
+
         Alert.alert(response.message);
         hideDialog();
         setChecked(false);
         removeCartItem();
-        navigation.navigate('HomeDrawer');
+        navigation.navigate('Home');
       })
       .catch(error => {
         // Handle any errors
@@ -134,7 +141,7 @@ const CartProceedScreen = ({route}) => {
               color="white"
               style={{backgroundColor: 'black', marginRight: 20}}
             />
-            <Appbar.Content title="Appy Coupon" style={{fontWeight: 'bold'}} />
+            <Appbar.Content title="Apply Coupon" style={{fontWeight: 'bold'}} />
             <Appbar.Action
               icon="chevron-right"
               size={32}
@@ -215,32 +222,56 @@ const CartProceedScreen = ({route}) => {
               label="Cash on delivery"
               status={checked ? 'checked' : 'unchecked'}
               onPress={handleCheckbox}
+              uncheckedColor="#000"
+              color="#FECE00"
+              theme={{
+                colors: {
+                  primary: '#000', // Use your primary color for the focused color
+                },
+              }}
             />
 
-            <Dialog.Content flexDirection="row">
-              <Text>Discount</Text>
-              <Text marginLeft={'60%'} style={{fontWeight: '800'}}>
-                {' '}
-                {/* - {'\u20B9'} {data[0]?.discount} */}- {'\u20B9'} {discount}
+            <Dialog.Content
+              flexDirection="row"
+              style={{
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{fontWeight: 'bold'}}>Discount : </Text>
+              <Text>
+                {/* - {'\u20B9'} {data[0]?.discount} */} {'\u20B9'}{' '}
+                {total_discount}
               </Text>
             </Dialog.Content>
-            <Dialog.Content flexDirection="row" marginTop={'-5%'}>
-              <Text>Total amount</Text>
-              <Text marginLeft={'45%'} style={{fontWeight: '800'}}>
-                - {'\u20B9'} {toalAmount - discount}
+            <Dialog.Content
+              flexDirection="row"
+              style={{
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                marginTop: -5,
+              }}>
+              <Text style={{fontWeight: 'bold'}}>Total amount :</Text>
+              <Text>
+                {'\u20B9'}
+                {finalValue}
               </Text>
             </Dialog.Content>
 
             <Dialog.Actions>
               <Button
                 mode="outlined"
-                style={[styles.submitbtn, {borderWidth: 3}]}
+                style={[
+                  styles.submitbtn,
+                  {borderWidth: 3, borderRadius: 10, paddingHorizontal: 5},
+                ]}
                 disabled={checked ? false : true}
                 textAlign="center"
                 onPress={placeOrder}>
-                {/* <Text style={{fontSize: 16}} disabled={checked ? true : false}> */}
-                Place Order
-                {/* </Text> */}
+                <Text
+                  style={{fontSize: 16, color: '#000', fontWeight: 'bold'}}
+                  disabled={checked ? true : false}>
+                  Place Order
+                </Text>
               </Button>
             </Dialog.Actions>
           </Dialog>

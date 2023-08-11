@@ -64,7 +64,10 @@ const UserLists = () => {
         setUsers(response);
         setLoading(false);
       })
-      .catch(error => console.warn('Error while fetch user ', error));
+      .catch(error => {
+        console.warn('Error while fetch user ', error);
+        setLoading(false);
+      });
   };
 
   const handleMenuOpen = userId => {

@@ -35,7 +35,7 @@ const DateRangePicker = ({
         onPress={showStartDatePickerModal}
         style={styles.button}>
         <Text style={styles.label}>
-          {startDate ? `${formatDate(startDate)}` : 'Select Start Date'}
+          {startDate ? `${formatDate(startDate)}` : 'Select Start Date *'}
         </Text>
       </TouchableOpacity>
 
@@ -50,7 +50,7 @@ const DateRangePicker = ({
 
       <TouchableOpacity onPress={showEndDatePickerModal} style={styles.button}>
         <Text style={styles.label}>
-          {endDate ? `${formatDate(endDate)}` : 'Select End Date'}
+          {endDate ? `${formatDate(endDate)}` : 'Select End Date *'}
         </Text>
       </TouchableOpacity>
 

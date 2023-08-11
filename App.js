@@ -15,4 +15,5 @@ const App = () => {
 };
 
 export const hostName = 'http://3.25.50.139:5000';
+// export const hostName = 'http://127.0.0.1:80';
 export default App;

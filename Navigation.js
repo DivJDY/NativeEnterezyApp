@@ -41,6 +41,7 @@ import OrderListScreen from './src/screens/OrderListsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import UserLists from './src/screens/UserLists';
 import ShowRentals from './src/screens/ShowRentals';
+import Admin from './src/screens/Admin';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -191,6 +192,18 @@ const DrawerNavigation = () => (
             size={30}
             color={color}
           />
+        ),
+      }}
+    />
+
+    <Drawer.Screen
+      name="adminData"
+      component={Admin}
+      options={{
+        title: 'Admin',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <Feather name="grid" size={30} color={color} />
         ),
       }}
     />

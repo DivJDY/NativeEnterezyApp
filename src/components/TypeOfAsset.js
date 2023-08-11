@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {View, Alert} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native-paper';
@@ -15,22 +16,16 @@ import {FetchUtilityOptions} from '../fetchUtility/FetchRequestOption';
 import LoadingIndicator from './LoadingIndicator';
 
 const validationSchema = Yup.object().shape({
-  brand_code: Yup.string()
-    .length(3)
-    .required('Enter 3 characters of Brand Code'),
-  brand_name: Yup.string().required('Brand name required'),
-  brand_desc: Yup.string(),
-  brand_discount: Yup.number().min(0, 'Brand discount cannot be negative'),
+  store_asset_name: Yup.string().required('Asset name required'),
+  store_asset_desc: Yup.string(),
 });
 
 const initialValues = {
-  brand_code: '',
-  brand_name: '',
-  brand_desc: '',
-  brand_discount: '',
+  store_asset_name: '',
+  store_asset_desc: '',
 };
 
-const Brand = () => {
+const TypeOfAsset = () => {
   const [loading, setLoading] = useState(false);
   const formik = useFormikContext();
 
@@ -47,12 +42,10 @@ const Brand = () => {
     console.warn(' From data ===> ', values);
 
     const data = {
-      brand_code: values.brand_code.toUpperCase(),
-      brand_name: values.brand_name,
-      brand_discount: values.brand_discount,
-      brand_desc: values.brand_desc,
+      store_asset_name: values.store_asset_name,
+      store_asset_desc: values.store_asset_desc,
     };
-    fetch(hostName + '/brand', {
+    fetch(hostName + '/typeofasset', {
       method: 'POST',
       headers: requestHeader,
       body: JSON.stringify(data),
@@ -74,8 +67,8 @@ const Brand = () => {
 
   return (
     <>
-      <View style={adminStyle.brandFormCont}>
-        <Text style={rentalStyle.rentStoreTxt}>Create Brand</Text>
+      <View style={[adminStyle.brandFormCont, {marginTop: 10}]}>
+        <Text style={rentalStyle.rentStoreTxt}>Create Asset</Text>
       </View>
       {loading ? (
         <LoadingIndicator />
@@ -96,16 +89,16 @@ const Brand = () => {
             <View style={styles.formContainer}>
               <View marginBottom={10}>
                 <TextInputComponent
-                  label="Brand Code"
-                  placeholder={'Enter Brand Code *'}
-                  onChangeText={handleChange('brand_code')}
-                  onBlur={handleBlur('brand_code')}
-                  value={values.brand_code}
+                  label="Asset Name"
+                  placeholder={'Enter Store Asset Name *'}
+                  onChangeText={handleChange('store_asset_name')}
+                  onBlur={handleBlur('store_asset_name')}
+                  value={values.store_asset_name}
                   style={styles.input}
                 />
-                {errors.brand_code && touched.brand_code && (
+                {errors.store_asset_name && touched.store_asset_name && (
                   <TextComponent
-                    text={errors.brand_code}
+                    text={errors.store_asset_name}
                     style={[styles.error, adminStyle.brandFormErr]}
                   />
                 )}
@@ -113,58 +106,23 @@ const Brand = () => {
 
               <View marginBottom={10}>
                 <TextInputComponent
-                  label="Brand Name"
-                  placeholder={'Enter Brand Name *'}
-                  onChangeText={handleChange('brand_name')}
-                  onBlur={handleBlur('brand_name')}
-                  value={values.brand_name}
-                  style={styles.input}
-                />
-                {errors.brand_code && touched.brand_name && (
-                  <TextComponent
-                    text={errors.brand_name}
-                    style={[styles.error, adminStyle.brandFormErr]}
-                  />
-                )}
-              </View>
-
-              <View marginBottom={10}>
-                <TextInputComponent
-                  label="Brand Discount"
-                  placeholder={'Enter Brand Discount '}
-                  onChangeText={handleChange('brand_discount')}
-                  onBlur={handleBlur('brand_discount')}
-                  value={values.brand_discount}
-                  style={styles.input}
-                  keyboardType={'numeric'}
-                />
-                {errors.brand_discount && touched.brand_discount && (
-                  <TextComponent
-                    text={errors.brand_discount}
-                    style={[styles.error, adminStyle.brandFormErr]}
-                  />
-                )}
-              </View>
-
-              <View marginBottom={10}>
-                <TextInputComponent
-                  label="Brand Description"
-                  placeholder={'Enter Brand Description '}
-                  onChangeText={handleChange('brand_desc')}
-                  onBlur={handleBlur('brand_desc')}
-                  value={values.brand_desc}
+                  label="Asset Description"
+                  placeholder={'Enter Store Asset Description '}
+                  onChangeText={handleChange('store_asset_desc')}
+                  onBlur={handleBlur('store_asset_desc')}
+                  value={values.store_asset_desc}
                   style={styles.input}
                   multiline={true}
                 />
-                {errors.brand_desc && touched.brand_desc && (
+                {errors.store_asset_desc && touched.store_asset_desc && (
                   <TextComponent
-                    text={errors.brand_desc}
+                    text={errors.store_asset_desc}
                     style={[styles.error, adminStyle.brandFormErr]}
                   />
                 )}
               </View>
 
-              <ButtonComponent name="Post Brand" onPress={handleSubmit} />
+              <ButtonComponent name="Post Asset" onPress={handleSubmit} />
             </View>
           )}
         </Formik>
@@ -173,4 +131,4 @@ const Brand = () => {
   );
 };
 
-export default Brand;
+export default TypeOfAsset;

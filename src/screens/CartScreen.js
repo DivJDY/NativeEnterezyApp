@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
@@ -24,18 +25,23 @@ const CartScreen = () => {
   };
 
   const deleteCartItem = async id => {
+    setIsLoading(true);
     await fetch(hostName + '/cart/' + id, {
       method: 'DELETE',
     })
       .then(response => response.json())
       .then(response => {
         console.log(response.message);
+        Alert.alert(response.message);
         getCartItems();
+        setIsLoading(false);
       })
       .catch(error => {
+        setIsLoading(false);
         // Handle any network or other errors
         console.error('Error:', error);
       });
+    setIsLoading(false);
   };
 
   // Inside your component or function
@@ -73,11 +79,12 @@ const CartScreen = () => {
     await fetch(hostName + '/cart', requestOptions)
       .then(response => response.json())
       .then(responseData => {
-        console.warn('fetch data ==> ', responseData);
+        console.warn('fetch cart data ==> ', responseData);
         setItem(responseData);
         setIsLoading(false);
       })
       .catch(error => {
+        setIsLoading(false);
         console.error(error);
       });
   }
@@ -90,7 +97,7 @@ const CartScreen = () => {
 
   let totalPrice = 0;
   totalPrice = Item?.reduce((total, product) => {
-    const price = parseFloat(product.total_product_price);
+    const price = parseFloat(product.total_price);
 
     if (!isNaN(price)) {
       return total + price;
@@ -99,53 +106,55 @@ const CartScreen = () => {
     }
   }, 0);
 
-  const RenderCart = ({item}) => {
-    return (
-      <>
-        <Card style={{marginHorizontal: 10, marginVertical: 10, padding: 10}}>
-          <View style={{flexDirection: 'row'}}>
-            <Avatar.Image
-              size={110}
-              mode="contain"
-              source={{uri: item?.product_image}}
-            />
-            <View style={{flexDirection: 'column', marginLeft: 20}}>
-              <Text style={styles.cardTitle} variant="titleLarge">
-                {item?.product_name}
-              </Text>
+  const RenderCart = ({item}) => (
+    <Card style={{marginHorizontal: 10, marginVertical: 10, padding: 10}}>
+      <View style={{flexDirection: 'row'}}>
+        <Avatar.Image
+          size={110}
+          mode="contain"
+          source={{uri: item?.product_image}}
+        />
+        <View style={{flexDirection: 'column', marginLeft: 20}}>
+          <Text style={styles.cardTitle} variant="titleLarge">
+            {item?.product_name}
+          </Text>
 
-              <Text
-                style={[styles.cardSubtitle, {marginVertical: 5}]}
-                variant="bodyMedium">
-                Price: <Text style={{marginLeft: 5}}>{'\u20B9'}</Text>
-                {item?.product_price}
-              </Text>
-              <Text
-                style={[styles.cardSubtitle, {marginBottom: 5}]}
-                variant="bodyMedium">
-                Total Price: <Text style={{marginLeft: 5}}>{'\u20B9'}</Text>
-                {item?.total_product_price}
-              </Text>
-              <Text style={[styles.cardSubtitle]} variant="bodyMedium">
-                Product quantity: {item?.quantity}
-              </Text>
-            </View>
-          </View>
-          <Button onPress={() => showAlert(item.id)}>
-            <Text
-              style={{
-                fontSize: 17,
-                color: '#FECE00',
-                fontWeight: 'semi-bold',
-                lineHeight: 20,
-              }}>
-              Remove
-            </Text>
-          </Button>
-        </Card>
-      </>
-    );
-  };
+          <Text
+            style={[styles.cardSubtitle, {marginVertical: 5}]}
+            variant="bodyMedium">
+            Product Brand: {item?.product_brand}
+          </Text>
+
+          <Text
+            style={[styles.cardSubtitle, {marginVertical: 5}]}
+            variant="bodyMedium">
+            Price: <Text style={{marginLeft: 5}}>{'\u20B9'}</Text>
+            {item?.selling_price}
+          </Text>
+          <Text
+            style={[styles.cardSubtitle, {marginBottom: 5}]}
+            variant="bodyMedium">
+            Total Price: <Text style={{marginLeft: 5}}>{'\u20B9'}</Text>
+            {item?.total_price}
+          </Text>
+          <Text style={[styles.cardSubtitle]} variant="bodyMedium">
+            Product quantity purchased: {item?.quantity_purchased}
+          </Text>
+        </View>
+      </View>
+      <Button onPress={() => showAlert(item.cart_code)}>
+        <Text
+          style={{
+            fontSize: 17,
+            color: '#FECE00',
+            fontWeight: 600,
+            lineHeight: 20,
+          }}>
+          Remove
+        </Text>
+      </Button>
+    </Card>
+  );
 
   return (
     <View style={{flex: 1}}>
@@ -155,11 +164,12 @@ const CartScreen = () => {
         <>
           <FlatList
             data={Item}
-            renderItem={({item}) => <RenderCart item={item} />}
-            keyExtractor={item => item.id}
+            renderItem={RenderCart}
+            keyExtractor={item => item.cart_code}
             onEndReached={() => reloadData}
             onEndReachedThreshold={0.5}
           />
+
           <View
             style={{
               flexDirection: 'row',

@@ -35,14 +35,14 @@ const CustomDrawer = props => {
       <DrawerContentScrollView
         {...props}
         contentContainerStyle={{backgroundColor: '#fff'}}>
-        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 20}}>
+        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
 
       <View
         style={{
-          paddingTop: 5,
+          paddingTop: 8,
           paddingHorizontal: 10,
           borderTopWidth: 2,
           borderTopColor: '#ccc',
@@ -120,12 +120,14 @@ const style = StyleSheet.create({
   logout: {
     fontSize: 18,
     // fontFamily: 'Roboto-Medium',
+    color: 'gray',
     marginLeft: 14,
     fontWeight: 'bold',
   },
   txtVersion: {
     fontSize: 16,
-    // fontFamily: 'Roboto-Medium',]
+    // fontFamily: 'Roboto-Medium',
+    color: 'gray',
     marginLeft: 12,
     fontWeight: 'bold',
     textAlign: 'center',

@@ -27,12 +27,13 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 function DisplayRental() {
-  const [productCost, setProductCost] = useState();
   const [address, setAddress] = useState('');
   const [avgStore, setAvgStore] = useState('');
   const [shelfImage, setShelfImage] = useState('');
   const [width, setWidth] = useState();
   const [length, setLength] = useState();
+
+  const [code, setCode] = useState('');
 
   const [price, setPrice] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,16 +57,20 @@ function DisplayRental() {
     setShowStartDatePicker(false);
     if (selectedDate) {
       setStartDate(selectedDate);
+      // const date = formatDate(selectedDate);
+      setStartDate(selectedDate);
     }
   };
 
   const handleEndDateChange = (event, selectedDate) => {
     setShowEndDatePicker(false);
     if (selectedDate) {
+      // const date = formatDate(selectedDate);
       setEndDate(selectedDate);
     }
   };
 
+  console.warn('  88888 => ', startDate);
   const showStartDatePickerModal = () => {
     setShowStartDatePicker(true);
   };
@@ -171,6 +176,7 @@ function DisplayRental() {
   }, []);
 
   const clearFormData = () => {
+    setCode('');
     setLength('');
     setWidth('');
     setAddress('');
@@ -186,7 +192,8 @@ function DisplayRental() {
   const fetchRental = formData => {
     setLoading(true);
     console.warn('Form Data =====> ', formData);
-    fetch(hostName + '/rental', {
+
+    fetch(hostName + '/shelfRentals', {
       method: 'POST',
       headers: requestHeader,
       body: JSON.stringify(formData),
@@ -206,24 +213,26 @@ function DisplayRental() {
 
   const submitData = () => {
     let formData;
-
     if (
+      code !== '' &&
       length !== '' &&
       width !== '' &&
       shelfvisibility !== [] &&
-      category !== [] &&
       price !== '' &&
       shelfImage !== ''
     ) {
       formData = {
-        product_length: length,
-        product_height: width,
-        product_cost: productCost,
-        shelf_location: address,
-        avg_shelf_foot_falls: avgStore,
-        shelf_image: shelfImage,
-        category_id: category[0],
-        shelf_id: shelfvisibility[0],
+        shelf_code: code.toUpperCase(),
+        category_id: category,
+        length: length,
+        width: width,
+        location_of_shelf: address,
+        store_footfalls: avgStore,
+        store_asset_code: shelfvisibility,
+        period_start: startDate,
+        period_end: endDate,
+        rental_image: shelfImage,
+        cost: price,
       };
 
       Alert.alert(
@@ -250,8 +259,6 @@ function DisplayRental() {
   };
 
   const renderRentalItem = item => {
-    console.warn(' ===>  shelfffff ', shelfvisibility);
-
     return (
       <View style={dropdownstyle.item}>
         <Text style={dropdownstyle.textItem}>{item.store_asset_name}</Text>
@@ -307,6 +314,17 @@ function DisplayRental() {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={rentalStyle.selectContainer}>
               <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
+                Rental Code :
+              </Text>
+              <TextInputComponent
+                placeholder={'Enter rental code'}
+                onChangeText={text => setCode(text)}
+                value={code}
+                style={[styles.input, rentalStyle.inputTxt]}
+              />
+            </View>
+            <View style={rentalStyle.selectContainer}>
+              <Text variant="titleMedium" style={rentalStyle.selectPlaceholder}>
                 Choose Store Assest to rent :
               </Text>
 
@@ -315,10 +333,11 @@ function DisplayRental() {
                   width={'50%'}
                   marginLeft={10}
                   data={shelfvisibilityList}
+                  labelField={'store_asset_name'}
                   selectedValue={shelfvisibility}
                   onChange={handleChangeRental}
                   renderItem={renderRentalItem}
-                  placeholder={'Asset Type '}
+                  placeholder={'Asset Type *'}
                   valueField={'store_asset_code'}
                   searchPlaceholder={'Search Store Asset Type....'}
                 />
@@ -340,7 +359,7 @@ function DisplayRental() {
                   renderItem={renderCategoryItem}
                   labelField={'category_name'}
                   valueField={'id'}
-                  placeholder={'Category *'}
+                  placeholder={'Category'}
                   searchPlaceholder={'Search category....'}
                 />
               )}
@@ -377,7 +396,7 @@ function DisplayRental() {
                 Enter the Rental Price :
               </Text>
               <TextInputComponent
-                placeholder={'Rental price'}
+                placeholder={'Rental price *'}
                 onChangeText={text => setPrice(text)}
                 keyboardType={'numeric'}
                 value={price}

@@ -11,7 +11,6 @@ import {hostName} from '../../App';
 const CardDetailsComponent = props => {
   const [value, setValue] = useState();
   const [quantity, setQuantity] = useState();
-  const [btnDisable, setBtnDisable] = useState(false);
 
   const navigation = useNavigation();
 
@@ -20,10 +19,8 @@ const CardDetailsComponent = props => {
   };
 
   const handleDecreaseQuantity = () => {
-    if (quantity >= props.data?.minimum_product_order_quantity) {
+    if (quantity > props.data?.minimum_product_order_quantity) {
       setQuantity(quantity - 1);
-    } else {
-      setBtnDisable(true);
     }
   };
 
@@ -34,11 +31,12 @@ const CardDetailsComponent = props => {
   const addToCart = item => {
     // console.log(' Item post cart ' + JSON.stringify(item));
     const cartItem = {...item, quantity: quantity};
-    // console.warn(' Item 1st **** ' + JSON.stringify(cartItem));
+    console.warn(' Item 1st **** ' + JSON.stringify(cartItem));
 
     const data = {
-      id: cartItem.id,
-      quantity: cartItem.minimum_product_order_quantity,
+      user_id: 1,
+      product_code: cartItem.product_code,
+      quantity_purchased: cartItem.minimum_product_order_quantity,
     };
 
     fetch(hostName + '/cart', {
@@ -98,6 +96,9 @@ const CardDetailsComponent = props => {
         />
         <Card.Content style={{backgroundColor: '#fff'}}>
           <Text style={styles.cardTitle} variant="titleLarge">
+            Brand: {value?.product_brand}
+          </Text>
+          <Text style={styles.cardTitle} variant="titleLarge">
             {value?.product_name}
           </Text>
           <Text
@@ -111,14 +112,14 @@ const CardDetailsComponent = props => {
             variant="bodyMedium">
             Price: <Text style={{marginLeft: 5}}>{'\u20B9'}</Text>
             {''}
-            {value?.product_price}
+            {value?.selling_price}
           </Text>
 
           <Text
             style={[styles.cardSubtitle, {color: 'gray', marginBottom: 5}]}
             variant="bodyMedium">
             MRP: <Text style={{marginLeft: 5, color: 'gray'}}>{'\u20B9'}</Text>
-            {''} {value?.product_mrp}
+            {''} {value?.maximum_retail_price}
           </Text>
 
           <View
@@ -128,7 +129,7 @@ const CardDetailsComponent = props => {
               alignItems: 'center',
             }}>
             <QuantitySelector
-              disable={btnDisable}
+              disabled={quantity <= props.data?.minimum_product_order_quantity}
               quantity={quantity}
               onIncrease={handleIncreaseQuantity}
               onDecrease={handleDecreaseQuantity}
