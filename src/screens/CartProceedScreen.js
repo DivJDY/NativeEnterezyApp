@@ -74,7 +74,7 @@ const CartProceedScreen = ({route}) => {
         product_image: item.product_image,
         brand_discount: item.brand_discount,
         total_price: finalValue,
-        status: 'assigned',
+        status: 'Order received',
         user_id: 1,
         user_name: 'Xyz',
       });

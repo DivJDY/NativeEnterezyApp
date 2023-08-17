@@ -25,6 +25,13 @@ const ShowRentals = () => {
 
   const updateRentalStatus = async (shelf_code, value) => {
     setIsLoading(true);
+    // if (status === 'closed') {
+    //   // Prevent the forbidden status transition
+    //   Alert.alert("Cannot change the status 'closed' to another status");
+    //   setIsLoading(false);
+    // } else {
+    // Update the status
+    // setStatus(value);
     const updateData = {status: value};
 
     await fetch(hostName + '/shelfRentals/' + shelf_code, {
@@ -45,6 +52,7 @@ const ShowRentals = () => {
         setIsLoading(false);
         console.error(error);
       });
+    // }
   };
 
   const handleStatusUpdate = (shelf_code, value) => {
@@ -60,7 +68,9 @@ const ShowRentals = () => {
         {
           text: 'OK',
           onPress: () => {
-            updateRentalStatus(shelf_code, value);
+            setIsLoading(true);
+            console.warn(' Status ==> ', value);
+            setTimeout(() => updateRentalStatus(shelf_code, value), 3000);
           },
         },
       ],

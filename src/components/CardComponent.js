@@ -98,7 +98,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
         <Text style={[styles.cardPara, {marginBottom: 8}]} variant="bodyMedium">
           Minimum order(quantity): {item?.minimum_product_order_quantity}
         </Text>
-        <TouchableOpacity onPress={() => deleteProductItem(item.id)}>
+        <TouchableOpacity onPress={() => deleteProductItem(item.product_code)}>
           <Icon name="delete" size={20} color="black" />
         </TouchableOpacity>
       </Card.Content>

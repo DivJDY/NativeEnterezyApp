@@ -1,14 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useContext} from 'react';
-import {
-  View,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
-  Alert,
-  StyleSheet,
-} from 'react-native';
+import {View, Image, TouchableOpacity, Alert, StyleSheet} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -17,6 +10,7 @@ import {Card, Text} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {AuthContext} from '../context/AuthContext';
 import {title, subTitle} from './SinupTitle';
+import version from '../../package.json';
 
 const CustomDrawer = props => {
   const {logout} = useContext(AuthContext);
@@ -80,7 +74,7 @@ const CustomDrawer = props => {
           </View>
         </TouchableOpacity>
 
-        <Text style={style.txtVersion}>App Version 1.1</Text>
+        <Text style={style.txtVersion}>App Version {version.version}</Text>
       </View>
     </View>
   );

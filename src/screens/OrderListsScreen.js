@@ -171,24 +171,27 @@ const OrderListScreen = () => {
                       }>
                       <Menu.Item
                         onPress={() =>
-                          handleStatusUpdate(order.order_code, 'processing')
+                          handleStatusUpdate(
+                            order.order_code,
+                            'Order processed',
+                          )
                         }
-                        title="processing"
+                        title="Order processed"
+                      />
+                      <Menu.Item
+                        onPress={() =>
+                          handleStatusUpdate(order.order_code, 'Order shipped')
+                        }
+                        title="Order shipped"
                       />
                       <Menu.Item
                         onPress={() =>
                           handleStatusUpdate(
                             order.order_code,
-                            'delivery schedule',
+                            'Order delivered',
                           )
                         }
-                        title="delivery schedule"
-                      />
-                      <Menu.Item
-                        onPress={() =>
-                          handleStatusUpdate(order.shelf_code, 'deliveried')
-                        }
-                        title="deliveried"
+                        title="Order delivered"
                       />
                     </Menu>
                   )}

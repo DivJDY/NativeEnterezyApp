@@ -42,6 +42,7 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import UserLists from './src/screens/UserLists';
 import ShowRentals from './src/screens/ShowRentals';
 import Admin from './src/screens/Admin';
+import CreateBanners from './src/screens/CreateBanners';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -262,6 +263,18 @@ const DrawerNavigation = () => (
             color={color}
             style={{marginLeft: 8}}
           />
+        ),
+      }}
+    />
+
+    <Drawer.Screen
+      name="banner"
+      component={CreateBanners}
+      options={{
+        title: 'Create Banners',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <MaterialCommunityIcons name="camera-image" size={30} color={color} />
         ),
       }}
     />

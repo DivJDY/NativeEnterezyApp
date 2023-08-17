@@ -35,7 +35,7 @@ const validationSchema = Yup.object().shape({
     .length(3)
     .required('Enter 3 characters of product Code'),
   product_name: Yup.string().required('Product name is required'),
-  product_desc: Yup.string().required('Product Description is required'),
+  product_desc: Yup.string(),
   minimum_product_order_quantity: Yup.number()
     .min(1, 'Minimum product order quantity should be at least 1')
     .required('Product order quantity required'),
@@ -322,7 +322,7 @@ const ProductPostScreen = () => {
                   <View marginBottom={10}>
                     <TextInputComponent
                       label="Product Description"
-                      placeholder={'Enter Product Description *'}
+                      placeholder={'Enter Product Description'}
                       onChangeText={handleChange('product_desc')}
                       onBlur={handleBlur('product_desc')}
                       value={values.product_desc}

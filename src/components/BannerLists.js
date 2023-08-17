@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Image,
@@ -11,19 +11,44 @@ import {
   Animated,
 } from 'react-native';
 import BannerPagination from './BannerPagination';
+import {hostName} from '../../App';
 
-const slides = [
-  {id: 1, image: require('../../assets/banner4.jpg')},
-  {id: 2, image: require('../../assets/banner1.jpeg')},
-  {id: 3, image: require('../../assets/banner3.jpg')},
-  {id: 4, image: require('../../assets/banner4.jpg')},
-  {id: 5, image: require('../../assets/banner1.jpeg')},
-  {id: 6, image: require('../../assets/banner3.jpg')},
-];
+// const slides = [
+//   {id: 1, image: require('../../assets/banner4.jpg')},
+//   {id: 2, image: require('../../assets/banner1.jpeg')},
+//   {id: 3, image: require('../../assets/banner3.jpg')},
+//   {id: 4, image: require('../../assets/banner4.jpg')},
+//   {id: 5, image: require('../../assets/banner1.jpeg')},
+//   {id: 6, image: require('../../assets/banner3.jpg')},
+// ];
 
 const BannerLists = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slidesRef = useRef(null);
+  const [slides, setSlides] = useState([]);
+
+  const fetchBannerLists = async () => {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
+    };
+    await fetch(hostName + '/banner', requestOptions)
+      .then(res => res.json())
+      .then(response => {
+        console.warn('banner ', response.banner_data);
+        setSlides(response.banner_data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    fetchBannerLists();
+  }, []);
 
   const scrollX = useRef(new Animated.Value(0)).current;
 
@@ -36,11 +61,17 @@ const BannerLists = () => {
   const viewConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
 
   const {width} = useWindowDimensions();
+
+  console.warn(' ite   ', slides);
   const RenderSlides = ({item}) => {
     return (
       <View style={[styles.container, {width}]}>
         <Image
-          source={item.image}
+          // source={{uri: item.banner_image}}
+          // source={item.banner_image}
+          source={
+            'https://enterezy-app-images.s3.amazonaws.com/enterezy-banner-images%2Frn_image_picker_lib_temp_04ab2852-d614-42c2-942e-4616ae621d01.jpg'
+          }
           style={[styles.image, {width, resizeMode: 'contain'}]}
         />
       </View>
@@ -65,7 +96,7 @@ const BannerLists = () => {
           // viewabilityConfig={{viewAreaCoveragePercentThreshold: 50}}
           viewabilityConfig={viewConfig}
           ref={slidesRef}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.banner_code}
         />
       </View>
       <BannerPagination data={slides} scrollX={scrollX} />
