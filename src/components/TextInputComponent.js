@@ -16,6 +16,7 @@ function TextInputComponent({
   return (
     <TextInput
       placeholder={placeholder}
+      textColor="#000"
       placeholderTextColor={'#000'}
       mode="Flat"
       onChangeText={onChangeText}

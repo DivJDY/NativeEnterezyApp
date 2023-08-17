@@ -430,7 +430,7 @@ const ProductPostScreen = () => {
                             <FontAwesome5
                               name="upload"
                               size={size}
-                              color={color}
+                              color={'#fff'}
                             />
                           )
                     }

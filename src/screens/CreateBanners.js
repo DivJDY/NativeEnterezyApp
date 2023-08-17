@@ -38,7 +38,6 @@ const CreateBanners = () => {
 
   const initialValues = {
     banner_name: '',
-    banner_image: null,
     banner_desc: '',
   };
 
@@ -128,7 +127,7 @@ const CreateBanners = () => {
       setBannerImg('');
       setLoading(false);
     } else {
-      Alert.alert('Please upload product image');
+      Alert.alert('Please upload banner image');
     }
   };
   return (
@@ -222,7 +221,7 @@ const CreateBanners = () => {
                             <FontAwesome5
                               name="upload"
                               size={size}
-                              color={color}
+                              color={'#fff'}
                             />
                           )
                     }

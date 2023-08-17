@@ -9,22 +9,21 @@ import {
   useWindowDimensions,
   FlatList,
   Animated,
+  Dimensions,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
+import {Card} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/AntDesign';
 import BannerPagination from './BannerPagination';
 import {hostName} from '../../App';
 
-// const slides = [
-//   {id: 1, image: require('../../assets/banner4.jpg')},
-//   {id: 2, image: require('../../assets/banner1.jpeg')},
-//   {id: 3, image: require('../../assets/banner3.jpg')},
-//   {id: 4, image: require('../../assets/banner4.jpg')},
-//   {id: 5, image: require('../../assets/banner1.jpeg')},
-//   {id: 6, image: require('../../assets/banner3.jpg')},
-// ];
+// const {width} = Dimensions.get('window');
 
 const BannerLists = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slidesRef = useRef(null);
+  const flatListRef = useRef(null);
   const [slides, setSlides] = useState([]);
 
   const fetchBannerLists = async () => {
@@ -50,6 +49,10 @@ const BannerLists = () => {
     fetchBannerLists();
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => fetchBannerLists(), 3000);
+  });
+
   const scrollX = useRef(new Animated.Value(0)).current;
 
   const viewableItemsChanged = useRef(({viewableItem}) => {
@@ -61,22 +64,98 @@ const BannerLists = () => {
   const viewConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
 
   const {width} = useWindowDimensions();
+  const deleteBannerItem = async id => {
+    Alert.alert(
+      '',
+      'You want delete this banner',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            await deleteBannerById(id);
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const deleteBannerById = async id => {
+    await fetch(hostName + '/banner/' + id, {
+      method: 'DELETE',
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log(response.message);
+        Alert.alert(response.message);
+        fetchBannerLists();
+      })
+      .catch(error => {
+        // Handle any network or other errors
+        console.error('Error:', error);
+      });
+  };
 
   console.warn(' ite   ', slides);
   const RenderSlides = ({item}) => {
     return (
       <View style={[styles.container, {width}]}>
-        <Image
-          // source={{uri: item.banner_image}}
-          // source={item.banner_image}
-          source={
-            'https://enterezy-app-images.s3.amazonaws.com/enterezy-banner-images%2Frn_image_picker_lib_temp_04ab2852-d614-42c2-942e-4616ae621d01.jpg'
-          }
-          style={[styles.image, {width, resizeMode: 'contain'}]}
+        <Card.Cover
+          // style={{marginBottom: 10}}
+          source={{uri: item?.banner_image}}
+          // resizeMode="repeat"
+          resizeMode="contain"
+          style={[styles.image, {width, height: '100%'}]}
         />
+        <View style={{position: 'absolute', top: 10, left: '90%', right: 10}}>
+          <TouchableOpacity onPress={() => deleteBannerItem(item.banner_code)}>
+            <Icon
+              name="delete"
+              size={30}
+              color="#000"
+              style={{fontWeight: 'bold'}}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
+
+  // Function to update the scroll position
+  const scrollToIndex = index => {
+    flatListRef.current.scrollToIndex({animated: true, index});
+    setCurrentIndex(index);
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Calculate the next index to scroll to
+      const nextIndex = (currentIndex + 1) % slides.length;
+      scrollToIndex(nextIndex); // This line could be causing the NaN issue
+
+      // Instead of the above line, you should just update the currentIndex without triggering a scroll
+      setCurrentIndex(nextIndex);
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [currentIndex, slides.length]);
+  // useEffect(() => {
+  //   // const interval = setInterval(() => {
+  //   //   // Calculate the next index to scroll to
+  //   //   const nextIndex = (currentIndex + 1) % slides.length;
+  //   //   scrollToIndex(nextIndex);
+  //   // }, 3000); // Change this value to control the interval
+  //   // // Clear the interval when the component unmounts
+  //   // return () => {
+  //   //   clearInterval(interval);
+  //   // };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentIndex]);
 
   return (
     <>
@@ -95,7 +174,7 @@ const BannerLists = () => {
           onViewableItemsChanged={viewableItemsChanged}
           // viewabilityConfig={{viewAreaCoveragePercentThreshold: 50}}
           viewabilityConfig={viewConfig}
-          ref={slidesRef}
+          ref={flatListRef}
           keyExtractor={item => item.banner_code}
         />
       </View>

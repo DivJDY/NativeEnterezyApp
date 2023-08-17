@@ -22,6 +22,7 @@ const CardComponent = ({name, item, fetchProduct}) => {
       .then(response => response.json())
       .then(response => {
         console.log(response.message);
+        Alert.alert(response.message);
         fetchProduct();
       })
       .catch(error => {

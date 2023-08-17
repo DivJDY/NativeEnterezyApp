@@ -234,17 +234,34 @@ const DrawerNavigation = () => (
     />
 
     <Drawer.Screen
+      name="banner"
+      component={CreateBanners}
+      options={{
+        title: 'Create Banners',
+        headerTitle: () => <HeaderImage />,
+        drawerIcon: ({color}) => (
+          <MaterialCommunityIcons name="camera-image" size={30} color={color} />
+        ),
+      }}
+    />
+
+    <Drawer.Screen
       name="DisplayRental"
       component={DisplayRental}
       options={{
         title: 'Display Rental',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <FontAwesome
-            name="rupee"
+          // <FontAwesome
+          //   name="rupee"
+          //   size={30}
+          //   color={color}
+          //   style={{marginLeft: 8}}
+          // />
+          <MaterialCommunityIcons
+            name="currency-rupee"
             size={30}
             color={color}
-            style={{marginLeft: 8}}
           />
         ),
       }}
@@ -257,24 +274,17 @@ const DrawerNavigation = () => (
         title: 'Show Rentals',
         headerTitle: () => <HeaderImage />,
         drawerIcon: ({color}) => (
-          <FontAwesome
-            name="rupee"
+          // <FontAwesome
+          //   name="rupee"
+          //   size={30}
+          //   color={color}
+          //   style={{marginLeft: 8}}
+          // />
+          <MaterialCommunityIcons
+            name="currency-rupee"
             size={30}
             color={color}
-            style={{marginLeft: 8}}
           />
-        ),
-      }}
-    />
-
-    <Drawer.Screen
-      name="banner"
-      component={CreateBanners}
-      options={{
-        title: 'Create Banners',
-        headerTitle: () => <HeaderImage />,
-        drawerIcon: ({color}) => (
-          <MaterialCommunityIcons name="camera-image" size={30} color={color} />
         ),
       }}
     />
