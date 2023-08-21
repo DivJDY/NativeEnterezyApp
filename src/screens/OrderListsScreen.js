@@ -7,6 +7,7 @@ import {List, Divider, Text, IconButton, Menu} from 'react-native-paper';
 import {hostName} from '../../App';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {show_rental} from '../styles/showRentals';
+import DownloadOrder from '../components/DownloadOrder';
 
 const OrderListScreen = () => {
   const [data, setData] = useState([]);
@@ -105,10 +106,29 @@ const OrderListScreen = () => {
 
   return (
     <View style={{flex: 1}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          justifyContent: 'space-around',
+          marginVertical: 10,
+        }}>
+        <Text
+          variant="titleLarge"
+          style={{
+            textAlign: 'center',
+            marginTop: 20,
+            fontWeight: 'bold',
+            textDecorationLine: 'underline',
+          }}>
+          Order Lists
+        </Text>
+        <DownloadOrder order={data} />
+      </View>
       {loading ? (
         <LoadingIndicator />
       ) : data.length === 0 ? (
-        <View style={{flex: 1, alignItems: 'center', marginTop: '10%'}}>
+        <View style={{flex: 1, alignItems: 'center', marginTop: '15%'}}>
           <Text style={{fontSize: 20, fontWeight: '700'}}>No order data</Text>
         </View>
       ) : (
@@ -119,7 +139,7 @@ const OrderListScreen = () => {
             {data?.map((order, index) => (
               <View key={index}>
                 <List.Item
-                  style={{marginBottom: -20}}
+                  style={{marginBottom: -20, flexWrap: 'nowrap'}}
                   titleStyle={{
                     fontSize: 18,
                     fontWeight: 'bold',
@@ -134,22 +154,37 @@ const OrderListScreen = () => {
                   )}
                   right={() => (
                     <Text
-                      style={{color: '#000', fontWeight: 'bold', fontSize: 16}}>
-                      {order?.total_price} Rs | Qty: {order.quantity_purchased}
+                      style={{
+                        color: '#000',
+                        fontWeight: 'bold',
+                        fontSize: 16,
+                      }}>
+                      {order?.total_price.toFixed(2)} Rs | Qty:{' '}
+                      {order.quantity_purchased}
                     </Text>
                   )}
                 />
                 <List.Item
-                  title={'Product Brand : ' + order.product_brand}
+                  title={
+                    'Product Brand : ' +
+                    order.product_brand +
+                    ' | Product Tax: ' +
+                    order.tax_rate
+                  }
                   description={
                     'Order Placed Date : ' + order.order_created_at.slice(0, 10)
                   }
-                  titleStyle={{fontSize: 16, lineHeight: 25, color: '#000'}}
+                  titleStyle={{
+                    fontSize: 16,
+                    lineHeight: 25,
+                    color: '#000',
+                  }}
                   descriptionStyle={{
                     fontSize: 16,
                     color: '#000',
                   }}
                   style={{marginBottom: -22}}
+                  titleNumberOfLines={2}
                 />
                 <List.Item
                   title={

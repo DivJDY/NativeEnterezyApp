@@ -105,11 +105,14 @@ const BottomTabNavigator = () => {
 };
 
 const HeaderImage = () => (
-  <Image
-    source={require('./assets/logo.jpg')}
-    style={{width: 40, height: 28}}
-    resizeMode="stretch"
-  />
+  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <Image
+      source={require('./assets/logo.jpg')}
+      style={{width: 40, height: 28, marginRight: 10}}
+      resizeMode="stretch"
+    />
+    <Text style={{fontSize: 18, fontWeight: 'bold'}}>Hello Xyz</Text>
+  </View>
 );
 
 const DrawerNavigation = () => (

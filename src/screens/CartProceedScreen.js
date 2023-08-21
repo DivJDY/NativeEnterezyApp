@@ -11,24 +11,33 @@ import {
   Portal,
   Checkbox,
   Provider,
+  IconButton,
 } from 'react-native-paper';
 import {styles} from '../styles/cardStyles';
 import {useNavigation} from '@react-navigation/native';
 import {hostName} from '../../App';
 
 const CartProceedScreen = ({route}) => {
-  // eslint-disable-next-line no-unused-vars
-  const [taxValue, setTaxValue] = useState(50);
+  // const [taxValue, setTaxValue] = useState(50);
   const [data, setData] = useState([]);
   const [toalAmount, setTotalAmount] = useState();
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [user, setUser] = useState([]);
   const navigation = useNavigation();
 
   const discount = route?.params?.cartData.reduce(
-    (total, item) => total + item.brand_discount,
+    (total, item) => total + item?.brand_discount,
     0,
   );
+
+  const total_tax = route?.params?.cartData.reduce(
+    (total, item) => total + item?.tax_rate,
+    0,
+  );
+  const tax = parseFloat(total_tax).toString();
+  // const tax = total_tax.replace(/^0+/, '');
+  // console.warn(' tax 0000000000 ', tax.discount);
   const total_discount = discount * 100;
   const finalValue = toalAmount - total_discount;
   // console.log(' route data ', route?.params?.cartData);
@@ -48,7 +57,7 @@ const CartProceedScreen = ({route}) => {
     })
       .then(response => response.json())
       .then(response => {
-        // console.warn(' *** ', response);
+        console.warn(' *** ', response);
       })
       .catch(error => {
         // Handle any errors
@@ -74,6 +83,7 @@ const CartProceedScreen = ({route}) => {
         product_image: item.product_image,
         brand_discount: item.brand_discount,
         total_price: finalValue,
+        tax_rate: item.tax_rate,
         status: 'Order received',
         user_id: 1,
         user_name: 'Xyz',
@@ -99,7 +109,7 @@ const CartProceedScreen = ({route}) => {
         hideDialog();
         setChecked(false);
         removeCartItem();
-        navigation.navigate('Home');
+        navigation.navigate('Cart');
       })
       .catch(error => {
         // Handle any errors
@@ -114,16 +124,23 @@ const CartProceedScreen = ({route}) => {
   const handleRightIconPress = () => {
     console.log('pressed');
   };
+
+  const fetchUserData = async () => {
+    await fetch(hostName + '/user/1')
+      .then(res => res.json())
+      .then(res => setUser(res))
+      .catch(err => console.warn(err));
+  };
+
   useEffect(() => {
     setData(route?.params?.cartData);
-    const total = route?.params?.totalPrice + taxValue;
-
+    const total = route?.params?.totalPrice;
     setTotalAmount(total);
+    fetchUserData();
   }, [
     data?.total_product_price,
     route?.params?.cartData,
     route?.params?.totalPrice,
-    taxValue,
   ]);
   return (
     <Provider>
@@ -134,7 +151,7 @@ const CartProceedScreen = ({route}) => {
             marginHorizontal: '10%',
             width: '80%',
           }}>
-          <Appbar.Header style={{backgroundColor: 'yellow'}}>
+          {/* <Appbar.Header style={{backgroundColor: 'yellow'}}>
             <Appbar.Action
               icon="percent"
               size={16}
@@ -147,22 +164,48 @@ const CartProceedScreen = ({route}) => {
               size={32}
               onPress={handleRightIconPress}
             />
-          </Appbar.Header>
+          </Appbar.Header> */}
           <Card style={{marginTop: 50}}>
+            <Card.Content
+              marginTop={5}
+              flexDirection="row"
+              flexWrap="wrap"
+              alignItems="center">
+              <Text
+                style={{fontWeight: 'bold', fontSize: 16, flex: 1}}
+                variant="titleMedium">
+                Delivery address :
+              </Text>
+              <Text style={{flex: 0.8, fontSize: 16}}>{user?.address}</Text>
+              <IconButton
+                icon="pencil"
+                size={26}
+                style={{color: '#000', flex: 0.2}}
+                onPress={() => console.warn(' 777')}
+              />
+            </Card.Content>
             <Card.Content>
-              <Text variant="titleLarge" style={{textAlign: 'center'}}>
+              <Text
+                variant="titleLarge"
+                style={{
+                  textAlign: 'center',
+                  marginVertical: 10,
+                  textDecorationLine: 'underline',
+                }}>
                 Bill Details
               </Text>
             </Card.Content>
-            <Card.Content flexDirection="row" flexWrap="wrap" marginTop={10}>
-              <Text variant="bodyMedium" marginRight={'40%'}>
-                Total Order value
-              </Text>
+            <Card.Content
+              flexDirection="row"
+              flexWrap="wrap"
+              marginTop={10}
+              justifyContent="space-between">
+              <Text variant="bodyMedium">Total Order value</Text>
               <Text variant="bodyMedium">
-                {'\u20B9'} {route?.params?.totalPrice}
+                {'\u20B9'} {route?.params?.totalPrice.toFixed(2)}
               </Text>
             </Card.Content>
-            <Card.Content flexDirection="row" flexWrap="wrap" marginTop={10}>
+            {/* <Card.Content flexDirection="row" flexWrap="wrap" marginTop={10}>
               <Text
                 variant="bodyMedium"
                 marginRight={'60%'}
@@ -172,11 +215,15 @@ const CartProceedScreen = ({route}) => {
               <Text variant="bodyMedium">
                 {'\u20B9'} {taxValue}
               </Text>
-            </Card.Content>
-            <Card.Content marginTop={10}>
-              <Text style={{fontWeight: 'bold'}} variant="bodyLarge">
-                Delivery in 1 day
-              </Text>
+            </Card.Content> */}
+
+            <Card.Content
+              flexDirection="row"
+              flexWrap="wrap"
+              marginTop={10}
+              justifyContent="space-between">
+              <Text variant="bodyMedium">Total Tax</Text>
+              <Text variant="bodyMedium">{tax}%</Text>
             </Card.Content>
 
             <Card.Content flexDirection="row" flexWrap="wrap" marginTop={5}>
@@ -190,7 +237,7 @@ const CartProceedScreen = ({route}) => {
                 To pay
               </Text>
               <Text marginTop={10} marginBottom={3} variant="bodyMedium">
-                {'\u20B9'} {toalAmount}
+                {'\u20B9'} {toalAmount?.toFixed(2)}
               </Text>
               <View style={styles.line} />
             </Card.Content>
@@ -253,22 +300,24 @@ const CartProceedScreen = ({route}) => {
               <Text style={{fontWeight: 'bold'}}>Total amount :</Text>
               <Text>
                 {'\u20B9'}
-                {finalValue}
+                {finalValue.toFixed(2)}
               </Text>
             </Dialog.Content>
 
             <Dialog.Actions>
               <Button
                 mode="outlined"
-                style={[
-                  styles.submitbtn,
-                  {borderWidth: 3, borderRadius: 10, paddingHorizontal: 5},
-                ]}
+                // style={[
+                //   styles.submitbtn,
+                //   {borderWidth: 3, borderRadius: 10, paddingHorizontal: 5},
+                // ]}
+
+                style={checked ? styles.submitbtn : styles.disableSubBtn}
                 disabled={checked ? false : true}
                 textAlign="center"
                 onPress={placeOrder}>
                 <Text
-                  style={{fontSize: 16, color: '#000', fontWeight: 'bold'}}
+                  style={{fontSize: 16, color: '#fff', fontWeight: 'bold'}}
                   disabled={checked ? true : false}>
                   Place Order
                 </Text>

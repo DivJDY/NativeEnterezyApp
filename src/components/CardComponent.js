@@ -82,6 +82,9 @@ const CardComponent = ({name, item, fetchProduct}) => {
         <Text style={styles.imageLoadError}>Error while loading an image</Text>
       )}
       <Card.Content>
+        <Text style={[styles.cardTitle, {fontSize: 14, fontWeight: 'bold'}]}>
+          Product Code: {item?.product_code}
+        </Text>
         <Text style={styles.cardTitle} variant="titleLarge">
           {item?.product_name}
         </Text>

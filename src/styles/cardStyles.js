@@ -46,7 +46,15 @@ export const styles = StyleSheet.create({
   },
   submitbtn: {
     // marginHorizontal: '10%',
-    borderColor: '#FECE00',
+    backgroundColor: '#FECE00',
+
+    borderRadius: 10,
+    paddingHorizontal: 5,
+  },
+  disableSubBtn: {
+    backgroundColor: 'gray',
+    borderRadius: 10,
+    paddingHorizontal: 5,
   },
   dialog: {
     position: 'absolute',

@@ -48,6 +48,21 @@ const validationSchema = Yup.object().shape({
     .required('Product MRP is required'),
 });
 
+const taxRate = [
+  {tax_id: 1, tax_rate: '0.0 %'},
+  {tax_id: 2, tax_rate: '0.10 %'},
+  {tax_id: 3, tax_rate: '0.25 %'},
+  {tax_id: 4, tax_rate: '1.0 %'},
+  {tax_id: 5, tax_rate: '1.5 %'},
+  {tax_id: 6, tax_rate: '3.0 %'},
+  {tax_id: 7, tax_rate: '5.0 %'},
+  {tax_id: 8, tax_rate: '6.0 %'},
+  {tax_id: 9, tax_rate: '7.50 %'},
+  {tax_id: 10, tax_rate: '12.0 %'},
+  {tax_id: 11, tax_rate: '18.0 %'},
+  {tax_id: 12, tax_rate: '28.0 %'},
+];
+
 const ProductPostScreen = () => {
   const [uploadImage, setUploadImage] = useState(null);
   const [brand, setBrand] = useState('');
@@ -55,6 +70,7 @@ const ProductPostScreen = () => {
   const [loadbrand, setLoadBrand] = useState(false);
   const [loading, setLoading] = useState(true);
   const [imgLoad, setImgLoad] = useState(false);
+  const [tax, setTax] = useState('');
 
   const formik = useFormikContext();
 
@@ -93,7 +109,7 @@ const ProductPostScreen = () => {
   const handleFormSubmit = (values, {resetForm}) => {
     setLoading(true);
     // Handle form submission logic here
-    if (uploadImage !== '') {
+    if (uploadImage !== '' && tax !== '') {
       const data = {
         product_code: values.product_code.toUpperCase(),
         product_name: values.product_name,
@@ -103,6 +119,7 @@ const ProductPostScreen = () => {
         product_desc: values.product_desc,
         minimum_product_order_quantity: values.minimum_product_order_quantity,
         product_image: uploadImage,
+        tax_rate: tax,
       };
 
       // console.warn(' post data => ', data);
@@ -129,6 +146,7 @@ const ProductPostScreen = () => {
       values.maximum_retail_price = '';
       setUploadImage('');
       setBrand('');
+      setTax('');
       setLoading(false);
     } else {
       Alert.alert('Please upload product image');
@@ -222,11 +240,31 @@ const ProductPostScreen = () => {
     setBrand(item.brand_code);
   };
 
+  const handleChangeTax = item => {
+    setTax(item.tax_rate);
+  };
+
   const renderBrandItem = item => {
     return (
       <View style={dropdownstyle.item}>
         <Text style={dropdownstyle.textItem}>{item.brand_name}</Text>
         {item.brand_code === brand && (
+          <AntDesign
+            style={dropdownstyle.icon}
+            color="black"
+            name="check"
+            size={20}
+          />
+        )}
+      </View>
+    );
+  };
+
+  const renderTaxItem = item => {
+    return (
+      <View style={dropdownstyle.item}>
+        <Text style={dropdownstyle.textItem}>{item.tax_rate}</Text>
+        {item.tax_rate === tax && (
           <AntDesign
             style={dropdownstyle.icon}
             color="black"
@@ -405,6 +443,22 @@ const ProductPostScreen = () => {
                           ]}
                         />
                       )}
+                  </View>
+
+                  <View marginBottom={14} marginLeft={-5}>
+                    {taxRate && (
+                      <DropDownSelection
+                        width={'89%'}
+                        data={taxRate}
+                        selectedValue={tax}
+                        onChange={handleChangeTax}
+                        renderItem={renderTaxItem}
+                        labelField={'tax_rate'}
+                        valueField={'tax_rate'}
+                        placeholder={'Select the Tax Rate *'}
+                        searchPlaceholder={'Search tax rate....'}
+                      />
+                    )}
                   </View>
 
                   <Button

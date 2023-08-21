@@ -1,5 +1,4 @@
 /* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {FlatList, View, Alert} from 'react-native';
@@ -125,6 +124,14 @@ const CartScreen = () => {
             Product Brand: {item?.product_brand}
           </Text>
 
+          <Text style={[styles.cardSubtitle]} variant="bodyMedium">
+            Product quantity purchased: {item?.quantity_purchased}
+          </Text>
+          <Text
+            style={[styles.cardSubtitle, {lineHeight: 25}]}
+            variant="bodyMedium">
+            Tax: {item?.tax_rate}
+          </Text>
           <Text
             style={[styles.cardSubtitle, {marginVertical: 5}]}
             variant="bodyMedium">
@@ -135,10 +142,7 @@ const CartScreen = () => {
             style={[styles.cardSubtitle, {marginBottom: 5}]}
             variant="bodyMedium">
             Total Price: <Text style={{marginLeft: 5}}>{'\u20B9'}</Text>
-            {item?.total_price}
-          </Text>
-          <Text style={[styles.cardSubtitle]} variant="bodyMedium">
-            Product quantity purchased: {item?.quantity_purchased}
+            {item?.total_price.toFixed(2)}
           </Text>
         </View>
       </View>
@@ -187,7 +191,7 @@ const CartScreen = () => {
                   fontWeight: 'bold',
                 }}>
                 Total: {'\u20B9'}
-                {totalPrice}
+                {totalPrice.toFixed(2)}
               </Text>
             </Button>
             <Button

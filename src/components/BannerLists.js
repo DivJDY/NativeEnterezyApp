@@ -22,6 +22,7 @@ import {hostName} from '../../App';
 
 const BannerLists = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [length, setLength] = useState();
   const slidesRef = useRef(null);
   const flatListRef = useRef(null);
   const [slides, setSlides] = useState([]);
@@ -37,20 +38,22 @@ const BannerLists = () => {
     await fetch(hostName + '/banner', requestOptions)
       .then(res => res.json())
       .then(response => {
-        console.warn('banner ', response.banner_data);
+        // console.warn('banner ', response.banner_data);
         setSlides(response.banner_data);
+        setLength(slides.length);
       })
       .catch(error => {
         console.log(error);
       });
   };
 
-  useEffect(() => {
-    fetchBannerLists();
-  }, []);
+  // useEffect(() => {
+  //   fetchBannerLists();
+  // }, []);
 
   useEffect(() => {
-    setTimeout(() => fetchBannerLists(), 3000);
+    fetchBannerLists();
+    // setTimeout(() => fetchBannerLists(), 3000);
   });
 
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -90,7 +93,7 @@ const BannerLists = () => {
     })
       .then(response => response.json())
       .then(response => {
-        console.log(response.message);
+        // console.log(response.message);
         Alert.alert(response.message);
         fetchBannerLists();
       })
@@ -100,7 +103,25 @@ const BannerLists = () => {
       });
   };
 
-  console.warn(' ite   ', slides);
+  const handleNextImage = () => {
+    const nextIndex = (currentIndex + 1) % slides.length;
+    setCurrentIndex(nextIndex);
+  };
+  // console.warn(' length == ', slides.length);
+
+  useEffect(() => {
+    if (length !== 0) {
+      const interval = setInterval(() => {
+        handleNextImage();
+        flatListRef.current.scrollToIndex({index: currentIndex});
+      }, 3000); // Change the interval duration as needed
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex]);
   const RenderSlides = ({item}) => {
     return (
       <View style={[styles.container, {width}]}>
@@ -126,36 +147,26 @@ const BannerLists = () => {
   };
 
   // Function to update the scroll position
-  const scrollToIndex = index => {
-    flatListRef.current.scrollToIndex({animated: true, index});
-    setCurrentIndex(index);
-  };
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Calculate the next index to scroll to
-      const nextIndex = (currentIndex + 1) % slides.length;
-      scrollToIndex(nextIndex); // This line could be causing the NaN issue
-
-      // Instead of the above line, you should just update the currentIndex without triggering a scroll
-      setCurrentIndex(nextIndex);
-    }, 5000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [currentIndex, slides.length]);
+  // const scrollToIndex = index => {
+  //   flatListRef.current.scrollToIndex({animated: true, index});
+  //   setCurrentIndex(index);
+  // };
   // useEffect(() => {
-  //   // const interval = setInterval(() => {
-  //   //   // Calculate the next index to scroll to
-  //   //   const nextIndex = (currentIndex + 1) % slides.length;
-  //   //   scrollToIndex(nextIndex);
-  //   // }, 3000); // Change this value to control the interval
-  //   // // Clear the interval when the component unmounts
-  //   // return () => {
-  //   //   clearInterval(interval);
-  //   // };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [currentIndex]);
+  //   const interval = setInterval(() => {
+  //     // Calculate the next index to scroll to
+  //     const nextIndex = (currentIndex + 1) % slides.length;
+  //     scrollToIndex(nextIndex); // This line could be causing the NaN issue
+
+  //     // Instead of the above line, you should just update the currentIndex without triggering a scroll
+  //     if (!isNaN(nextIndex)) {
+  //       setCurrentIndex(nextIndex);
+  //     }
+  //   }, 5000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [currentIndex, slides.length]);
 
   return (
     <>

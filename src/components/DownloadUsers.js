@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {View, PermissionsAndroid} from 'react-native';
 import React, {useEffect} from 'react';
 import RNFS from 'react-native-fs';

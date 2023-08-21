@@ -10,7 +10,9 @@ import {hostName} from '../../App';
 
 const CardDetailsComponent = props => {
   const [value, setValue] = useState();
-  const [quantity, setQuantity] = useState();
+  const [quantity, setQuantity] = useState(
+    props.data.minimum_product_order_quantity,
+  );
 
   const navigation = useNavigation();
 
@@ -36,7 +38,7 @@ const CardDetailsComponent = props => {
     const data = {
       user_id: 1,
       product_code: cartItem.product_code,
-      quantity_purchased: cartItem.minimum_product_order_quantity,
+      quantity_purchased: cartItem.quantity,
     };
 
     fetch(hostName + '/cart', {
@@ -62,7 +64,7 @@ const CardDetailsComponent = props => {
 
   useEffect(() => {
     setValue(props.data);
-    setQuantity(props.data?.minimum_product_order_quantity);
+    setQuantity(props.data.minimum_product_order_quantity);
   }, [props.data]);
 
   const showAlert = message => {
@@ -96,10 +98,11 @@ const CardDetailsComponent = props => {
         />
         <Card.Content style={{backgroundColor: '#fff'}}>
           <Text style={styles.cardTitle} variant="titleLarge">
-            Brand: {value?.product_brand}
+            Brand Name: {value?.product_brand} ({value?.brand_code})
           </Text>
+
           <Text style={styles.cardTitle} variant="titleLarge">
-            {value?.product_name}
+            {value?.product_name} ({value?.product_code})
           </Text>
           <Text
             style={[styles.cardPara, {marginBottom: 5}]}
