@@ -187,6 +187,15 @@ const OrderListScreen = () => {
                   titleNumberOfLines={2}
                 />
                 <List.Item
+                  description={'Delivery Address : ' + order.shipping_address}
+                  descriptionStyle={{
+                    fontSize: 16,
+                    color: '#000',
+                    lineHeight: 24,
+                  }}
+                  style={{marginVertical: '-6%'}}
+                />
+                <List.Item
                   title={
                     'Expected Delivery Date : ' +
                     order.delivery_date.slice(0, 10)

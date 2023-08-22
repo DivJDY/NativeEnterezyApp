@@ -104,24 +104,24 @@ const BannerLists = () => {
   };
 
   const handleNextImage = () => {
-    const nextIndex = (currentIndex + 1) % slides.length;
+    const nextIndex = (currentIndex + 1) % length;
     setCurrentIndex(nextIndex);
   };
   // console.warn(' length == ', slides.length);
 
-  useEffect(() => {
-    if (length !== 0) {
-      const interval = setInterval(() => {
-        handleNextImage();
-        flatListRef.current.scrollToIndex({index: currentIndex});
-      }, 3000); // Change the interval duration as needed
+  // useEffect(() => {
+  //   if (length !== 0) {
+  //     const interval = setInterval(() => {
+  //       handleNextImage();
+  //       flatListRef.current.scrollToIndex({index: currentIndex});
+  //     }, 3000); // Change the interval duration as needed
 
-      return () => {
-        clearInterval(interval);
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
+  //     return () => {
+  //       clearInterval(interval);
+  //     };
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentIndex]);
   const RenderSlides = ({item}) => {
     return (
       <View style={[styles.container, {width}]}>

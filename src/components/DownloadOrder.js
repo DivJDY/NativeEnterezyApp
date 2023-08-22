@@ -8,10 +8,10 @@ import Entypo from 'react-native-vector-icons/Entypo';
 const DownloadOrder = ({order}) => {
   const generateCSVData = data => {
     let csvData =
-      'Product Brand, User Name, Product Code, Product Name, Product Image, Tax Rate, Qunatity Purchased, Selling Price, Ordered Price\n'; // Header row
+      'Product Brand, User Name, Product Code, Product Name, Product Image, Tax Rate, Qunatity Purchased, Selling Price, Ordered Price, Address\n'; // Header row
 
     data.forEach(item => {
-      csvData += `${item.product_brand}, ${item.user_name}, ${item.product_code}, ${item.product_name}, ${item.product_image}, ${item.tax_rate}, ${item.quantity_purchased},${item.selling_price}, ${item.total_price}\n`; // Data rows
+      csvData += `${item.product_brand}, ${item.user_name}, ${item.product_code}, ${item.product_name}, ${item.product_image}, ${item.tax_rate}, ${item.quantity_purchased},${item.selling_price}, ${item.total_price}, ${item.shipping_address}\n`; // Data rows
     });
 
     return csvData;

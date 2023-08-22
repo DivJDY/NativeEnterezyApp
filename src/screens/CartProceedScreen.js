@@ -1,10 +1,15 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import {View, Alert} from 'react-native';
+import {
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   Button,
-  Appbar,
   Text,
   Card,
   Dialog,
@@ -25,6 +30,29 @@ const CartProceedScreen = ({route}) => {
   const [checked, setChecked] = useState(false);
   const [user, setUser] = useState([]);
   const navigation = useNavigation();
+
+  const [formData, setFormData] = useState({
+    shipping_address: route?.params?.cartData[0].shipping_address,
+  });
+  const [editMode, setEditMode] = useState(false);
+
+  const handleInputChange = (key, value) => {
+    setFormData(prevData => ({
+      ...prevData,
+      [key]: value,
+    }));
+  };
+
+  const handleEditPress = () => {
+    setEditMode(true);
+  };
+
+  const handleSavePress = () => {
+    setEditMode(false);
+    update_ShippingAdd(route?.params?.cartData[0].cart_code);
+    // Perform save or submit logic here
+    console.log('Form Data:', formData);
+  };
 
   const discount = route?.params?.cartData.reduce(
     (total, item) => total + item?.brand_discount,
@@ -87,10 +115,11 @@ const CartProceedScreen = ({route}) => {
         status: 'Order received',
         user_id: 1,
         user_name: 'Xyz',
+        shipping_address: formData.shipping_address,
       });
     });
 
-    console.warn(' place order data ', ' ** ', postOrderData);
+    // console.warn(' place order data ', ' ** ', postOrderData);
 
     fetch(hostName + '/order', {
       method: 'POST',
@@ -109,7 +138,7 @@ const CartProceedScreen = ({route}) => {
         hideDialog();
         setChecked(false);
         removeCartItem();
-        navigation.navigate('Cart');
+        navigation.navigate('HomeDrawer');
       })
       .catch(error => {
         // Handle any errors
@@ -119,10 +148,6 @@ const CartProceedScreen = ({route}) => {
 
   const handleCheckbox = () => {
     setChecked(!checked);
-  };
-
-  const handleRightIconPress = () => {
-    console.log('pressed');
   };
 
   const fetchUserData = async () => {
@@ -142,70 +167,133 @@ const CartProceedScreen = ({route}) => {
     route?.params?.cartData,
     route?.params?.totalPrice,
   ]);
+
+  const update_ShippingAdd = async id => {
+    const body = {shipping_address: formData.shipping_address};
+
+    await fetch(hostName + '/cart/' + id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then(response => response.json())
+      .then(responseData => {
+        // Update the state or perform any necessary actions
+        console.warn(responseData[0].message);
+        Alert.alert(responseData[0].message);
+        // fetchUser();
+      })
+      .catch(error => {
+        console.error('Error updating data:', error);
+      });
+  };
+
+  // const [isPressed, setIsPressed] = useState(false);
+
+  // const handlePressIn = () => {
+  //   setIsPressed(true);
+  // };
+
+  // const handlePressOut = () => {
+  //   setIsPressed(false);
+  // };
+
+  // const underlineColor = isPressed ? 'yellow' : 'red';
+
   return (
     <Provider>
       <View style={{flex: 1, marginVertical: 20}}>
         <View
           style={{
             flex: 1,
-            marginHorizontal: '10%',
-            width: '80%',
+            marginHorizontal: 20,
+            width: '90%',
           }}>
-          {/* <Appbar.Header style={{backgroundColor: 'yellow'}}>
-            <Appbar.Action
-              icon="percent"
-              size={16}
-              color="white"
-              style={{backgroundColor: 'black', marginRight: 20}}
-            />
-            <Appbar.Content title="Apply Coupon" style={{fontWeight: 'bold'}} />
-            <Appbar.Action
-              icon="chevron-right"
-              size={32}
-              onPress={handleRightIconPress}
-            />
-          </Appbar.Header> */}
-          <Card style={{marginTop: 50}}>
-            <Card.Content
-              marginTop={5}
-              flexDirection="row"
-              flexWrap="wrap"
-              alignItems="center">
-              <Text
-                style={{fontWeight: 'bold', fontSize: 16, flex: 1}}
-                variant="titleMedium">
-                Delivery address :
-              </Text>
-              <Text style={{flex: 0.8, fontSize: 16}}>{user?.address}</Text>
-              <IconButton
-                icon="pencil"
-                size={26}
-                style={{color: '#000', flex: 0.2}}
-                onPress={() => console.warn(' 777')}
-              />
-            </Card.Content>
-            <Card.Content>
-              <Text
-                variant="titleLarge"
-                style={{
-                  textAlign: 'center',
-                  marginVertical: 10,
-                  textDecorationLine: 'underline',
-                }}>
-                Bill Details
-              </Text>
-            </Card.Content>
-            <Card.Content
-              flexDirection="row"
-              flexWrap="wrap"
-              marginTop={10}
-              justifyContent="space-between">
-              <Text variant="bodyMedium">Total Order value</Text>
-              <Text variant="bodyMedium">
-                {'\u20B9'} {route?.params?.totalPrice.toFixed(2)}
-              </Text>
-            </Card.Content>
-            {/* <Card.Content flexDirection="row" flexWrap="wrap" marginTop={10}>
+          <KeyboardAvoidingView
+            enabled
+            behavior={Platform.OS === 'ios' ? 'padding' : null}
+            style={{marginBottom: 80}}>
+            <Card style={{marginTop: 50, backgroundColor: '#fff'}}>
+              <Card.Content
+                marginTop={5}
+                flexDirection="row"
+                flexWrap="wrap"
+                alignItems="center">
+                <Text
+                  style={{fontWeight: 'bold', fontSize: 16, width: '40%'}}
+                  variant="titleMedium">
+                  Delivery address :
+                </Text>
+                {/* <TouchableWithoutFeedback
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}> */}
+                <TextInput
+                  style={{
+                    padding: 10,
+                    backgroundColor: '#fff',
+                    width: '48%',
+                    color: '#000',
+                    lineHeight: 20,
+                    // borderWidth: 1,
+                    // borderColor: 'gray',
+                  }}
+                  underlineColorAndroid="transparent" // Hide default Android underline
+                  value={formData.shipping_address}
+                  onChangeText={value =>
+                    handleInputChange('shipping_address', value)
+                  }
+                  editable={editMode}
+                  multiline
+                  numberOfLines={3}
+                  returnKeyLabel="done"
+                  returnKeyType="done"
+                />
+                {/* </TouchableWithoutFeedback> */}
+
+                {!editMode ? (
+                  <IconButton
+                    icon="pencil"
+                    size={26}
+                    color="#000"
+                    style={{width: '8%'}}
+                    onPress={handleEditPress}
+                  />
+                ) : (
+                  <IconButton
+                    icon="check-circle"
+                    size={26}
+                    // color="#FECE00"
+                    color="green"
+                    style={{width: '8%'}}
+                    onPress={handleSavePress}
+                  />
+                )}
+              </Card.Content>
+
+              <Card.Content>
+                <Text
+                  variant="titleLarge"
+                  style={{
+                    textAlign: 'center',
+                    marginVertical: 10,
+                    textDecorationLine: 'underline',
+                  }}>
+                  Bill Details
+                </Text>
+              </Card.Content>
+              <Card.Content
+                flexDirection="row"
+                flexWrap="wrap"
+                marginTop={10}
+                justifyContent="space-between">
+                <Text variant="bodyMedium">Total Order value</Text>
+                <Text variant="bodyMedium">
+                  {'\u20B9'} {route?.params?.totalPrice.toFixed(2)}
+                </Text>
+              </Card.Content>
+              {/* <Card.Content flexDirection="row" flexWrap="wrap" marginTop={10}>
               <Text
                 variant="bodyMedium"
                 marginRight={'60%'}
@@ -217,47 +305,56 @@ const CartProceedScreen = ({route}) => {
               </Text>
             </Card.Content> */}
 
-            <Card.Content
-              flexDirection="row"
-              flexWrap="wrap"
-              marginTop={10}
-              justifyContent="space-between">
-              <Text variant="bodyMedium">Total Tax</Text>
-              <Text variant="bodyMedium">{tax}%</Text>
-            </Card.Content>
-
-            <Card.Content flexDirection="row" flexWrap="wrap" marginTop={5}>
-              <View style={styles.line} />
-
-              <Text
-                marginRight={'65%'}
-                variant="bodyMedium"
+              <Card.Content
+                flexDirection="row"
+                flexWrap="wrap"
                 marginTop={10}
-                marginBottom={3}>
-                To pay
-              </Text>
-              <Text marginTop={10} marginBottom={3} variant="bodyMedium">
-                {'\u20B9'} {toalAmount?.toFixed(2)}
-              </Text>
-              <View style={styles.line} />
-            </Card.Content>
-          </Card>
-        </View>
+                justifyContent="space-between">
+                <Text variant="bodyMedium">Total Tax</Text>
+                <Text variant="bodyMedium">{tax}%</Text>
+              </Card.Content>
 
-        <Button
-          // style={styles.submitbtn}
-          style={{
-            marginHorizontal: 10,
-            backgroundColor: 'black',
-          }}
-          onPress={() =>
-            // navigation.navigate('HomeStack')
-            showDialog()
-          }>
-          <Text style={{fontSize: 16, color: '#fff', fontWeight: 'bold'}}>
-            Proceed
-          </Text>
-        </Button>
+              <Card.Content flexDirection="row" flexWrap="wrap" marginTop={5}>
+                <View style={styles.line} />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    variant="bodyMedium"
+                    marginRight="70%"
+                    marginTop={10}
+                    marginBottom={3}>
+                    To pay
+                  </Text>
+                  <Text marginTop={10} marginBottom={3} variant="bodyMedium">
+                    {'\u20B9'} {toalAmount?.toFixed(2)}
+                  </Text>
+                </View>
+                <View style={styles.line} />
+              </Card.Content>
+            </Card>
+          </KeyboardAvoidingView>
+
+          <Button
+            // style={styles.submitbtn}
+            style={{
+              // position: 'absolute',
+              marginHorizontal: 10,
+              backgroundColor: 'black',
+              // right: '40%',
+              // left: '50%',
+              // bottom: 0,
+            }}
+            onPress={() =>
+              // navigation.navigate('HomeStack')
+              showDialog()
+            }>
+            <Text style={{fontSize: 16, color: '#fff', fontWeight: 'bold'}}>
+              Proceed
+            </Text>
+          </Button>
+        </View>
 
         <Portal>
           <Dialog

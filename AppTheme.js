@@ -21,6 +21,7 @@ export const theme = {
   colors: {
     ...DefaultTheme.colors,
     text: 'black',
+    textInput: '#FECE00',
 
     primary: '#FECE00', // replace with your desired background color
     // text: 'white',
