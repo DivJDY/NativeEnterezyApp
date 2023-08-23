@@ -1,5 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
-import {View, PermissionsAndroid, TouchableOpacity} from 'react-native';
+import {PermissionsAndroid, TouchableOpacity} from 'react-native';
 import React, {useEffect} from 'react';
 import RNFS from 'react-native-fs';
 import {Alert} from 'react-native';

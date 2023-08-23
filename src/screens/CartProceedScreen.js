@@ -59,10 +59,16 @@ const CartProceedScreen = ({route}) => {
     0,
   );
 
+  const total_tax_amount = route?.params?.cartData.reduce(
+    (total, item) => total + item?.tax_amount,
+    0,
+  );
+
   const total_tax = route?.params?.cartData.reduce(
     (total, item) => total + item?.tax_rate,
     0,
   );
+
   const tax = parseFloat(total_tax).toString();
   // const tax = total_tax.replace(/^0+/, '');
   // console.warn(' tax 0000000000 ', tax.discount);
@@ -311,7 +317,9 @@ const CartProceedScreen = ({route}) => {
                 marginTop={10}
                 justifyContent="space-between">
                 <Text variant="bodyMedium">Total Tax</Text>
-                <Text variant="bodyMedium">{tax}%</Text>
+                <Text variant="bodyMedium">
+                  {'\u20B9'} {total_tax_amount}
+                </Text>
               </Card.Content>
 
               <Card.Content flexDirection="row" flexWrap="wrap" marginTop={5}>

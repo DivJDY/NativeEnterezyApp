@@ -137,7 +137,7 @@ const OrderListScreen = () => {
           showsHorizontalScrollIndicator={false}>
           <List.Section>
             {data?.map((order, index) => (
-              <View key={index}>
+              <View key={order.order_code}>
                 <List.Item
                   style={{marginBottom: -20, flexWrap: 'nowrap'}}
                   titleStyle={{
@@ -170,6 +170,9 @@ const OrderListScreen = () => {
                     order.product_brand +
                     ' | Product Tax: ' +
                     order.tax_rate
+                    // +
+                    // ' | ' +
+                    // order.tax_amount
                   }
                   description={
                     'Order Placed Date : ' + order.order_created_at.slice(0, 10)
